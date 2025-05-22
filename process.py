@@ -1,7 +1,11 @@
 import pandas as pd 
 import numpy as np
+import sys
+import json
+sys.stdout.reconfigure(encoding='utf-8')  # ✅ 保證輸出為 UTF-8（避免 Windows 預設 gbk/cp950）
 
 def getDataTable(filePath):
+    # print("im in")
     fullTestTable = pd.read_excel(filePath, sheet_name='套印用資料-全測')
     getData(filePath,fullTestTable)
     # studyTestTable = pd.read_excel(filePath, sheet_name='套印用資料-免學')
@@ -86,7 +90,7 @@ def getData(filePath,dataFrame):
         datajson = {
             '身分證號碼':identification,
             '中文姓名':chName,
-            '出生日期':birthYear + birthMounth + birthDay,
+            '出生日期':birthYear + birthMounth + birthDay,  
             '報簡職類':testSubject,
             '英文姓名':engName,
             '檢定區別':testType,
@@ -104,7 +108,14 @@ def getData(filePath,dataFrame):
             '學制':schoolType
         }
         dataJsonLst.append(datajson)
-    print(dataJsonLst)
+    print(json.dumps(dataJsonLst, ensure_ascii=False))
 
-filePath= "./convert_content/1.中壢高商(14901).xlsx"
-getDataTable(filePath)
+
+
+
+if __name__ == "__main__":
+    func = sys.argv[1]
+    args = sys.argv[2:]
+
+    if func in globals():
+        globals()[func](*args)
