@@ -1,0 +1,130 @@
+@mixin all-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+@font-face {
+    font-family: Notos;
+    src: url(../fonts/NotoSansTC-ExtraBold.ttf);
+}
+
+.LoginFrameContainer {
+    @include layerDeco();
+    @include all-center();
+    font-family: Notos;
+    height: 100vh;
+    width: 100vw;
+    // background: linear-gradient(125deg, rgba(226, 135, 113, 1) 0%, rgba(201, 80, 125, 1) 40%, rgba(194, 59, 189, 1) 80%, rgba(123, 70, 199, 1) 100%);
+    background: linear-gradient(90deg, rgba(123, 70, 199, 1) 45%, rgba(76, 110, 207, 1) 100%);
+
+    .loginbox {
+        @include all-center();
+        // height: 43rem;
+        background-color: rgba(255, 255, 255, 0.61);
+        width: 400px;
+        padding: 3rem 0 2.5rem 0;
+        border-radius: 25px;
+
+
+        input {
+            padding: 0.5rem 1rem;
+            width: 100%;
+            border-radius: 10px;
+            background-color: rgba(255, 255, 255, 0.61);
+            border: none;
+            box-shadow: rgba(14, 30, 37, 0.12) 0px 2px 4px 0px, rgba(14, 30, 37, 0.32) 0px 2px 16px 0px;
+            box-sizing: border-box;
+
+        }
+
+        label{
+            text-shadow: $txShadow;
+            color: $black;
+            box-sizing:border-box;
+        }
+
+        .boxContainer {
+            display: flex;
+            flex-direction: column;
+            align-items:center;
+            justify-content: center;
+            width: 65%;
+            max-width: 70%;
+            .logoName {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                h3 {
+                    font-size: 1.5rem;
+                    color: $black;
+                    text-shadow: $txShadow ;
+                }
+
+                .logo {
+                    @include all-center();
+                    background-color: #7c46c74c;
+                    color: $color1;
+                    height: 1.5rem;
+                    padding: 0.5rem;
+                    aspect-ratio: 1/1;
+                    border-radius: 12px;
+                    font-size: 1.5rem;
+                    margin-right: 1rem;
+                    box-shadow: rgba(14, 30, 37, 0.12) 0px 2px 4px 0px, rgba(14, 30, 37, 0.32) 0px 2px 16px 0px;
+                }
+            }
+            .loginDataContainer{
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                margin: 1.5rem 0;
+                .loginData {
+                    width: 100%;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: start;
+                    margin: 0.5rem 0;
+                }
+            }
+            // .otherFunction{
+            //     // display: flex;ㄑ
+            
+            // }
+            .loginButton{
+                @include all-center();
+                width: 100%;
+                flex-direction: column;
+                .line{
+                    width: 25px;
+                    height: 2px;
+                    border-radius: 25px;
+                    background-color: $black;
+                    margin: 0.8rem 0;
+                    opacity: 0.2;
+                }
+                span{
+                    color: $black;
+                    font-size: 0.75rem;
+                    u{
+                        cursor: pointer;
+                    }
+                }
+                button{
+                    background-color: $color1;
+                    color: white;
+                    padding: 0.4rem 1.2rem;
+                    width: 100%;
+                    // box-sizing: border-box;
+                    transition: .25s;
+                    border: none;
+                    &:hover{
+                        background-color: white;
+                        color: $color1;
+                    }
+                }
+            }
+        }
+
+    }
+}
