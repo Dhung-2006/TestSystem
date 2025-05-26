@@ -15,18 +15,19 @@
     document.addEventListener("DOMContentLoaded",()=>{
     const fm = document.querySelector("#piyan");
     const data = {"aa":"./convert_content/1.中壢高商(14901).xlsx"};
-    fm.addEventListener("submit",(e)=>{
+    fm.addEventListener("submit",async (e)=>{
         e.preventDefault();
         const URL = "/upload";
-        const res = fetch(URL,{
+        const res = await fetch(URL,{
             method:"POST",
             headers:{"Content-Type":'application/json'},
             body:JSON.stringify(data)
-            
         });
+        const rn = await res.json();
 
-        console.log(res);        
+        console.log(rn , data);
 
+        // console.log(res);
     })
     })
 </script>
