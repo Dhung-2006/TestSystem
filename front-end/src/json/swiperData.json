@@ -1,0 +1,27 @@
+[
+    {
+        "swiper_icon":"file",
+        "swiper_title":"下載範本",
+        "swiper_inner":"請依範本格式填寫，若已下載範本可略過此步驟。"
+    },
+    {
+        "swiper_icon":"upload",
+        "swiper_title":"上傳學生檔案",
+        "swiper_inner":"請上傳包含學生資訊的檔案，支援 Excel 或 CSV 格式，請確保符合規範。"
+    },
+    {
+        "swiper_icon":"photo-video",
+        "swiper_title":"上傳學生照片",
+        "swiper_inner":"請上傳學生證件用照片，格式為 JPG 或 PNG，請確保影像清晰、符合規範。"
+    },
+    {
+        "swiper_icon":"edit",
+        "swiper_title":"編輯學生照片",
+        "swiper_inner":"上傳照片後即可編輯照片尺寸與位置，符合證件格式需求。"
+    },
+    {
+        "swiper_icon":"handshake-angle",
+        "swiper_title":"特殊需求協助",
+        "swiper_inner":"有特殊需求請提前告知，我們會提供適當協助與安排。"
+    }
+]
