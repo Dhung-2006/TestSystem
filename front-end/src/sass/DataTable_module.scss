@@ -1,0 +1,32 @@
+.tableContainer {
+    overflow-y: scroll;
+    max-height: 25rem;
+    border-radius: 12px;
+    table {
+        border-collapse: separate;
+        border-spacing: 0;
+        width: 100%;
+        border-radius: 15px;
+        border: none;
+        background-color: white;
+        overflow-x: scroll;
+
+        td,
+        th {
+            border-left: none;
+            border-right: none;
+        }
+
+        thead tr th {
+            // color: red;
+            background-color: $color1;
+            // border: none;
+            border-left: 0;
+            border-right: 0;
+        }
+
+        tbody {
+            color: $black;
+        }
+    }
+}

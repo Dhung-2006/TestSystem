@@ -3,9 +3,47 @@
     justify-content: center;
     align-items: center;
 }
+
 @font-face {
     font-family: Notos;
     src: url(../fonts/NotoSansTC-ExtraBold.ttf);
+}
+.op0{
+    opacity: 0;
+    pointer-events: none;
+    z-index: -1;
+}
+
+.loading {
+    @include all-center();
+    position: absolute;
+    height: 100vh;
+    width: 100%;
+    background-color: #09090978;
+    backdrop-filter: blur(20px);
+    z-index: 999;
+    transition: .25s;
+    .loader {
+        width: 50px;
+        padding: 8px;
+        aspect-ratio: 1;
+        border-radius: 50%;
+        background: white;
+        --_m:
+            conic-gradient(#0000 10%, #000),
+            linear-gradient(#000 0 0) content-box;
+        -webkit-mask: var(--_m);
+        mask: var(--_m);
+        -webkit-mask-composite: source-out;
+        mask-composite: subtract;
+        animation: l3 1s infinite linear;
+    }
+}
+
+@keyframes l3 {
+    to {
+        transform: rotate(1turn)
+    }
 }
 
 .LoginFrameContainer {
@@ -21,42 +59,46 @@
         @include all-center();
         // height: 43rem;
         background-color: rgba(255, 255, 255, 0.61);
-        width: 400px;
+        width: 28rem;
+        // 200px
         padding: 3rem 0 2.5rem 0;
         border-radius: 25px;
 
 
         input {
-            padding: 0.5rem 1rem;
+            padding: 0.65rem 1.2rem;
             width: 100%;
             border-radius: 10px;
+            font-size: 0.9rem;
             background-color: rgba(255, 255, 255, 0.61);
             border: none;
             box-shadow: rgba(14, 30, 37, 0.12) 0px 2px 4px 0px, rgba(14, 30, 37, 0.32) 0px 2px 16px 0px;
             box-sizing: border-box;
-
+            color: $black;
         }
 
-        label{
+        label {
             text-shadow: $txShadow;
             color: $black;
-            box-sizing:border-box;
+            box-sizing: border-box;
+            font-size: 1.15rem;
         }
 
         .boxContainer {
             display: flex;
             flex-direction: column;
-            align-items:center;
+            align-items: center;
             justify-content: center;
             width: 65%;
             max-width: 70%;
+
             .logoName {
                 display: flex;
                 align-items: center;
                 justify-content: center;
 
                 h3 {
-                    font-size: 1.5rem;
+                    font-size: 1.75rem;
                     color: $black;
                     text-shadow: $txShadow ;
                 }
@@ -74,11 +116,13 @@
                     box-shadow: rgba(14, 30, 37, 0.12) 0px 2px 4px 0px, rgba(14, 30, 37, 0.32) 0px 2px 16px 0px;
                 }
             }
-            .loginDataContainer{
+
+            .loginDataContainer {
                 width: 100%;
                 display: flex;
                 flex-direction: column;
                 margin: 1.5rem 0;
+
                 .loginData {
                     width: 100%;
                     display: flex;
@@ -87,38 +131,51 @@
                     margin: 0.5rem 0;
                 }
             }
+
             // .otherFunction{
             //     // display: flex;ㄑ
-            
+
             // }
-            .loginButton{
+            .loginButton {
                 @include all-center();
                 width: 100%;
                 flex-direction: column;
-                .line{
-                    width: 25px;
-                    height: 2px;
+
+                .line {
+                    width: 30px;
+                    height: 3px;
                     border-radius: 25px;
                     background-color: $black;
                     margin: 0.8rem 0;
                     opacity: 0.2;
                 }
-                span{
+
+                span {
                     color: $black;
-                    font-size: 0.75rem;
-                    u{
+                    font-size: 0.95rem;
+
+                    u {
+                        transition: .25s;
+
+                        &:hover {
+                            opacity: 0.6;
+                        }
+
                         cursor: pointer;
                     }
                 }
-                button{
+
+                button {
                     background-color: $color1;
                     color: white;
                     padding: 0.4rem 1.2rem;
                     width: 100%;
+                    font-size: 1.15rem;
                     // box-sizing: border-box;
                     transition: .25s;
                     border: none;
-                    &:hover{
+
+                    &:hover {
                         background-color: white;
                         color: $color1;
                     }

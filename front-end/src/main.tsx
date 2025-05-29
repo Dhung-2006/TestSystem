@@ -5,6 +5,7 @@ import './index.css'
 import App from './App.tsx'
 import "./sass/Integration_module.scss";
 import RegisterFrame from './Frames/RegisterFrame.tsx'
+import SignupFrame from './Frames/SignupFrame.tsx'
 import LoginFrame from './Frames/LoginFrame.tsx';
 
 
@@ -14,8 +15,10 @@ createRoot(document.getElementById('root')!).render(
     {/* <LoginFrame /> */}
     <BrowserRouter>
       <Routes>
-        <Route path='/' element={<LoginFrame />} />
-        <Route path='registerFrame' element={<RegisterFrame />} />
+        <Route path='/login' element={<LoginFrame />} />
+        <Route path='register' element={<RegisterFrame />} />
+        <Route path='signup' element={<SignupFrame />} />
+        
       </Routes>
     </BrowserRouter>
     

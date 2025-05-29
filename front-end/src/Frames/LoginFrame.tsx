@@ -1,10 +1,62 @@
+import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGear } from '@fortawesome/free-solid-svg-icons'
+import Loading from "../component/Loading";
+import { useEffect, useState , useRef } from "react";
 const LoginFrame = () => {
+
+    // const [loginAccount , setLoginAccount] = useState("");
+    // const [LoginPassword , setLoginPassword] = useState("");
+
+    const [formValue , setFormValue] = useState({loginAccount:"" , loginPassword:""});
+
+    // const account = useRef(null);
+
+    const handleFormValue = (e:React.ChangeEvent<HTMLInputElement>)=>{
+        // name => get element裡面的name
+        // value => get element裡面的value
+        const {name , value } = e.target;
+        setFormValue((prev)=>({ ...prev , [name]:value }));
+    }
+
+    
+
+    const handleFormSubmit = async(e:React.ChangeEvent<HTMLFormElement>) =>{
+        e.preventDefault();
+        const formData = new FormData();
+        formData.append("loginAccount" , formValue.loginAccount);
+        formData.append("loginPassword" , formValue.loginPassword);
+        const URL : string = "";
+        try{
+            const res = await fetch(URL,{
+                method:"POST",
+                body: formData
+            })
+            
+            if(!res.ok) throw new Error("500 server error");
+            const data = await res.json();
+            console.log("成功",data)
+            
+        }
+        catch(err){
+            console.error("123",err);
+        }
+    }
+    // useEffect(()=>{console.log(loginAccount)},[loginAccount])
+    // const submitForm = ():void =>{
+    //     const URL = '';
+    //     fetch(URL,{
+    //         method:'POST',
+    //         // headers:{
+    //         //     'Content-Type':
+    //         // }
+    //     })
+    // }
     return (
         <div className="LoginFrameContainer">
+            <Loading />
             {/* 要判斷login/regist */}
-            <form className="loginbox">
+            <form className="loginbox" onSubmit={(handleFormSubmit)}>
                 <div className="boxContainer">
                     <div className="logoName">
                         <div className="logo"><FontAwesomeIcon icon={faGear} /></div>
@@ -13,12 +65,12 @@ const LoginFrame = () => {
                     <div className="loginDataContainer">
                         <div className="loginData">
                             <label>帳號</label>
-                            <input type="text" />
+                            <input type="text" name="loginAccount" onChange={handleFormValue} value={formValue.loginAccount} />
                         </div>
                         <div className="loginData">
 
                             <label>密碼</label>
-                            <input type="password" />
+                            <input type="password" name="loginPassword" onChange={handleFormValue} value={formValue.loginPassword} />
                         </div>
                     </div>
                     <div className="otherFunction">
@@ -34,7 +86,7 @@ const LoginFrame = () => {
                     <div className="loginButton">
                         <button type="submit">登入</button>
                         <div className="line"></div>
-                        <span>沒有帳號嗎？<u>註冊一個帳號</u></span>
+                        <Link to="/signup"><span>沒有帳號嗎？<u>註冊一個帳號</u></span></Link>
                     </div>
                 </div>
             </form>

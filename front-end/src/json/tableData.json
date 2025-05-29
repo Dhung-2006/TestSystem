@@ -1,0 +1,80 @@
+[
+
+    {
+        "no" :1,
+        "type" : "02000汽車修護",
+        "identity":"一般身份",
+        "number":22,
+        "photo_n": 16,
+        "all" : 22,
+        "pass_a":0,
+        "pass_s":0
+    }
+    ,
+    {
+        "no" :2,
+        "type" : "02000汽車修護",
+        "identity":"一般身份",
+        "number":20,
+        "photo_n": 26,
+        "all" : 21,
+        "pass_a":1,
+        "pass_s":20
+    }
+    ,
+    {
+        "no" :2,
+        "type" : "02000汽車修護",
+        "identity":"一般身份",
+        "number":20,
+        "photo_n": 26,
+        "all" : 21,
+        "pass_a":1,
+        "pass_s":20
+    }
+    ,
+    {
+        "no" :2,
+        "type" : "02000汽車修護",
+        "identity":"一般身份",
+        "number":20,
+        "photo_n": 26,
+        "all" : 21,
+        "pass_a":1,
+        "pass_s":20
+    }
+    ,
+    {
+        "no" :2,
+        "type" : "02000汽車修護",
+        "identity":"一般身份",
+        "number":20,
+        "photo_n": 26,
+        "all" : 21,
+        "pass_a":1,
+        "pass_s":20
+    }
+    ,
+    {
+        "no" :2,
+        "type" : "02000汽車修護",
+        "identity":"一般身份",
+        "number":20,
+        "photo_n": 26,
+        "all" : 21,
+        "pass_a":1,
+        "pass_s":20
+    }
+    ,
+    {
+        "no" :2,
+        "type" : "02000汽車修護",
+        "identity":"一般身份",
+        "number":20,
+        "photo_n": 26,
+        "all" : 21,
+        "pass_a":1,
+        "pass_s":20
+    }
+   
+]
