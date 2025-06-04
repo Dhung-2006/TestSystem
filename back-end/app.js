@@ -8,11 +8,15 @@ const { sequelize, userAccounts  , fileInfo} = require('./sqlSetting');
 const { where } = require('sequelize');
 const { stat } = require('fs');
 const { count } = require('console');
+const cors = require('cors')
 
 
-// app.use(cors({
-//   origin: "http://localhost:5173" // 只允許這個來源的前端請求
-// }));
+app.use(express.urlencoded({extended:true}))
+
+app.use(cors({
+  origin: "http://localhost:5173", // 只允許這個來源的前端請求
+  credentials : true
+}));
 app.use(express.json())
 
 
@@ -55,8 +59,9 @@ app.post('/upload' , (req , res) =>{
   // });
 })
 
-app.post('/regist' , (req,res) =>{
-  const applier = req.body["gmail"];
+app.post('/signup' , (req,res) =>{
+  const applier  = req.body.signEmail;
+  console.log(applier);
   const transporter = nodemailer.createTransport({
     service: 'Gmail',
     auth: {
@@ -76,21 +81,18 @@ app.post('/regist' , (req,res) =>{
 
   transporter.sendMail(mailOptions, (err, info) => {
     if (err) {
-      ErrHandler()
+      res.json(false)
     } else {
-      Callback()
+      res.json(randomCode);
     }
   })
-  res.json(randomCode);
+ 
 
 })
 
-app.get("/login" ,async (req, res) =>{
-  // const reqAcc = req.body[account];
-  // const reqPsd  = req.body[password];
-  // const findingUser = await userAccounts.findOne({where :{userAcc : userAccount}})
-  reqAcc = "dexter"
-  reqPsd  = "dexter"
+app.post("/login" ,async (req, res) =>{
+  const reqAcc = req.body.loginAccount;
+  const reqPsd  = req.body.loginPassword;
   sequelize.sync().then(async()=>{
     const targetAcc = await userAccounts.findOne({where:{
       userAcc:reqAcc
@@ -101,7 +103,7 @@ app.get("/login" ,async (req, res) =>{
     if (targetAcc.userPsd === reqPsd){
       res.json({
         'useraccount':targetAcc.userAcc,
-        "status" : "success"
+        "status" : "true"
       })
       }else{
         res.json({"status": "false"})
@@ -148,6 +150,7 @@ app.get("/showAllAcc" , async(req,res)=>{
       }
     })
 })
+
 app.listen(3000 , ()=>{
   console.log("server start at http://localhost:3000"); 
 }) 

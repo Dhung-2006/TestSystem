@@ -1,6 +1,6 @@
 from docx import *
 
-initial_json = {
+inputJson = {
      
     '身分證號碼': 'H126312469',
     '中文姓名': '卓宸宸',
@@ -22,13 +22,32 @@ initial_json = {
     '學制': '高級中學'
   
 }
-
-wordPath = './convert_content/5.報名表正面.docx'
+# worddic={
+#     '身分證號碼':'身分證號',
+#     '中文姓名':'姓名',
+#     '出生日期':'出生日期',
+#     '英文姓名':'英文姓名',
+#     '原住民傳統姓名並列之羅馬拼音':'身分證上原住民姓名之羅馬拼音',
+#     '通訊地址':'通訊地址',
+#     '戶籍地址':'戶籍地址',
+#     '就讀學校':'報檢人參檢學校',
+#     '就讀科系':'科系',
+#     '年級':'年級',
+#     '班別':'班別',
+#     '上課別':'部別'
+#     }
+wordPath = './back-end/convert_content/5.報名表正面.docx'
 wordDoc = Document(wordPath)
 table = wordDoc.tables[0]
 nowCommand = ''
-testSet = set()
+filledInfo = set()
 for idxr, row in enumerate(table.rows):
     for idxc , cell in enumerate(table._cells):
-      
-      pass
+        if cell.text == "" and table.cell(idxr,idxc-1) not in filledInfo:
+            fillitemIdx = table.cell(idxr,idxc-1).text
+            try:
+                cell.text = inputJson[fillitemIdx]
+                filledInfo.add(inputJson[fillitemIdx])
+            except:
+                pass
+wordDoc.save("./back-end/convert_content/testdoc.docx")
