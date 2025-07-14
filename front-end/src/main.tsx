@@ -15,10 +15,10 @@ createRoot(document.getElementById('root')!).render(
     {/* <LoginFrame /> */}
     <BrowserRouter>
       <Routes>
-        <Route path='/login' element={<LoginFrame />} />
+        <Route path='/loginframe' element={<LoginFrame />} />
         <Route path='register' element={<RegisterFrame />} />
-        <Route path='signup' element={<SignupFrame />} />
-        
+        <Route path='/signupframe' element={<SignupFrame />} />
+
       </Routes>
     </BrowserRouter>
     

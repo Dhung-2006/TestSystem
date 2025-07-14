@@ -18,15 +18,22 @@ const SignupFrame = () =>{
 
     const handleFormSubmit = async(e:React.ChangeEvent<HTMLFormElement>) =>{
         e.preventDefault();
-        const formData = new FormData();
-        formData.append("signEmail" , formValue.signEmail);
-        formData.append("signAccount" , formValue.signAccount);
-        formData.append("signPassword" , formValue.signPassword);
-        const URL : string = "";
+        const formData = {
+            'signEmail': formValue.signEmail,
+            'signAccount' : formValue.signAccount,
+            'signPassword' : formValue.signPassword
+        };
+        // formData.append("signEmail" , formValue.signEmail);
+        // formData.append("signAccount" , formValue.signAccount);
+        // formData.append("signPassword" , formValue.signPassword);
+        const URL : string = "http://localhost:3000/signup";
         try{
             const res = await fetch(URL,{
                 method:"POST",
-                body: formData
+                headers:{
+                    'Content-Type' : "application/json"
+                },
+                body: JSON.stringify(formData)
             })
             
             if(!res.ok) throw new Error("500 server error");

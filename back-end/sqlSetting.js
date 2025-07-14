@@ -1,3 +1,4 @@
+const { datacatalog } = require('googleapis/build/src/apis/datacatalog');
 const { Sequelize, DataTypes } = require('sequelize');
 
 const sequelize = new Sequelize({
@@ -5,6 +6,7 @@ const sequelize = new Sequelize({
   storage: 'sqlite.db' // ✅ 自動建立 sqlite 檔案
 });
 
+// 使用者
 const userAccounts = sequelize.define('userAccounts',{
   userID:{
     primaryKey :true,
@@ -23,6 +25,7 @@ const userAccounts = sequelize.define('userAccounts',{
   }
 });
 
+// excel檔案
 const fileInfo = sequelize.define('fileInfo' , {
   fileID:{
     primaryKey :true , 
@@ -45,6 +48,23 @@ const fileInfo = sequelize.define('fileInfo' , {
     allowNull:false
   }
   
+})
+
+// json檔案(讀取excel 檔案內容)
+const josnFile = sequelize.define('jsonFile' , {
+  jsonID:{
+    primaryKey:true, 
+    autoIncrement : true,
+    type:DataTypes.INTEGER
+  },
+  jsonName:{
+    type:DataTypes.STRING,
+    unique:true,
+    allowNull:false
+  },
+  userID:{
+    type: DataTypes.INTEGER
+  }
 })
 
 module.exports ={

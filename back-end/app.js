@@ -8,7 +8,8 @@ const { sequelize, userAccounts  , fileInfo} = require('./sqlSetting');
 const { where } = require('sequelize');
 const { stat } = require('fs');
 const { count } = require('console');
-const cors = require('cors')
+const cors = require('cors');
+const fs = require('fs');
 
 
 app.use(express.urlencoded({extended:true}))
@@ -35,28 +36,29 @@ app.get('/testpost', (req, res) => {
   res.send('Received');
 });
 
-app.post('/upload' , (req , res) =>{
+app.get('/upload' , (req , res) =>{
  console.log('123')
   const funcToRun = "getDataTable";
-  // const filePath = "./convert_content/1.中壢高商(14901).xlsx"
-  const getFilePath = req.body['filePath']
+  const filePath = "./convert_content/1.中壢高商(14901).xlsx"
+  // const getFilePath = req.body['filePath']
   // const py = spawn('python' , ['process.py' , funcToRun , filePath])
-  // let outputData = ''
-  // py.stdout.on('data' , (data) =>{
-  //   outputData += data.toString('utf-8')
-  // })
-  // py.stderr.on('data', (data) => {
-  //   outputData += data.toString()
-  // });
+  const py = spawn('python' , ['process.py' , funcToRun , filePath])
+  let outputData = ''
+  py.stdout.on('data' , (data) =>{
+    outputData += data.toString('utf-8')
+  })
+  py.stderr.on('data', (data) => {
+    outputData += data.toString()
+  });
 
-  // py.stdout.on('end', () => {
-  //   try {
-  //     const jsonData = JSON.parse(outputData);
-  //     console.log('接收到 JSON:', jsonData);
-  //   } catch (err) {
-  //     console.error('JSON 解析失敗:', err);
-  //   }
-  // });
+  py.stdout.on('end', () => {
+    try {
+      const jsonData = JSON.parse(outputData);
+      console.log('接收到 JSON:', jsonData);
+    } catch (err) {
+      console.error('JSON 解析失敗:', err);
+    }
+  });
 })
 
 app.post('/signup' , (req,res) =>{
@@ -112,15 +114,22 @@ app.post("/login" ,async (req, res) =>{
 })
 
 app.get("/createOneAcc" , async(req, res) => {
+  const newFolderPath = path.join(__dirname , "user_data" , "dexter")
   sequelize.sync().then(() => {
     userAccounts.create({
       userAcc : "dexter",
       userPsd : "dexter"
     }).then(()=>{
+      fs.mkdirSync(newFolderPath, { recursive: true }); 
       console.log("account already ready")
+    }).catch(err=>{
+      if(err.name === "SequelizeUniqueConstraintError"){
+        console.log('帳號已註冊')
+      };
     })
   });
 })
+
 
 app.get("/desTestAcc", async (req, res) => {
   try {
@@ -152,5 +161,5 @@ app.get("/showAllAcc" , async(req,res)=>{
 })
 
 app.listen(3000 , ()=>{
-  console.log("server start at http://localhost:3000"); 
+  console.log("server is running"); 
 }) 

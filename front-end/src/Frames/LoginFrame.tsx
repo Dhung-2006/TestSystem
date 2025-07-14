@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { json, Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGear } from '@fortawesome/free-solid-svg-icons'
 import Loading from "../component/Loading";
@@ -23,14 +23,20 @@ const LoginFrame = () => {
 
     const handleFormSubmit = async(e:React.ChangeEvent<HTMLFormElement>) =>{
         e.preventDefault();
-        const formData = new FormData();
-        formData.append("loginAccount" , formValue.loginAccount);
-        formData.append("loginPassword" , formValue.loginPassword);
-        const URL : string = "";
+        const formData = {
+            'loginAccount':formValue.loginAccount,
+            'loginPassword' : formValue.loginPassword
+        }
+        // formData.append("loginAccount" , formValue.loginAccount);
+        // formData.append("loginPassword" , formValue.loginPassword);
+        const URL : string = "http://localhost:3000/login";
         try{
             const res = await fetch(URL,{
                 method:"POST",
-                body: formData
+                headers:{
+                    'Content-Type':'application/json'
+                },
+                body: JSON.stringify(formData)
             })
             
             if(!res.ok) throw new Error("500 server error");
