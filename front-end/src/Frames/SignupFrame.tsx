@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Loading from "../component/Loading";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faGear, faUser } from "@fortawesome/free-solid-svg-icons";
 const SignupFrame = () =>{
 
 
@@ -45,7 +47,7 @@ const SignupFrame = () =>{
                     <form className="loginbox" onSubmit={handleFormSubmit}>
                         <div className="boxContainer">
                             <div className="logoName">
-                                {/* <div className="logo"><FontAwesomeIcon icon={faGear} /></div> */}
+                                <div className="logo"><FontAwesomeIcon icon={faUser} /></div>
                                 <h3>註冊帳號</h3>
                             </div>
                             <div className="loginDataContainer">

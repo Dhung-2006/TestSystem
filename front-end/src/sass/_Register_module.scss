@@ -1,0 +1,608 @@
+@import "_configs.scss";
+
+.registerFrameContainer {
+    position: relative;
+    height: 100vh;
+    width: 100vw;
+    font-family: Notos;
+
+    // background: linear-gradient(90deg,rgba(123, 70, 199, 1) 45%, rgba(76, 110, 207, 1) 100%);
+
+    // background: #E28771;
+    background: linear-gradient(125deg, rgba(226, 135, 113, 1) 0%, rgba(201, 80, 125, 1) 40%, rgba(194, 59, 189, 1) 80%, rgba(123, 70, 199, 1) 100%);
+    // animation: gradientShift 10s ease infinite;
+    // background-size: 200% 200%;
+
+    padding: 2rem 2.5rem 1.5rem 2.5rem;
+    box-sizing: border-box;
+
+    .alertFrameContainer {
+        @include all-center();
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 100vh;
+        width: 100%;
+        z-index: 9999;
+        background-color: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(10px);
+        transition: .25s;
+
+        .alertFrame {
+            background-color: rgba(0, 0, 0, 0.2);
+            padding: 1rem 6rem 2rem 6rem;
+            border-radius: 15px;
+            backdrop-filter: blur(15px);
+            box-shadow: rgba(17, 17, 26, 0.1) 0px 4px 16px, rgba(17, 17, 26, 0.1) 0px 8px 24px, rgba(17, 17, 26, 0.1) 0px 16px 56px;
+
+            .alert_icon {
+                font-size: 5rem;
+                color: $color1;
+                // filter: drop-shadow(2px 2px 10px rgba(255, 255, 255, 0.194));
+            }
+
+            .alert_text {
+                margin-bottom: 1.25rem;
+
+                h2 {
+                    font-size: 2rem;
+                }
+
+                h4 {
+                    font-size: 1.25rem;
+                }
+            }
+
+            .alert_option {
+                @include all-center();
+                gap: 1rem;
+
+                .alert_option_button {
+                    &:nth-child(2) {
+                        background-color: $color1;
+                    }
+
+                    &:hover {
+                        background-color: white;
+                        color: $color1;
+                        opacity: 0.8;
+                    }
+
+                    // &:hover{
+                    //     background-color: $color1;
+                    //     color: white;
+                    // }
+                    cursor: pointer;
+                    transition: .25s;
+                    background-color: rgba(255, 255, 255, 0.2);
+                    padding: 0.5rem 2rem;
+                    font-size: 1.05rem;
+                    border-radius: 25px;
+                }
+            }
+        }
+    }
+
+    .innerContainer {
+        @include all-center();
+        flex-direction: column;
+        height: 100%;
+        gap: 0.5rem;
+
+        .navbarContainer {
+            @include layerDeco();
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            padding: 1.5rem 2.5rem;
+            box-sizing: border-box;
+
+            // margin-bottom: 2rem;
+            .navbarLogo {
+                display: flex;
+                align-items: center;
+
+                .icon {
+                    @include all-center();
+                    background-color: $color1;
+                    height: 2rem;
+                    padding: 0.5rem;
+                    aspect-ratio: 1/1;
+                    border-radius: 12px;
+                    font-size: 1.5rem;
+                    margin-right: 1rem;
+                }
+
+                .text {
+                    font-size: 2rem;
+                    font-weight: bold;
+                    color: $black;
+                }
+            }
+
+            .navbarButton {
+                &:hover {
+                    background-color: white;
+                    color: $color1;
+                    opacity: 0.7;
+                }
+
+                @include all-center();
+                padding: 0.5rem 1.5rem;
+                border-radius: 15px;
+                background-color: $color1;
+                transition: .25s;
+                border: none;
+
+                .icon {
+                    font-size: 1.5rem;
+                    margin-right: 0.65rem;
+                }
+
+                .text {
+                    font-size: 1.25rem;
+                }
+            }
+        }
+
+        .bottomContainer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex: 1;
+            width: 100%;
+            gap: 1.8rem;
+
+            .leftSideContainer {
+                @include all-center();
+                // flex-direction: column;
+                width: $bottomWidth;
+                height: 95%;
+                box-sizing: border-box;
+
+                // gap: 1.5rem;
+                .selectionComponent {
+                    @include all-center();
+                    @include layerDeco();
+                    flex-shrink: 2;
+                    flex-direction: column;
+                    height: 100%;
+                    width: 100%;
+                    padding: 2rem;
+                    box-sizing: border-box;
+                    // margin-bottom: 1rem;
+                    display: flex;
+                    flex-direction: column;
+
+                    .itemContainer {
+                        @include all-center();
+                        flex-direction: column;
+                        // flex:6;
+
+                    }
+
+                    .item {
+                        @include all-center();
+                        transition: .25s;
+                        margin: 1.5rem 0;
+                        cursor: pointer;
+
+                        &:hover h4 {
+                            color: $color1;
+                            opacity: 0.8;
+                        }
+
+                        .decoration {
+                            @include all-center();
+                            height: 2rem;
+                            aspect-ratio: 1/1;
+                            background-color: #7c46c75e;
+                            color: $color1;
+                            border-radius: 50%;
+                            margin-right: 0.8rem;
+                        }
+
+                        h4 {
+                            font-size: 1.5rem;
+                            font-weight: bold;
+                            text-align: center;
+                            color: $black;
+                            text-shadow: $txShadow;
+                            transition: .25s;
+                        }
+                    }
+
+                    .line {
+                        height: 1.5px;
+                        width: 8rem;
+                        background-color: $black;
+                        opacity: 0.2;
+                        border-radius: 15px;
+                        margin: 1rem 0;
+                    }
+
+                    .settingContainer {
+                        display: flex;
+                        // flex :4;
+                        align-items: end;
+                    }
+
+                }
+
+                // .functionComponent{
+
+                //     @include all-center();
+                //     @include layerDeco();
+                //     height: 25%;
+                //     width: 100%;
+                //     gap: 2rem;
+                //     .icon{
+                //         @include all-center();
+                //         background-color: rgba(255,255,255,0.4);
+                //         border-radius: 15px;
+                //         box-shadow: rgba(14, 30, 37, 0.12) 0px 2px 4px 0px, rgba(14, 30, 37, 0.32) 0px 2px 16px 0px;
+                //         height: 4rem;
+                //         aspect-ratio: 1/1;
+                //         color: $black;
+                //         font-size: 1.5rem;
+
+                //     }
+
+                // }
+            }
+
+            .rightSideContainer {
+                @include layerDeco();
+                width: calc(98% - $bottomWidth);
+                height: 95%;
+                border-radius: 15px;
+                padding: 2.5rem 3rem;
+                background-color: rgba(255, 255, 255, 0.6);
+                box-sizing: border-box;
+
+                //  
+                .dataTableContainer {
+                    h2 {
+                        text-align: left;
+                        color: $black;
+                        font-size: 3rem;
+                        text-shadow: $txShadow;
+                        margin-bottom: 1.5rem;
+                    }
+
+                    .dataButtonContainer {
+                        display: flex;
+                        align-items: center;
+                        justify-content: end;
+                        width: 100%;
+                        margin-top: 1rem;
+
+                        .dataButton {
+                            padding: 0.8rem 2.5rem;
+                            background-color: $color1;
+                            font-size: 1.05rem;
+                            margin: 0 1rem;
+                            box-shadow: rgba(14, 30, 37, 0.12) 0px 2px 4px 0px, rgba(14, 30, 37, 0.32) 0px 2px 16px 0px;
+                            border: none;
+                            transition: .25s;
+
+                            &:hover {
+                                background-color: white;
+                                color: $color1;
+                            }
+                        }
+                    }
+                }
+
+                // 
+                .registerContainer {
+
+                    // width: 100%;
+                    // display: flex;
+                    // flex-direction:column;
+                    // align-items: start;
+                    h2 {
+                        text-align: left;
+                        color: $black;
+                        font-size: 3rem;
+                        text-shadow: $txShadow;
+                    }
+
+                    .progressionContainer {
+                        @include all-center();
+                        width: 100%;
+                        gap: 1.2rem;
+                        margin: 1rem 0 0.5rem 0;
+
+                        .progression {
+                            width: 95%;
+                            height: 10px;
+                            border-radius: 20px;
+                            background-color: rgba(173, 168, 168, 0.1);
+                            backdrop-filter: blur(10px);
+                            overflow: hidden;
+                            box-shadow: rgba(14, 30, 37, 0.12) 0px 2px 4px 0px, rgba(14, 30, 37, 0.32) 0px 2px 16px 0px;
+
+                            .progression_percent {
+                                height: inherit;
+                                // width: 25%;
+                                border-radius: 20px;
+                                transition: .25s;
+                                background-color: $color1;
+                            }
+                        }
+
+                        h5 {
+                            font-size: 1.25rem;
+                            color: $black;
+                            text-shadow: $txShadow;
+                        }
+                    }
+
+                    .line {
+                        width: 100%;
+                        height: 1.5px;
+                        background-color: rgba(255, 255, 255, 0.25);
+                        margin: 1rem 0 1rem 0;
+                    }
+
+                    .submitDiv {
+                        display: flex;
+                        width: 100%;
+                        justify-content: end;
+
+                        .carouselIconContainer {
+                            position: absolute;
+                            display: flex;
+                            justify-content: center;
+                            width: 100%;
+                            left: 0;
+                            gap: 1.5rem;
+
+                            .carouselIcon {
+
+                                @include all-center();
+                                font-size: 1.25rem;
+                                user-select: none;
+                                height: 3rem;
+                                aspect-ratio: 1/1;
+                                background-color: $color1;
+                                color: white;
+                                border-radius: 50%;
+                                box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
+                                transition: .25s;
+                                cursor: pointer;
+
+                                &:hover {
+                                    background-color: white;
+                                    color: $color1;
+                                }
+                            }
+                        }
+
+                        .registerSubmit {
+                            // position: absolute;
+                            // margin-left: auto;
+                            // right: 0;
+                            border: none;
+                            // margin-top: 2rem;
+                            background-color: $color1;
+                            color: white;
+                            transition: .25s;
+                            font-size: 1.15rem;
+                            padding: 0.65rem 1.5rem;
+                            border-radius: 10px;
+                            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
+
+                            &:hover {
+                                background-color: white;
+                                color: $color1;
+                                opacity: 0.6;
+                            }
+                        }
+                    }
+
+                    // carousels
+                    .card_container {
+                        &.done {
+                            background-color: $color1 ;
+
+                            .card_bottom :not(.card_status):not(.card_status *) {
+                                color: white;
+                            }
+
+                            .card_top_icon {
+                                background-color: rgba(255, 255, 255, 0.496);
+                            }
+
+                           
+                        }
+
+                        // 55 / 45
+                        display: flex;
+                        align-items: center;
+                        flex-direction: column;
+                        // height: 22rem;
+                        // aspect-ratio: 0.55/0.65;
+                        border-radius: 18px;
+                        background-color: rgba(255, 255, 255, 0.6);
+                        padding: 0.9rem;
+                        box-sizing: border-box;
+                        transition: .25s;
+                        cursor: pointer;
+                        box-shadow: rgba(14, 30, 37, 0.12) 0px 2px 4px 0px,
+                        rgba(14, 30, 37, 0.32) 0px 2px 16px 0px;
+
+                        & * {
+                            transition: .25s;
+                        }
+
+                        &:hover {
+                            background-color: $color1;
+                            opacity: 0.8;
+                        }
+
+                        &:hover .card_top_icon {
+                            background-color: rgba(255, 255, 255, 0.496);
+                            // color: white;
+                        }
+
+                        &:hover .card_bottom :not(.card_status):not(.card_status *) {
+                            color: white;
+                        }
+
+                        .card_top_icon {
+                            @include all-center();
+                            width: 100%;
+                            height: 10rem;
+                            border-radius: 20px;
+                            background-color: #7c46c766;
+                            color: $color1;
+                            font-size: 5rem;
+                            margin-bottom: 1rem;
+                        }
+
+                        .card_bottom {
+                            @include all-center();
+                            flex-direction: column;
+
+                            // gap: 1rem;
+                            .card_text {
+                                margin: 0 0 1rem 0.5rem;
+
+                                h3,
+                                p {
+                                    text-align: left;
+                                    vertical-align: middle;
+                                    color: #0f0f0f;
+                                    margin: 0;
+                                }
+
+                                h3 {
+                                    font-size: 1.45rem;
+                                }
+
+                                .num_dec_container {
+                                    display: flex;
+                                    align-items: center;
+                                    margin-bottom: 0.65rem;
+
+                                    .num_dec {
+                                        @include all-center();
+                                        height: 1.5rem;
+                                        font-size: 1rem;
+                                        background-color: $color1;
+                                        border-radius: 50%;
+                                        color: white;
+                                        aspect-ratio: 1/1;
+                                        margin-right: 0.5rem;
+                                    }
+                                }
+                            }
+
+                            .card_status {
+                                padding: 0.25rem 1rem;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                align-self: flex-end;
+                                background-color: #16a548a8;
+                                // backdrop-filter: blur(20px);
+                                border-radius: 15px;
+
+                                &.false {
+                                    background-color: $color1 !important;
+                                    color: white
+                                }
+
+                                &.false .icon {
+                                    color: #7B46C7;
+                                }
+
+                                .icon {
+                                    @include all-center();
+                                    height: 1rem;
+                                    padding: 0.1rem;
+                                    aspect-ratio: 1/1;
+                                    border-radius: 50%;
+                                    font-size: 1rem;
+                                    background-color: white;
+                                    color: #16A549;
+                                    margin-right: 0.4rem;
+                                }
+
+                                .text {
+                                    margin: 0;
+                                    padding: 0;
+                                    text-align: center;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
+
+    }
+
+    .viewDataToggler {
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 100%;
+        width: 100%;
+        background: #0f0f0fc5;
+        backdrop-filter: blur(20px);
+        transition: .25s;
+
+        .closeBtn {
+            position: absolute;
+            right: 4%;
+            top: 3%;
+            font-size: 1.52rem;
+            cursor: pointer;
+            transition: .25s;
+
+            &:hover {
+                opacity: 0.5;
+            }
+        }
+
+        &.hidden {
+            background: none;
+            user-select: none;
+            pointer-events: none;
+            backdrop-filter: blur(0);
+            opacity: 0;
+
+        }
+    }
+
+}
+
+.swiper-wrapper {
+    padding: 1rem 0rem;
+}
+
+.swiper-pagination {
+    transform: translate(0, 50%) !important;
+}
+
+.swiper-pagination-bullet-active {
+    background-color: $color1 !important;
+}
+
+@keyframes gradientShift {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
