@@ -26,7 +26,7 @@ const DataTable = forwardRef<ExportDataType,triggerPDFmodal >(({triggerModalShow
         }
     }), [])
     type rowData = {
-        "name": string,
+        "no": number,
         "type": string;
         "identity": string;
         "number": number;
@@ -40,12 +40,6 @@ const DataTable = forwardRef<ExportDataType,triggerPDFmodal >(({triggerModalShow
             accessorKey: "no",
             header: "No.",
             cell: (props: any) => <p>{props.row.index + 1}</p>
-        }
-        ,
-        {
-            accessorKey: "name",
-            header: "姓名",
-            cell: (props: any) => <p>{props.getValue()}</p>
         }
         ,
         {

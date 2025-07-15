@@ -2,6 +2,9 @@ import pandas as pd
 import numpy as np
 import sys
 import json
+
+userName = ""
+cFileName = ""
 sys.stdout.reconfigure(encoding='utf-8')  # ✅ 保證輸出為 UTF-8（避免 Windows 預設 gbk/cp950）
 
 def getDataTable(filePath):
@@ -108,14 +111,20 @@ def getData(filePath,dataFrame):
             '學制':schoolType
         }
         dataJsonLst.append(datajson)
-    print(json.dumps(dataJsonLst, ensure_ascii=False))
-
+    # print(json.dumps(dataJsonLst, ensure_ascii=False))
+    with open(f"./user_data/{userName}/{cFileName}.json" , "w" , encoding="utf-8") as jason_f:
+        json.dump(dataJsonLst , jason_f , ensure_ascii=False , indent= 4)
+    
 
 
 
 if __name__ == "__main__":
-    func = sys.argv[1]
-    args = sys.argv[2:]
-
-    if func in globals():
-        globals()[func](*args)
+    filePath = sys.argv[1]
+    userName  = sys.argv[2]
+    cFileName = sys.argv[3]
+    # print(filePath)
+    try:
+        getDataTable(filePath)
+    except Exception as e :
+        print(str(e))
+# getDataTable("./back-end/convert_content/1.中壢高商(14901).xlsx")

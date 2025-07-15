@@ -1,27 +1,14 @@
-@mixin all-center {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-@font-face {
-    font-family: Notos;
-    src: url(../fonts/NotoSansTC-ExtraBold.ttf);
-}
-.op0{
-    opacity: 0;
-    pointer-events: none;
-    z-index: -1;
-}
-
+@import "_configs.scss";
 .loading {
     @include all-center();
     position: absolute;
+    left: 0;
+    top: 0;
     height: 100vh;
     width: 100%;
     background-color: #09090978;
     backdrop-filter: blur(20px);
-    z-index: 999;
+    z-index: 99999;
     transition: .25s;
     .loader {
         width: 50px;

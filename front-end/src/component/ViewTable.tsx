@@ -5,26 +5,13 @@ import type { ColumnDef, ColumnFiltersState } from "@tanstack/react-table";
 import DATA from "../json/tableData.json";
 import { forwardRef, useState, useImperativeHandle } from "react";
 
-export type ExportDataType = {
-    triggerExport: () => void;
-}
-type triggerPDFmodal = {
-    triggerModalShow : () => void;
-}
-
 // higher order function only receive two arguments , props needs to become a set.
-const DataTable = forwardRef<ExportDataType,triggerPDFmodal >(({triggerModalShow}, ref) => {
+const ViewTable = (init_data) => {
     // const { modalOut } = props; 
-    const [data, setData] = useState<rowData[]>(DATA);
+    const [data, setData] = useState<rowData[]>(init_data);
     const [exportData, setExportData] = useState(false);
     const [columnFilter, setColumnFilter] = useState<ColumnFiltersState>([]);
 
-    useImperativeHandle(ref, () => ({
-        triggerExport: () => {
-            setExportData(exportData => !exportData);
-            console.log(exportData);
-        }
-    }), [])
     type rowData = {
         "name": string,
         "type": string;
@@ -59,36 +46,6 @@ const DataTable = forwardRef<ExportDataType,triggerPDFmodal >(({triggerModalShow
             header: "身份",
             cell: (props: any) => <p>{props.getValue()}</p>
         }
-        ,
-        {
-            accessorKey: "number",
-            header: "報名人數",
-            cell: (props: any) => <p>{props.getValue()}</p>
-        }
-        ,
-        {
-            accessorKey: "photo_n",
-            header: "未傳照片",
-            cell: (props: any) => <p>{props.getValue()}</p>
-        }
-        ,
-        {
-            accessorKey: "all",
-            header: "全測",
-            cell: (props: any) => <p>{props.getValue()}</p>
-        }
-        ,
-        {
-            accessorKey: "pass_a",
-            header: "免學",
-            cell: (props: any) => <p>{props.getValue()}</p>
-        }
-        ,
-        {
-            accessorKey: "pass_s",
-            header: "免術",
-            cell: (props: any) => <p>{props.getValue()}</p>
-        }
         // ,
         // {
 
@@ -106,7 +63,7 @@ const DataTable = forwardRef<ExportDataType,triggerPDFmodal >(({triggerModalShow
     });
     console.log(data);
     return (
-        <div className="tableContainer">
+        <div className="viewTable">
             <table border={1} cellPadding={6} >
                 <thead>
                     {table.getHeaderGroups().map((headerGroup) => (
@@ -141,7 +98,7 @@ const DataTable = forwardRef<ExportDataType,triggerPDFmodal >(({triggerModalShow
                             ))}
                             <td>
                                 {/* <div style={{ display: "flex" }}> */}
-                                    <div className="iconEye" onClick={triggerModalShow}>
+                                    <div className="iconEye">
                                         <FontAwesomeIcon icon={faEye} />
                                     </div>
                                     {/* 先view就好
@@ -160,5 +117,5 @@ const DataTable = forwardRef<ExportDataType,triggerPDFmodal >(({triggerModalShow
             </table>
         </div>
     )
-})
-export default DataTable;
+}
+export default ViewTable;

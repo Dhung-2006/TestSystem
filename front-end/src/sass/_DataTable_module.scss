@@ -1,0 +1,54 @@
+@import "_configs.scss";
+.tableContainer {
+    overflow-y: scroll;
+    max-height: 33rem;
+    width: 100%;
+    border-radius: 12px;
+    table {
+        border-collapse: separate;
+        border-spacing: 0;
+        width: 100%;
+        border-radius: 15px;
+        border: none;
+        background-color: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(20px);
+        overflow-x: scroll;
+        thead{
+            position: sticky;
+            left: 0;
+            top: 0;
+        }
+
+        td,
+        th {
+            border-left: none;
+            border-right: none;
+        }
+        tr:nth-of-type(even){
+            background-color: rgba(178, 97, 212, 0.1);
+            
+        }
+
+        thead tr th {
+            // color: red;
+            background-color: $color1;
+            // border: none;
+            border-left: 0;
+            border-right: 0;
+        }
+
+        tbody {
+            color: $black;
+            .iconEye{
+                color: rgba(123, 70, 199, 1);
+                cursor: pointer;
+                user-select: none;
+                transition: .25s;
+                &:hover{
+                    opacity: 0.6;
+                }
+            }
+        }
+        
+    }
+}

@@ -4,12 +4,13 @@ const app = express();
 const path = require("path")
 const session  = require("express-session");
 const nodemailer = require("nodemailer")
-const { sequelize, userAccounts  , fileInfo} = require('./sqlSetting');
+const { sequelize, userAccounts  , fileInfo , jsonFile, jsonFile} = require('./sqlSetting');
 const { where } = require('sequelize');
 const { stat } = require('fs');
 const { count } = require('console');
 const cors = require('cors');
 const fs = require('fs');
+const { assuredworkloads } = require('googleapis/build/src/apis/assuredworkloads');
 
 
 app.use(express.urlencoded({extended:true}))
@@ -36,30 +37,47 @@ app.get('/testpost', (req, res) => {
   res.send('Received');
 });
 
-app.get('/upload' , (req , res) =>{
- console.log('123')
+app.get('/upload', async (req, res) => {
+  // -----------------------------------------------
   const funcToRun = "getDataTable";
   const filePath = "./convert_content/1.中壢高商(14901).xlsx"
+  const userName = "dexter"
+  const cFileName = "text-1"
   // const getFilePath = req.body['filePath']
   // const py = spawn('python' , ['process.py' , funcToRun , filePath])
-  const py = spawn('python' , ['process.py' , funcToRun , filePath])
+  // -------------------------------------------------
+  const py = spawn('python', ['process.py', filePath, userName, cFileName])
   let outputData = ''
-  py.stdout.on('data' , (data) =>{
+  py.stdout.on('data', (data) => {
     outputData += data.toString('utf-8')
   })
-  py.stderr.on('data', (data) => {
-    outputData += data.toString()
-  });
-
-  py.stdout.on('end', () => {
-    try {
-      const jsonData = JSON.parse(outputData);
-      console.log('接收到 JSON:', jsonData);
-    } catch (err) {
-      console.error('JSON 解析失敗:', err);
-    }
-  });
+  py.on('close', () => {
+    console.log(outputData)
+    sequelize.sync().then(() => {
+      jsonFile.create({
+        jsonName: cFileName,
+        userAcc: userName
+      }).then(() => {
+        console.log("Json File has already prepared")
+      }).catch(err => {
+        console.log(err.name)
+      })
+    })
+  })
 })
+
+// .then(()=>{
+//     sequelize.sync().then(()=>{
+//       jsonFile.create({
+//         jsonName:cFileName,
+//         userAcc:userName
+//       }).then(()=>{
+//         console.log("Json File has already prepared")
+//       }).catch(err=>{
+//         console.log(err.name)
+//       })
+//     )
+//     )
 
 app.post('/signup' , (req,res) =>{
   const applier  = req.body.signEmail;
@@ -124,7 +142,7 @@ app.get("/createOneAcc" , async(req, res) => {
       console.log("account already ready")
     }).catch(err=>{
       if(err.name === "SequelizeUniqueConstraintError"){
-        console.log('帳號已註冊')
+        console.log('帳號重複')
       };
     })
   });
@@ -160,6 +178,19 @@ app.get("/showAllAcc" , async(req,res)=>{
     })
 })
 
+app.get("/seeAllJson" , async(req,res)=>{
+  sequelize.sync().then(async()=>{
+      const files = await jsonFile.findAll();
+      var counter=0 ;
+      for (const file of files){
+        counter++;
+        console.log(` ${counter}:${file.jsonID}`)
+        console.log(` ${counter} :${file.jsonName}`);
+        console.log(` ${counter} :${file.userAcc}`);
+      }
+  })
+})
+
 app.listen(3000 , ()=>{
   console.log("server is running"); 
-}) 
+})
