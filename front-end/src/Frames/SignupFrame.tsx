@@ -1,95 +1,183 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import Loading from "../component/Loading";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faGear, faUser } from "@fortawesome/free-solid-svg-icons";
-const SignupFrame = () =>{
+import { faGear, fas, faUser } from "@fortawesome/free-solid-svg-icons";
+const SignupFrame = () => {
 
+    // const verifyCodeArr = [0, 1, 2, 3];
 
-    const [formValue , setFormValue] = useState({signEmail:"",signAccount:"" , signPassword:""});
+    // useRef
+    const userInput = useRef<(HTMLInputElement | null)[]>([]);
+
+    // useState
+    const [verifyAlertFrame, setVerifyAlertFrame] = useState(false);
+    const [formValue, setFormValue] = useState({ signEmail: "", signAccount: "", signPassword: "" });
+    const [verificationCode, setVerificationCode] = useState("");
+    const [inputvalue, setinputValue] = useState<string[]>(["", "", "", ""]);
+    // const [forbidOverflow , setForbidOverflow] = useState
 
     // const account = useRef(null);
+    const forbidOverflow = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
+        // console.log("inputvalue[index].length", inputvalue[index].length);
+        // console.log("e.target", e.target.value);
 
-    const handleFormValue = (e:React.ChangeEvent<HTMLInputElement>)=>{
+
+        const value = e.target.value;
+        const isValid = /^[0-9]?$/.test(value);
+        console.log(isValid, "value");
+
+
+
+        if (isValid) {
+            console.log("inputvalue[index].length", inputvalue[index].length);
+            console.log("!isNaN(Number(e.target.value)", !isNaN(Number(e.target.value)));
+            console.log(userInput)
+            setinputValue((prev) => {
+                const temp = [...prev];
+
+                temp[index] = value;
+
+                // if (userInput.current[index + 1]) {
+                userInput.current[index + 1]?.focus();
+                // }
+
+                return temp;
+
+
+            })
+        }
+        else {
+            console.log(2131231232131232);
+
+        }
+    }
+
+    const handleFormValue = (e: React.ChangeEvent<HTMLInputElement>) => {
         // name => get element裡面的name
         // value => get element裡面的value
-        const {name , value } = e.target;
-        setFormValue((prev)=>({ ...prev , [name]:value }));
+        const { name, value } = e.target;
+        setFormValue((prev) => ({ ...prev, [name]: value }));
     }
 
 
-    const handleFormSubmit = async(e:React.ChangeEvent<HTMLFormElement>) =>{
+
+
+
+    const handleFormSubmit = async (e: React.ChangeEvent<HTMLFormElement>) => {
         e.preventDefault();
-        const formData = {
-            'signEmail': formValue.signEmail,
-            'signAccount' : formValue.signAccount,
-            'signPassword' : formValue.signPassword
-        };
-        // formData.append("signEmail" , formValue.signEmail);
-        // formData.append("signAccount" , formValue.signAccount);
-        // formData.append("signPassword" , formValue.signPassword);
-        const URL : string = "http://localhost:3000/signup";
-        try{
-            const res = await fetch(URL,{
-                method:"POST",
-                headers:{
-                    'Content-Type' : "application/json"
-                },
-                body: JSON.stringify(formData)
+        const formData = new FormData();
+        formData.append("signEmail", formValue.signEmail);
+        formData.append("signAccount", formValue.signAccount);
+        formData.append("signPassword", formValue.signPassword);
+        const URL: string = "";
+        try {
+            // test code VVVV
+            const res = await fetch(URL, {
+                method: "POST",
+                body: formData
             })
-            
-            if(!res.ok) throw new Error("500 server error");
+            if (!res.ok) throw new Error("500 server error");
             const data = await res.json();
-            console.log("成功",data)
-            
+            setVerificationCode(data);
+
+            setVerifyAlertFrame(true);
+            console.log("成功", 1)
+
         }
-        catch(err){
-            console.error("123",err);
+        catch (err) {
+            console.error("123", err);
         }
     }
-    return(
+
+
+    const handleSubmitVerify = () => {
+        console.log(typeof (inputvalue[0] + inputvalue[1] + inputvalue[2] + inputvalue[3]));
+        const verify_code: string = inputvalue[0] + inputvalue[1] + inputvalue[2] + inputvalue[3];
+        if (verificationCode === verify_code) {
+            location.href = "http://localhost:5173/register";
+        }
+
+    }
+
+    useEffect(() => {
+        console.log(userInput);
+    }, [])
+
+
+    // const verifyCodesTsx = [];
+
+    // for (let index = 0; index < 4; index++) {
+    //     verifyCodesTsx.push(<input type="number" min={0} max={10} onChange={forbidOverflow} ref={"userInput"+index} />)
+
+    // }
+
+    return (
         <div className="LoginFrameContainer">
-                <Loading />
-                    {/* 要判斷login/regist */}
-                    <form className="loginbox" onSubmit={handleFormSubmit}>
-                        <div className="boxContainer">
-                            <div className="logoName">
-                                <div className="logo"><FontAwesomeIcon icon={faUser} /></div>
-                                <h3>註冊帳號</h3>
-                            </div>
-                            <div className="loginDataContainer">
-                                <div className="loginData">
-                                    <label>Email</label>
-                                    <input type="email" name="signEmail" onChange={handleFormValue} value={formValue.signEmail}/>
-                                </div>
-                                <div className="loginData">
-                                    <label>帳號</label>
-                                    <input type="text" name="signAccount" onChange={handleFormValue} value={formValue.signAccount}/>
-                                </div>
-                                <div className="loginData">
-        
-                                    <label>密碼</label>
-                                    <input type="password" name="signPassword" onChange={handleFormValue} value={formValue.signPassword}/>
-                                </div>
-                            </div>
-                            <div className="otherFunction">
-                                {/* 
+            <div className={`verifyFrameContainer ${verifyAlertFrame ? "" : "op0"}`}>
+                <div className="verifyFrame">
+                    <h3>請輸入驗證碼</h3>
+                    <div className="verifyCodes">
+                        {/* {verifyCodesTsx} */}
+                        {
+                            inputvalue.map((item, index) => (
+
+                                <input name={`input-${index}`} pattern="[0-9]*" type="text" min={0} max={10} value={item} onChange={(e) => forbidOverflow(e, index)} ref={(el) => { if (el && userInput.current) { userInput.current[index] = el } }} />
+                            ))
+                        }
+                        {/* <input type="number" min={0} max={10} onChange={} />
+                        <input type="number" min={0} max={10} onChange={} />
+                        <input type="number" min={0} max={10} onChange={} />
+                        <input type="number" min={0} max={10} onChange={} /> */}
+                    </div>
+                    <h4 className="notifySubmit">沒收到驗證碼嗎？<span>重新驗證？</span></h4>
+                    <div className="clsContainer">
+                        <div className="verifycls" onClick={() => { setVerifyAlertFrame(false) }}>取 消</div>
+                        <div className="verifycls" onClick={handleSubmitVerify}>送 出</div>
+                    </div>
+                </div>
+            </div>
+            <Loading />
+            {/* 要判斷login/regist */}
+            <form className="loginbox" onSubmit={handleFormSubmit} >
+                <div className="boxContainer">
+                    <div className="logoName">
+                        <div className="logo"><FontAwesomeIcon icon={faUser} /></div>
+                        <h3>註冊帳號</h3>
+                    </div>
+                    <div className="loginDataContainer">
+                        <div className="loginData">
+                            <label>Email</label>
+                            <input type="email" name="signEmail" onChange={handleFormValue} value={formValue.signEmail} required />
+                        </div>
+                        <div className="loginData">
+                            <label>帳號</label>
+                            <input type="text" name="signAccount" onChange={handleFormValue} value={formValue.signAccount} required />
+                        </div>
+                        <div className="loginData">
+
+                            <label>密碼</label>
+                            <input type="password" name="signPassword" onChange={handleFormValue} value={formValue.signPassword} required />
+                        </div>
+                    </div>
+                    <div className="otherFunction">
+                        {/* 
                                 記住帳密
                                 忘記密碼
                                 用localstorage
                                  */}
-                                {/* <input type="checkbox" name="" id="" />
+                        {/* <input type="checkbox" name="" id="" />
                                 <label>記住我</label> */}
-        
-                            </div>
-                            <div className="loginButton">
-                                <button type="submit">註冊</button>
-                                <div className="line"></div>
-                                <Link to="/login"><span><u>返回登入頁面</u></span></Link>
-                            </div>
-                        </div>
-                    </form>
+
+                    </div>
+                    <div className="loginButton">
+                        <button type="submit">註冊</button>
+                        <div className="line"></div>
+                        <Link to="/login"><span><u>返回登入頁面</u></span></Link>
+                    </div>
                 </div>
+            </form>
+        </div>
     )
 }
 export default SignupFrame; 

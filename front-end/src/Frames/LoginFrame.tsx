@@ -71,12 +71,12 @@ const LoginFrame = () => {
                     <div className="loginDataContainer">
                         <div className="loginData">
                             <label>帳號</label>
-                            <input type="text" name="loginAccount" onChange={handleFormValue} value={formValue.loginAccount} />
+                            <input type="text" name="loginAccount" onChange={handleFormValue} value={formValue.loginAccount} required />
                         </div>
                         <div className="loginData">
 
                             <label>密碼</label>
-                            <input type="password" name="loginPassword" onChange={handleFormValue} value={formValue.loginPassword} />
+                            <input type="password" name="loginPassword" onChange={handleFormValue} value={formValue.loginPassword} required />
                         </div>
                     </div>
                     <div className="otherFunction">

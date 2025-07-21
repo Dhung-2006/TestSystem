@@ -5,10 +5,14 @@ import type { ColumnDef, ColumnFiltersState } from "@tanstack/react-table";
 import DATA from "../json/tableData.json";
 import { forwardRef, useState, useImperativeHandle } from "react";
 
+// type json_type = {
+//     [key : string]
+// }
 // higher order function only receive two arguments , props needs to become a set.
-const ViewTable = (init_data) => {
+// const ViewTable :React.FC<json_type> = (init_data) => {
+const ViewTable = () => {
     // const { modalOut } = props; 
-    const [data, setData] = useState<rowData[]>(init_data);
+    const [data, setData] = useState<rowData[]>(DATA);
     const [exportData, setExportData] = useState(false);
     const [columnFilter, setColumnFilter] = useState<ColumnFiltersState>([]);
 
