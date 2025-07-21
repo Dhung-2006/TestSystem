@@ -112,7 +112,7 @@ def getData(filePath,dataFrame):
         }
         dataJsonLst.append(datajson)
     # print(json.dumps(dataJsonLst, ensure_ascii=False))
-    with open(f"./user_data/{userName}/{cFileName}.json" , "w" , encoding="utf-8") as jason_f:
+    with open(f"./user_data/{userName}/{cFileName}/{cFileName}.json" , "w" , encoding="utf-8") as jason_f:
         json.dump(dataJsonLst , jason_f , ensure_ascii=False , indent= 4)
     
 
@@ -122,9 +122,11 @@ if __name__ == "__main__":
     filePath = sys.argv[1]
     userName  = sys.argv[2]
     cFileName = sys.argv[3]
-    # print(filePath)
     try:
         getDataTable(filePath)
     except Exception as e :
         print(str(e))
 # getDataTable("./back-end/convert_content/1.中壢高商(14901).xlsx")
+
+
+

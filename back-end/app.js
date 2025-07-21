@@ -1,16 +1,18 @@
 const { spawn } = require('child_process');
+// import { firebasedataconnect } from 'googleapis/build/src/apis/firebasedataconnect';
+// import { useImperativeHandle } from 'react';
 const express = require('express');
 const app = express();
 const path = require("path")
 const session  = require("express-session");
 const nodemailer = require("nodemailer")
-const { sequelize, userAccounts  , fileInfo , jsonFile, jsonFile} = require('./sqlSetting');
+const { sequelize, userAccounts  , fileInfo , jsonFile} = require('./sqlSetting');
 const { where } = require('sequelize');
 const { stat } = require('fs');
-const { count } = require('console');
+const { count, log } = require('console');
 const cors = require('cors');
 const fs = require('fs');
-const { assuredworkloads } = require('googleapis/build/src/apis/assuredworkloads');
+// const { assuredworkloads } = require('googleapis/build/src/apis/assuredworkloads');
 
 
 app.use(express.urlencoded({extended:true}))
@@ -29,28 +31,57 @@ app.get('/' , async(req,res)=>{
   console.log(`visitor:${ip}`)
 });
 
+app.get('/cleanAllData', (req, res) => {
+  fs.unlink('./sqlite.db', (err) => {
+    if (err) {
+      console.error(err);
+      res.status(500).send('刪除資料庫失敗');
+      return;
+    }
 
-app.get('/testpost', (req, res) => {
+    fs.rm('./user_data/dexter', { recursive: true, force: true }, (err) => {
+      if (err) {
+        console.error(err);
+        res.status(500).send('刪除資料夾失敗');
+        return;
+      }
 
- 
-  console.log(req.query.name);
-  res.send('Received');
+      res.send('刪除成功');
+    });
+  });
 });
 
+// app.get('/autoset' , async(req,res) =>{
+//   const createOneAcc =await fetch('http://localhost:3000/createOneAcc')
+//   const upload = await fetch('http://localhost:3000/upload')
+// })
+
+
+
 app.get('/upload', async (req, res) => {
+
+  console.log('im fetching url --> localhost:3000/upload');
+  
   // -----------------------------------------------
   const funcToRun = "getDataTable";
   const filePath = "./convert_content/1.中壢高商(14901).xlsx"
   const userName = "dexter"
-  const cFileName = "text-1"
+  const cFileName = "test-1"
   // const getFilePath = req.body['filePath']
   // const py = spawn('python' , ['process.py' , funcToRun , filePath])
   // -------------------------------------------------
   const py = spawn('python', ['process.py', filePath, userName, cFileName])
+  const folderName = path.join(__dirname, "user_data" , userName , cFileName)
+  await fs.mkdirSync(folderName, { recursive: true }); 
   let outputData = ''
   py.stdout.on('data', (data) => {
     outputData += data.toString('utf-8')
   })
+
+  py.stderr.on('data' , (data) =>{
+    console.log(data.toString('utf-8'));
+  })
+
   py.on('close', () => {
     console.log(outputData)
     sequelize.sync().then(() => {
@@ -65,19 +96,6 @@ app.get('/upload', async (req, res) => {
     })
   })
 })
-
-// .then(()=>{
-//     sequelize.sync().then(()=>{
-//       jsonFile.create({
-//         jsonName:cFileName,
-//         userAcc:userName
-//       }).then(()=>{
-//         console.log("Json File has already prepared")
-//       }).catch(err=>{
-//         console.log(err.name)
-//       })
-//     )
-//     )
 
 app.post('/signup' , (req,res) =>{
   const applier  = req.body.signEmail;
@@ -140,9 +158,11 @@ app.get("/createOneAcc" , async(req, res) => {
     }).then(()=>{
       fs.mkdirSync(newFolderPath, { recursive: true }); 
       console.log("account already ready")
+      return;
     }).catch(err=>{
       if(err.name === "SequelizeUniqueConstraintError"){
         console.log('帳號重複')
+        return;
       };
     })
   });
@@ -190,6 +210,32 @@ app.get("/seeAllJson" , async(req,res)=>{
       }
   })
 })
+
+// function verify_regular(){
+  
+// }
+
+app.get("/fillWd" , async(req,res)=>{
+  const userName = "dexter" ;//req.body['username']
+  const chooseFile = "test-1" ;//req.body['test-1.json]
+  // const filePath = path.join(__dirname  , "user_data" , userName , )
+  const py = spawn('python' , ['fillWord.py' , userName , chooseFile]);
+  let outputData =''
+  py.stdout.on('data' , (data)=>{
+    outputData += data.toString('utf-8')
+  });
+
+  py.stderr.on('data', (data) => {
+    console.error("Python error:", data.toString('utf-8'));  // ❗加上這行看錯誤
+  });
+
+  py.on('close' , ()=>{
+    console.log(outputData)
+  })
+  
+  
+  
+});
 
 app.listen(3000 , ()=>{
   console.log("server is running"); 
