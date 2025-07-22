@@ -7,11 +7,13 @@ const path = require("path")
 const session  = require("express-session");
 const nodemailer = require("nodemailer")
 const { sequelize, userAccounts  , fileInfo , jsonFile} = require('./sqlSetting');
-const { where } = require('sequelize');
+const { where, json } = require('sequelize');
 const { stat } = require('fs');
 const { count, log } = require('console');
 const cors = require('cors');
 const fs = require('fs');
+const { verbose } = require('sqlite3');
+const { Json } = require('sequelize/lib/utils');
 // const { assuredworkloads } = require('googleapis/build/src/apis/assuredworkloads');
 
 
@@ -99,6 +101,8 @@ app.get('/upload', async (req, res) => {
 
 app.post('/signup' , (req,res) =>{
   const applier  = req.body.signEmail;
+  // console.log(req.body.signEmail);
+  
   console.log(applier);
   const transporter = nodemailer.createTransport({
     service: 'Gmail',
@@ -109,7 +113,7 @@ app.post('/signup' , (req,res) =>{
   })
 
   const randomCode = Math.floor(Math.random()*9000)+1000;
-
+  console.log(randomCode)
   const mailOptions = {
     from: "TestSystem",
     to: applier,
@@ -124,8 +128,6 @@ app.post('/signup' , (req,res) =>{
       res.json(randomCode);
     }
   })
- 
-
 })
 
 app.post("/login" ,async (req, res) =>{
@@ -149,16 +151,23 @@ app.post("/login" ,async (req, res) =>{
   })
 })
 
-app.get("/createOneAcc" , async(req, res) => {
+app.post("/createOneAcc" , async(req, res) => {
+  const userAccount = req.body.signAccount
+  const userPassword = req.body.signPassword
   const newFolderPath = path.join(__dirname , "user_data" , "dexter")
   sequelize.sync().then(() => {
     userAccounts.create({
-      userAcc : "dexter",
-      userPsd : "dexter"
+      userAcc : userAccount,
+      userPsd : userPassword
     }).then(()=>{
       fs.mkdirSync(newFolderPath, { recursive: true }); 
       console.log("account already ready")
-      return;
+      res.cookie("userAccount" , userAccount ,{
+        httpOnly:false,
+        sameSite:"None",
+        secure :true
+      })   
+      res.status(200).send("成功了!!")
     }).catch(err=>{
       if(err.name === "SequelizeUniqueConstraintError"){
         console.log('帳號重複')
@@ -172,12 +181,10 @@ app.get("/createOneAcc" , async(req, res) => {
 app.get("/desTestAcc", async (req, res) => {
   try {
     const accounts = await userAccounts.findAll();
-
     for (const account of accounts) {
       console.log(`useracc: ${account.userAcc} has been deleted`);
       await account.destroy();  
     }
-
     res.json({ message: "All accounts deleted" });
   } catch (error) {
     console.error("刪除帳號時發生錯誤:", error);
@@ -226,17 +233,46 @@ app.get("/fillWd" , async(req,res)=>{
   });
 
   py.stderr.on('data', (data) => {
-    console.error("Python error:", data.toString('utf-8'));  // ❗加上這行看錯誤
+    console.error("Python error:", data.toString('utf-8'));  
   });
 
   py.on('close' , ()=>{
     console.log(outputData)
   })
-  
-  
-  
 });
+
+app.get("/verifyData", (req, res) => {
+  const userName = "dexter";
+  const chooseFile = "test-1";
+  let badInfoList = []
+  fs.readFile(`./user_data/${userName}/${chooseFile}/${chooseFile}.json`, "utf8", (err, loadJsonList) => {
+    if (err) {
+      console.log(err)
+      return;
+    }
+    const jsonList =JSON.parse(loadJsonList)
+    jsonList.forEach((jsonData , idx) => {
+      const badInfo = verify_data(jsonData, idx)
+      if (badInfo != null){
+        badInfoList.push(badInfo)
+      }
+    });
+  })
+  // verify_data()
+})
+
+function verify_data(json_data ,idx){
+  const idRegex = /^[A-Z][12]\d{8}$/;
+  const id = json_data["身分證號碼"];
+  let badContent = []
+  if (!idRegex.test(id)) {
+    // console.log("格式錯誤");
+    badContent.push("身分證號碼")
+  }
+  const birthRegex = /^\d{5}$/
+}
 
 app.listen(3000 , ()=>{
   console.log("server is running"); 
 })
+

@@ -100,7 +100,7 @@ def getData(filePath,dataFrame):
             '通訊地址':callAdr,
             '戶籍地址':liveAdr,
             '聯絡電話(住宅)':"0" + teleArea + teleNum,
-            '聯絡電話(手機)':cellNum,
+            '聯絡電話(手機)':"0"+cellNum,
             '就讀學校':stdSch,
             '就讀科系':major,
             '上課別':studyType,

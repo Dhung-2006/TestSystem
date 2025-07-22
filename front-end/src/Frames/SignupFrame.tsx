@@ -78,10 +78,7 @@ const SignupFrame = () => {
             // test code VVVV
             const res = await fetch(URL, {
                 headers:new Headers({"Content-Type":"application/json"}),
-<<<<<<< HEAD
                 credentials:"include" , 
-=======
->>>>>>> 1b47d79 (temporary)
                 method: "POST",
                 body: JSON.stringify(formValue)
             })
@@ -103,10 +100,7 @@ const SignupFrame = () => {
         if (String(verificationCode) === verify_code) {
             fetch("http://localhost:3000/createOneAcc",{
                 headers:new Headers({"Content-Type":"application/json"}),
-<<<<<<< HEAD
                 credentials:"include" , 
-=======
->>>>>>> 1b47d79 (temporary)
                 method:"POST",
                 body:JSON.stringify(formValue)
             })
