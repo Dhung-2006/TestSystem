@@ -1,7 +1,7 @@
-import { use, useRef, useState } from "react";
+import { use, useEffect, useRef, useState } from "react";
 import NavbarComponent from "../component/NavbarComponent";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faAngleLeft, faAngleRight, faCircleQuestion, faDatabase, faGear, faMagnifyingGlass, faPaperPlane, faPrint, faUpload, faUser, faWarning, faX } from '@fortawesome/free-solid-svg-icons'
+import { faAngleLeft, faAngleRight, faCircleQuestion, faDatabase, faFile, faGear, faMagnifyingGlass, faPaperPlane, faPen, faPrint, faRecycle, faRepeat, faTrash, faUpload, faUser, faUserCircle, faWarning, faX } from '@fortawesome/free-solid-svg-icons'
 import SwiperCarousel from '../component/SwiperCarousel.tsx';
 import ViewComponent from "../component/ViewComponent.tsx";
 import DataTable, { type ExportDataType } from "../component/DataTable.tsx";
@@ -15,6 +15,16 @@ type uploadType = {
 }
 
 const RegisterFrame = () => {
+
+    useEffect(() => {
+        fetch("cookie/api", {
+            credentials: "include"
+        })
+        .then((res) => { setCookie(true) })
+
+    }, [])
+
+    const [cookie, setCookie] = useState(false);
     const swiper = useSwiper();
 
     const [progressionValue, setProgressionValue] = useState(0);
@@ -25,8 +35,13 @@ const RegisterFrame = () => {
 
     const [nonFillout, setNonFillout] = useState(0);
     const [repeatAlert, setRepeatAlert] = useState(0);
+    const [editAlertFrame, setEditAlertFrame] = useState(0);
     const [alertFrameShow0, setAlertFrameShow0] = useState(0);
     const [alertFrameShow1, setAlertFrameShow1] = useState(0);
+
+    // success & erro
+    const [notifyFrame, setNotifyFrame] = useState(0);
+
     const [uploadStatus, setUploadStatus] = useState<uploadType>({ "status": false, "fileName": "" });
 
 
@@ -39,8 +54,8 @@ const RegisterFrame = () => {
 
 
     // photo upload //
-    const photoUpload = ():void =>{
-        
+    const photoUpload = (): void => {
+
         handleCarouselItemSep(2);
         // files deliver
     }
@@ -70,10 +85,10 @@ const RegisterFrame = () => {
                 // 上傳成功 frame
                 setAlertFrameShow1(0);
                 // clearUploadRef(0);
-                
+
             }
         }
-        else{
+        else {
             setNonFillout(1);
         }
     }
@@ -152,6 +167,8 @@ const RegisterFrame = () => {
             case 2:
                 clickPhotoRef();
                 break;
+            case 3:
+                setEditAlertFrame(1);
             default:
                 console.error("there's an error of argument deliever");
         }
@@ -275,10 +292,78 @@ const RegisterFrame = () => {
         }
     }
     return (
-
+        cookie?(
         <div className="registerFrameContainer">
             <input type="file" id="hiddenInput" style={{ display: "none" }} ref={uploadFileRef} onChange={fileChange} />
-            <input type="file" id="uploadPhotoRef" style={{ display: "none" }} ref={uploadPhotoRef} onChange={photoUpload}/>
+            <input type="file" id="uploadPhotoRef" style={{ display: "none" }} ref={uploadPhotoRef} onChange={photoUpload} />
+
+            {/* <div className="notify">
+
+            </div> */}
+            <div className={`editFrameContainer ${editAlertFrame ? "" : "op0"}`}>
+                <div className="editFrame">
+
+                    <div className="editTextsContainer">
+                        <h2>編輯學生資料</h2>
+                        <h5>請再次確認學生資料，編輯完畢點擊下方儲存鍵</h5>
+                    </div>
+
+                    <div className="line" />
+                    <div className="editContent">
+                        <div className="editPhotoContainer">
+                            <div className="editPhoto"><img src="../../public/vite.svg" alt="" /></div>
+                            <div className="editPhotoName">
+                                <h4>test.png</h4>
+                                <div className="editIcon"><FontAwesomeIcon icon={faRepeat} /></div>
+                            </div>
+                        </div>
+                        <div className="editFilesContainer">
+                            <div className="editFile">
+                                <div className="editIcon"><FontAwesomeIcon icon={faUserCircle} /></div>
+                                <div className="editFileTexts">
+                                    <h3>檔案名稱</h3>
+                                    <h4>test.pdf</h4>
+                                </div>
+                                {/* <div className="editControlContainer"> */}
+                                <div className="editControl">
+                                    <div className="icon">
+                                        <FontAwesomeIcon icon={faPen} />
+                                    </div>
+                                    <div className="icon">
+                                        <FontAwesomeIcon icon={faTrash} />
+                                    </div>
+                                    {/* </div> */}
+                                </div>
+                            </div>
+
+                            <div className="editFile">
+                                <div className="editIcon"><FontAwesomeIcon icon={faUserCircle} /></div>
+                                <div className="editFileTexts">
+                                    <h3>檔案名稱</h3>
+                                    <h4>test.pdf</h4>
+                                </div>
+                                <div className="editControlContainer">
+                                    <div className="editControl">
+                                        <div className="icon">
+                                            <FontAwesomeIcon icon={faPen} />
+                                        </div>
+                                        <div className="icon">
+                                            <FontAwesomeIcon icon={faTrash} />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                    <div className="editClsContainer">
+                        <div className="editCls" onClick={() => { setEditAlertFrame(0) }}>關閉</div>
+                        <div className="editCls">送出</div>
+                    </div>
+                </div>
+            </div>
 
             <div className={`alertFrameContainer ${!alertFrameShow1 ? "op0" : ""}`}>
                 <div className="uploadFrame">
@@ -397,6 +482,9 @@ const RegisterFrame = () => {
                 </div>
             </div>
         </div>
+        )
+        :
+        null
     )
 }
 
