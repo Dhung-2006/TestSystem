@@ -92,7 +92,7 @@ const LoginFrame = () => {
                     <div className="loginButton">
                         <button type="submit">登入</button>
                         <div className="line"></div>
-                        <Link to="/signup"><span>沒有帳號嗎？<u>註冊一個帳號</u></span></Link>
+                        <Link to="/signupframe"><span>沒有帳號嗎？<u>註冊一個帳號</u></span></Link>
                     </div>
                 </div>
             </form>

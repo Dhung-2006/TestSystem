@@ -70,12 +70,15 @@ const SignupFrame = () => {
         formData.append("signEmail", formValue.signEmail);
         formData.append("signAccount", formValue.signAccount);
         formData.append("signPassword", formValue.signPassword);
-        const URL: string = "";
+        const URL: string = "http://localhost:3000/signup";
+        
         try {
             // test code VVVV
             const res = await fetch(URL, {
+                headers:new Headers({"Content-Type":"application/json"}),
+                credentials:"include" , 
                 method: "POST",
-                body: formData
+                body: JSON.stringify(formValue)
             })
             if (!res.ok) throw new Error("500 server error");
             const data = await res.json();
@@ -90,11 +93,15 @@ const SignupFrame = () => {
         }
     }
 
-
     const handleSubmitVerify = () => {
-        console.log(typeof (inputvalue[0] + inputvalue[1] + inputvalue[2] + inputvalue[3]));
         const verify_code: string = inputvalue[0] + inputvalue[1] + inputvalue[2] + inputvalue[3];
-        if (verificationCode === verify_code) {
+        if (String(verificationCode) === verify_code) {
+            fetch("http://localhost:3000/createOneAcc",{
+                headers:new Headers({"Content-Type":"application/json"}),
+                credentials:"include" , 
+                method:"POST",
+                body:JSON.stringify(formValue)
+            })
             location.href = "http://localhost:5173/register";
         }
 
@@ -173,7 +180,7 @@ const SignupFrame = () => {
                     <div className="loginButton">
                         <button type="submit">註冊</button>
                         <div className="line"></div>
-                        <Link to="/login"><span><u>返回登入頁面</u></span></Link>
+                        <Link to="/loginframe"><span><u>返回登入頁面</u></span></Link>
                     </div>
                 </div>
             </form>
