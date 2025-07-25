@@ -1,3 +1,4 @@
+import os
 from docx import *
 from docx.shared import Pt
 from docx.oxml.ns import qn
@@ -16,18 +17,14 @@ from docx2pdf import convert
 
 sys.stdout.reconfigure(encoding='utf-8')  # ✅ 保證輸出為 UTF-8（避免 Windows 預設 gbk/cp950）
 
-wordFilePaths = []
 
-def fillin(userName , chooseFile):
-    
-    with open(f'./user_data/{userName}/{chooseFile}/{chooseFile}.json' , encoding="utf-8") as f:
-        inputJsons = json.load(f) 
 
+def fillin(userName , chooseFile , inputJsons , fileType):
+    wordFilePaths = []
     for inputJson in inputJsons:
         wordPath = './convert_content/5.報名表正面.docx'
         wordDoc = Document(wordPath)
         table = wordDoc.tables[0]
-        nowCommand = ''
         filledInfo = set()
         for idxr, row in enumerate(table.rows):
             for idxc , cell in enumerate(row.cells):
@@ -77,8 +74,8 @@ def fillin(userName , chooseFile):
                 elif table.cell(idxr,idxc-1).text.replace("\n" , '') == "檢定區別" :
                     testTypeDic = {
                         "全測":"學術科全測 ",
-                        "免術":"A免試學科",
-                        "免學":"B免試術科"
+                        "免學":"A免試學科",
+                        "免術":"B免試術科"
                     }
                     if cell.text  in filledInfo:
                         continue
@@ -260,20 +257,22 @@ def fillin(userName , chooseFile):
                     paragraph = cell.add_paragraph()
                     paragraph.alignment  = WD_ALIGN_PARAGRAPH.CENTER
                     run = paragraph.add_run()
-                    run.add_picture(f'./user_data/{userName}/{chooseFile}/{chooseFile}-image/{inputJson["身分證號碼"]}.jpg')
+                    run.add_picture(f'./user_data/{userName}/{chooseFile}/image/{inputJson["身分證號碼"]}.jpg')
                     run = paragraph.add_run()
-                    run.add_picture(f'./user_data/{userName}/{chooseFile}/{chooseFile}-image/{inputJson["身分證號碼"]}.jpg')
-        wordDoc.save(f'./user_data/{userName}/{chooseFile}/{inputJson["身分證號碼"]}.docx')
-        wordFilePaths.append(f'./user_data/{userName}/{chooseFile}/{inputJson["身分證號碼"]}.docx')
+                    run.add_picture(f'./user_data/{userName}/{chooseFile}/image/{inputJson["身分證號碼"]}.jpg')
+        wordDoc.save(f'./user_data/{userName}/{chooseFile}/{fileType}/{inputJson["身分證號碼"]}.docx')
+        wordFilePaths.append(f'./user_data/{userName}/{chooseFile}/{fileType}/{inputJson["身分證號碼"]}.docx')
+    return wordFilePaths
 
-def combineWord():
+def combineWord(wordFilePaths , fileType):
     # print(wordFilePaths)
     master = Document(wordFilePaths[0])
     composer = Composer(master)
     for file in wordFilePaths[1:]:
         doc = Document(file)
         composer.append(doc)
-    composer.save(f'./user_data/{userName}/{chooseFile}/combine.docx')
+    composer.save(f'./user_data/{userName}/{chooseFile}/{fileType}/combine.docx')
+    return f'./user_data/{userName}/{chooseFile}/{fileType}/combine.docx'
 
 def docxConvert():
     convert(f'./user_data/{userName}/{chooseFile}/combine.docx',f'./user_data/{userName}/{chooseFile}/combine.pdf')
@@ -282,11 +281,31 @@ if __name__ == "__main__":
     print("im running python")
     userName = sys.argv[1]
     chooseFile = sys.argv[2]
-    fillin(userName , chooseFile)
-    # print(f"username = {userName}")
-    # print(f"choosefile = {choooseFile}")
-    print("run sucess")
-    combineWord()
-    print("combine success")
+    combineWordPath = []
+    if os.path.exists(f'./user_data/{userName}/{chooseFile}/fullTest/fullTest.json'):
+        with open(f'./user_data/{userName}/{chooseFile}/fullTest/fullTest.json' , encoding="utf-8") as f:
+            inputJsons = json.load(f) 
+        wordFilePath = fillin(userName , chooseFile , inputJsons  , "fullTest")
+        path = combineWord(wordFilePath , "fullTest")
+        combineWordPath.append(path)
+        # docxConvert()
+
+    if os.path.exists(f'./user_data/{userName}/{chooseFile}/studyTest/studyTest.json'):
+        with open(f'./user_data/{userName}/{chooseFile}/studyTest/studyTest.json' , encoding="utf-8") as f:
+            inputJsons = json.load(f)
+        wordFilePath = fillin(userName , chooseFile , inputJsons , "studyTest")
+        path = combineWord(wordFilePath , "studyTest")  
+        combineWordPath.append(path) 
+        # docxConvert()
+
+    if os.path.exists(f'./user_data/{userName}/{chooseFile}/technicalTest/technicalTest.json'):
+        with open(f'./user_data/{userName}/{chooseFile}/technicalTest/technicalTest.json' , encoding="utf-8") as f:
+            inputJsons = json.load(f)
+        wordFilePath = fillin(userName , chooseFile , inputJsons , "technicalTest")
+        path = combineWord(wordFilePath , "technicalTest")
+        combineWordPath.append(path)
+        # docxConvert()
+    
+    combineWord(combineWordPath , "")
     docxConvert()
-    print("conver success")
+    

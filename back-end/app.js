@@ -60,10 +60,7 @@ app.get('/cleanAllData', (req, res) => {
 
 
 
-app.get('/upload', async (req, res) => {
-
-  console.log('im fetching url --> localhost:3000/upload');
-  
+app.get('/upload', async (req, res) => {  
   // -----------------------------------------------
   const funcToRun = "getDataTable";
   const filePath = "./convert_content/1.中壢高商(14901).xlsx"
@@ -74,7 +71,15 @@ app.get('/upload', async (req, res) => {
   // -------------------------------------------------
   const py = spawn('python', ['process.py', filePath, userName, cFileName])
   const folderName = path.join(__dirname, "user_data" , userName , cFileName)
-  await fs.mkdirSync(folderName, { recursive: true }); 
+  const fullTest  = path.join(__dirname, "user_data" , userName , cFileName , "full_Test")
+  const studyTest = path.join(__dirname, "user_data" , userName , cFileName , "study_Test")
+  const technicalTest = path.join(__dirname, "user_data" , userName , cFileName , "technical_Test")
+  const imagePath = path.join(__dirname, "user_data" , userName , cFileName , "image")
+  await fs.mkdirSync(folderName, { recursive: true });
+  await fs.mkdirSync(fullTest, { recursive: true });
+  await fs.mkdirSync(studyTest, { recursive: true });   
+  await fs.mkdirSync(technicalTest, { recursive: true });   
+  await fs.mkdirSync(imagePath, { recursive: true });   
   let outputData = ''
   py.stdout.on('data', (data) => {
     outputData += data.toString('utf-8')
@@ -154,7 +159,7 @@ app.post("/login" ,async (req, res) =>{
 app.post("/createOneAcc" , async(req, res) => {
   const userAccount = req.body.signAccount
   const userPassword = req.body.signPassword
-  const newFolderPath = path.join(__dirname , "user_data" , "dexter")
+  const newFolderPath = path.join(__dirname , "user_data" , userAccount)
   sequelize.sync().then(() => {
     userAccounts.create({
       userAcc : userAccount,
@@ -269,7 +274,10 @@ function verify_data(json_data ,idx){
     // console.log("格式錯誤");
     badContent.push("身分證號碼")
   }
+
   const birthRegex = /^\d{5}$/
+  const birthDay = json_data["出生日期"]  
+  // if (!birthRegex.test(b))
 }
 
 app.listen(3000 , ()=>{

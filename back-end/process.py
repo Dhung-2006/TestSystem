@@ -5,16 +5,25 @@ import json
 
 userName = ""
 cFileName = ""
+
 sys.stdout.reconfigure(encoding='utf-8')  # ✅ 保證輸出為 UTF-8（避免 Windows 預設 gbk/cp950）
 
 def getDataTable(filePath):
-    # print("im in")
     fullTestTable = pd.read_excel(filePath, sheet_name='套印用資料-全測')
-    getData(filePath,fullTestTable)
-    # studyTestTable = pd.read_excel(filePath, sheet_name='套印用資料-免學')
-    # getData(filePath,studyTestTable)
-    # technicalTestTable = pd.read_excel(filePath, sheet_name='套印用資料-免術')
-    # getData(filePath,technicalTestTable)
+    dataJsonLst = getData(filePath,fullTestTable , "Data-全測")
+    with open(f"./back-end/user_data/{userName}/{cFileName}/fullTest/fullTest.json" , "w" , encoding="utf-8") as jason_f:
+        json.dump(dataJsonLst , jason_f , ensure_ascii=False , indent= 4)
+
+    studyTestTable = pd.read_excel(filePath, sheet_name='套印用資料-免學')
+    dataJsonLst = getData(filePath,studyTestTable , "Data-免學")
+    with open(f"./back-end/user_data/{userName}/{cFileName}/studyTest/studyTest.json" , "w" , encoding="utf-8") as jason_f:
+        json.dump(dataJsonLst , jason_f , ensure_ascii=False , indent= 4)
+
+    technicalTestTable = pd.read_excel(filePath, sheet_name='套印用資料-免術')
+    dataJsonLst = getData(filePath,technicalTestTable, "Data-免學")
+    with open(f"./back-end/user_data/{userName}/{cFileName}/technicalTest/technicalTest.json" , "w" , encoding="utf-8") as jason_f:
+        json.dump(dataJsonLst , jason_f , ensure_ascii=False , indent= 4)
+
     
 def getMajorCode(filePath):
     dataframe= pd.read_excel(filePath,sheet_name='代號',usecols=[0])
@@ -51,10 +60,12 @@ def getSchoolCode( filePath):
     schoolTypeLst = [data[0] for data in dataframe.values]
     return schoolTypeLst
 
-def getData(filePath,dataFrame):
+def getData(filePath,dataFrame , frameType):
     dataRows = dataFrame.shape[0]
     dataJsonLst = []
+    idDataframe = pd.read_excel(filePath , sheet_name= frameType , skiprows=2)
     for i in range(dataRows):
+        testNumber = idDataframe.loc[i , "流水號"]
         identification = dataFrame.loc[i , '身分證號碼']
         chName = dataFrame.loc[i, '中文姓名']
         birthYear = str(dataFrame.loc[i,'出生年'])
@@ -91,6 +102,7 @@ def getData(filePath,dataFrame):
         schoolTypeLst = getSchoolCode(filePath)
         schoolType = schoolTypeLst[schoolTypeCode]
         datajson = {
+            '准考證號碼':str(testNumber),
             '身分證號碼':identification,
             '中文姓名':chName,
             '出生日期':birthYear + birthMounth + birthDay,  
@@ -111,9 +123,7 @@ def getData(filePath,dataFrame):
             '學制':schoolType
         }
         dataJsonLst.append(datajson)
-    # print(json.dumps(dataJsonLst, ensure_ascii=False))
-    with open(f"./user_data/{userName}/{cFileName}/{cFileName}.json" , "w" , encoding="utf-8") as jason_f:
-        json.dump(dataJsonLst , jason_f , ensure_ascii=False , indent= 4)
+    return dataJsonLst
     
 
 
