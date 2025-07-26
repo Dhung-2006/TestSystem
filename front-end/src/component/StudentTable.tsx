@@ -23,18 +23,19 @@ type rowType = {
 type allProps = {
     // triggerModalShow: () => void;
     globalFilter: string,
-    setGlobalFilter: React.Dispatch<React.SetStateAction<string>>;
-    setCalRows: React.Dispatch<React.SetStateAction<rowType>>;
+    setGlobalFilter: React.Dispatch<React.SetStateAction<string>>,
+    setCalRows: React.Dispatch<React.SetStateAction<rowType>>,
+    setModalShow :React.Dispatch<React.SetStateAction<number>>,
 }
 
 // higher order function only receive two arguments , props needs to become a set.
-const DataTable = forwardRef<ExportDataType, allProps>(({  globalFilter, setGlobalFilter, setCalRows }, ref) => {
+const StudentTable = forwardRef<ExportDataType, allProps>(({ globalFilter, setGlobalFilter, setCalRows ,setModalShow }, ref) => {
     // const { modalOut } = props; 
     const [data, setData] = useState<rowData[]>(DATA);
     const [exportData, setExportData] = useState(false);
     const [columnFilter, setColumnFilter] = useState<ColumnFiltersState>([]);
 
-    
+
 
     type rowData = {
         "name": string,
@@ -62,7 +63,7 @@ const DataTable = forwardRef<ExportDataType, allProps>(({  globalFilter, setGlob
         {
             accessorKey: "type",
             header: "檔案總數",
-            cell: (props: any) => <p>{13}</p>
+            cell: (props: any) => <p>{props.getValue()}</p>
         }
         ,
         {
@@ -70,12 +71,28 @@ const DataTable = forwardRef<ExportDataType, allProps>(({  globalFilter, setGlob
             header: "報名種類",
             cell: (props: any) => <p>{props.getValue()}</p>
         }
-        // ,
-        // {
-        //     accessorKey: "identity",
-        //     header: "身份",
-        //     cell: (props: any) => <p>{props.getValue()}</p>
-        // }
+        ,
+        {
+            accessorKey: "identity",
+            header: "身份",
+            cell: (props: any) => <p>{props.getValue()}</p>
+        }
+        ,
+        {
+            header: "",
+            id:"status",
+            size:10,
+            maxSize:10,
+            cell: (props: any) =>
+            (
+                <div className="functionBtn">
+                    <div className="editButton" onClick={()=>{setModalShow(1)}}>編輯</div>
+                    <div className="editButton">刪除</div>
+                    {/* <div className="editButton">刪除</div> */}
+                </div>
+            )
+        }
+        
         // ,
         // {
         //     accessorKey: "number",
@@ -133,8 +150,8 @@ const DataTable = forwardRef<ExportDataType, allProps>(({  globalFilter, setGlob
     //     value1: String(totalRows),
     //     value2: String(filteredRows)
     // }))
-    const enterDetailData = () =>{
-        
+    const enterDetailData = () => {
+
     }
 
     useEffect(() => {
@@ -143,7 +160,7 @@ const DataTable = forwardRef<ExportDataType, allProps>(({  globalFilter, setGlob
             value1: String(totalRows),
             value2: String(filteredRows)
         }))
-    }, [totalRows,filteredRows])
+    }, [totalRows, filteredRows])
 
     // const [totalRows] = useState(data.length); 
     // const [filteredRows] = useState(table.getRowModel().rows.length); 
@@ -170,7 +187,7 @@ const DataTable = forwardRef<ExportDataType, allProps>(({  globalFilter, setGlob
                                     {flexRender(header.column.columnDef.header, header.getContext())}
                                 </th>
                             ))}
-                            <th />
+                            {/* <th /> */}
                         </tr>
                     ))}
                 </thead>
@@ -191,20 +208,13 @@ const DataTable = forwardRef<ExportDataType, allProps>(({  globalFilter, setGlob
                                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                 </td>
                             ))}
-                            <td>
-                                {/* <div style={{ display: "flex" }}> */}
+                            {/* <td>
+                                <div style={{ display: "flex" }}>
                                 <div className="iconEye next" onClick={enterDetailData}>
                                     <FontAwesomeIcon icon={faRightToBracket} />
                                 </div>
-                                {/* 先view就好
-                                    checkbox -> multiple export 
-                                    view 用成開一個modal popout 再rerender
-                                    */}
-                                {/* <div>
-                                        <FontAwesomeIcon icon={faFileExport} />
-                                    </div> */}
-                                {/* </div> */}
-                            </td>
+                            </td> */}
+
                         </tr>
 
                     ))}
@@ -214,4 +224,4 @@ const DataTable = forwardRef<ExportDataType, allProps>(({  globalFilter, setGlob
         </div>
     )
 })
-export default DataTable;
+export default StudentTable;

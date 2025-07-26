@@ -1,19 +1,23 @@
 @import "_configs.scss";
+
 .tableContainer {
     overflow-y: scroll;
     height: 100%;
     width: 100%;
     border-radius: 12px;
+
     table {
         border-collapse: separate;
         border-spacing: 0;
         width: 100%;
+        table-layout: fixed;
         border-radius: 15px;
         border: none;
         background-color: rgba(255, 255, 255, 0.2);
         backdrop-filter: blur(20px);
         overflow-x: scroll;
-        thead{
+
+        thead {
             position: sticky;
             left: 0;
             top: 0;
@@ -24,9 +28,10 @@
             border-left: none;
             border-right: none;
         }
-        tr:nth-of-type(even){
+
+        tr:nth-of-type(even) {
             background-color: rgba(178, 97, 212, 0.1);
-            
+
         }
 
         thead tr th {
@@ -39,16 +44,46 @@
 
         tbody {
             color: $black;
-            .iconEye{
+
+            .iconEye {
                 color: rgba(123, 70, 199, 1);
                 cursor: pointer;
                 user-select: none;
                 transition: .25s;
-                &:hover{
+
+                &:hover {
                     opacity: 0.6;
                 }
             }
+
+            .functionBtn {
+                @include all-center();
+                gap: 1rem;
+
+                // padding: 0 !important;
+                //  flex-shrink: 0;
+                .editButton {
+                    @include all-center();
+                    background-color: $color1;
+                    color: white;
+                    transition: .25s;
+                    padding: 0.25rem 1.45rem;
+                    border-radius: 25px;
+                    white-space: nowrap;
+                    /* ✅ 不換行 */
+                    overflow: hidden;
+                    /* ✅ 超出不顯示 */
+                    text-overflow: ellipsis;
+                    /* 可選，避免撐開 */
+                    cursor: pointer;
+
+                    &:hover {
+                        background-color: white;
+                        color: $color1;
+                    }
+                }
+            }
         }
-        
+
     }
 }

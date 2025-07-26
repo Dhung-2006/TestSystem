@@ -1,21 +1,25 @@
 import { useReactTable, getCoreRowModel, getFilteredRowModel, flexRender } from "@tanstack/react-table";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faFileExport } from '@fortawesome/free-solid-svg-icons'
-import type { ColumnDef, ColumnFiltersState } from "@tanstack/react-table";
+import type { ColumnDef, ColumnFiltersState, GlobalFiltering } from "@tanstack/react-table";
 import DATA from "../json/tableData.json";
 import { forwardRef, useState, useImperativeHandle } from "react";
 
+type globalType = {
+
+    globalFilter: string;
+    setGlobalFilter: React.Dispatch<React.SetStateAction<string>>;
+}
 // type json_type = {
 //     [key : string]
 // }
 // higher order function only receive two arguments , props needs to become a set.
 // const ViewTable :React.FC<json_type> = (init_data) => {
-const ViewTable = () => {
+const ViewTable = ({ globalFilter, setGlobalFilter }:globalType) => {
     // const { modalOut } = props; 
     const [data, setData] = useState<rowData[]>(DATA);
     const [exportData, setExportData] = useState(false);
     const [columnFilter, setColumnFilter] = useState<ColumnFiltersState>([]);
-
     type rowData = {
         "name": string,
         "type": string;
@@ -62,6 +66,8 @@ const ViewTable = () => {
     const table = useReactTable({
         data,
         columns,
+        state: { globalFilter },
+        onGlobalFilterChange: setGlobalFilter,
         getCoreRowModel: getCoreRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
     });
@@ -102,14 +108,14 @@ const ViewTable = () => {
                             ))}
                             <td>
                                 {/* <div style={{ display: "flex" }}> */}
-                                    <div className="iconEye">
-                                        <FontAwesomeIcon icon={faEye} />
-                                    </div>
-                                    {/* 先view就好
+                                <div className="iconEye">
+                                    <FontAwesomeIcon icon={faEye} />
+                                </div>
+                                {/* 先view就好
                                     checkbox -> multiple export 
                                     view 用成開一個modal popout 再rerender
                                     */}
-                                    {/* <div>
+                                {/* <div>
                                         <FontAwesomeIcon icon={faFileExport} />
                                     </div> */}
                                 {/* </div> */}

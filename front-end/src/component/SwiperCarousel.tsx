@@ -26,38 +26,7 @@ const SwiperCarousel :React.FC<swiperDone>= ({handleAlertFrame , carouselDone}) 
 
   // const [isDone, setIsDone] = useState(false);
 
-  const EventDoneFn = (arg : number) =>{
-
-        switch(arg){
-            case 0:
-                // handleAlertFrame();
-                // const a = document.createElement("a");
-                // a.href = "../../public/template.xlsx";
-                // // template.xlsx
-                // // a.href = "../../public/test.pdf";
-                // a.download = "桃竹區在校生技能檢定網路報名系統範本1";
-                // a.click();
-
-
-                // const blob = new Blob([],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
-              break;
-            case 1:
-                alert(1);
-              break;
-            case 2:
-                alert(2);
-              break;
-            case 3:
-                alert(3);
-              break;
-              case 4:
-                
-                break;
-            default:
-              console.error("there's an error of argument deliever");
-        }
-  }
-
+ 
   return (
     <Swiper
       spaceBetween={30}

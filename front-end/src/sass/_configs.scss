@@ -34,6 +34,12 @@ $bxShadow : rgba(14, 30, 37, 0.12) 0px 2px 4px 0px, rgba(14, 30, 37, 0.32) 0px 2
     pointer-events: none;
     z-index: -1;
 }
+.divNone{
+    display: none !important;
+}
+.redT{
+    color: rgb(225, 47, 47) !important;
+}
 
 .allCenter{
     @include all-center();

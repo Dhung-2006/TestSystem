@@ -5,11 +5,12 @@ import ViewTable from "./ViewTable";
 import jsonData from "../json/tableData.json"
 const ViewComponent = () => {
     const URL = "/public/test.pdf";
-    
+    const [globalFilter, setGlobalFilter] = useState<string>("");
     const [viewData, setViewData] = useState(jsonData);
     console.log("viewData",viewData);
     const [viewHeightCSS, setViewHeightCSS] = useState<number | undefined>(0);
     const viewHeightRef = useRef<HTMLDivElement>(null);
+
     // 優化使用者點擊輸入框UX
     const inputRef = useRef<HTMLInputElement>(null);
     const userFocus = () => {
@@ -38,12 +39,12 @@ const ViewComponent = () => {
             <div className="leftsideContainer">
                 <div className="searchBarContainer">
                     <div className="searchBar" onClick={userFocus}>
-                        <input type="text" value={userInputValue} ref={inputRef} onChange={(e)=>{userSearchEvent(e)}} 
-                        placeholder={"請輸入要搜尋的學生資料"} />
+                        <input type="text" value={globalFilter} ref={inputRef} onChange={(e)=>{setGlobalFilter(e.target.value)}} 
+                         placeholder={"請輸入要搜尋的學生資料"} />
                         <div className="mag-icon"><FontAwesomeIcon icon={faMagnifyingGlass} /></div>
                     </div>
                 </div>
-                <div className="previewDatas" ref={viewHeightRef} ><ViewTable /></div>
+                <div className="previewDatas" ref={viewHeightRef} ><ViewTable globalFilter={globalFilter} setGlobalFilter={setGlobalFilter}/></div>
             </div>
             <div className="rightsideContainer">
                 <iframe  src={URL}  />
