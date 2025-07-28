@@ -16,6 +16,497 @@
     padding: 2rem 2.5rem 1.5rem 2.5rem;
     box-sizing: border-box;
 
+    .viewStudentDetailContainer {
+        @include all-center();
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 100vh;
+        width: 100%;
+        z-index: 9999;
+        background-color: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(10px);
+        transition: .25s;
+
+        .viewStudentDetail {
+            @include all-center();
+            flex-direction: column;
+            background-color: rgba(255, 255, 255, 0.8);
+            // width: 35rem;
+            padding: 2rem 3rem;
+            border-radius: 12px;
+
+            .line {
+
+                height: 1px;
+                width: 100%;
+                background-color: rgba(41, 40, 40, 0.5);
+                margin: 1.5rem 0 2rem 0;
+
+            }
+
+            .viewStudentTitle {
+                width: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: start;
+
+                .Viewicon {
+                    @include all-center();
+                    height: 2.5rem;
+                    aspect-ratio: 1/1;
+                    border-radius: 50%;
+                    // $color1 : #7B46C7;
+                    background-color: #7c46c737;
+                    color: $color1;
+                    // color: white;
+                    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+                    font-size: 1.2rem;
+                    margin-right: 1rem;
+                }
+
+                h4 {
+                    font-size: 1.25rem;
+                    color: rgba(25, 25, 25, 0.8)
+                }
+            }
+
+            .viewStudentContent {
+
+                .studentImageContainer {
+                    @include all-center();
+                    background-color: white;
+                    padding: 0.5rem;
+                    border-radius: 12px;
+                    margin-right: 2rem;
+
+                    img {
+                        height: 6rem;
+                        object-fit: cover;
+                    }
+                }
+
+                .viewTestData{
+                    .viewStudentColumn {
+                        margin: 1rem 0;
+                    }
+                }
+
+                //  -- template --
+                .viewStudentColumn {
+                    position: relative;
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    width: 100%;
+                    margin: 0.5rem 0;
+                    gap: 1rem;
+
+                    .viewStudentItem {
+                        position: relative;
+                        display: flex;
+                        align-items: start;
+                        justify-content: center;
+                        flex-direction: column;
+                        gap: 0.5rem;
+                        width: 100%;
+
+                        .viewStudentName {
+                            position: relative;
+                            color: rgba(25, 25, 25, 0.8);
+                            font-size: 1rem;
+                            width: 100%;
+
+                            h5 {
+                                text-align: left;
+                            }
+
+                            input {
+                                padding: 0.25rem 0rem 0.25rem 1rem;
+                                border-radius: 8px;
+                                width: 90%;
+                                background-color: white;
+                                color: $black;
+                                border: 1px solid rgba(0, 0, 0, 0.23);
+                                // box-sizing: border-box
+                            }
+                        }
+
+
+                    }
+                }
+
+                .deco {
+                    & .viewStudentItem:nth-child(1) {
+                        width: 30%;
+                    }
+
+                    & .viewStudentItem:nth-child(2) {
+                        width: 70%;
+                    }
+                }
+
+                // -- template --
+                .bottomSide {
+                    margin-top: 1rem;
+
+                    .viewStudentItem {
+                        display: flex;
+                        justify-content: space-between;
+
+                        .viewStudentName {
+                            position: relative;
+                            width: 100%;
+
+                            input {
+                                padding: 0.25rem 0rem 0.25rem 1rem;
+                                border-radius: 8px;
+                                width: 90%;
+                                background-color: white;
+                                color: $black;
+                                border: 1px solid rgba(0, 0, 0, 0.23);
+                                // box-sizing: border-box
+                            }
+                        }
+                    }
+
+                }
+            }
+
+            .functionBtnContainer {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 1.5rem;
+                margin: 2rem 0 0rem 0;
+
+
+                .functionBtn {
+                    &:nth-child(2) {
+                        background-color: $color1;
+                        color: white;
+                    }
+
+                    // $color1 : #7B46C7;
+                    &:hover {
+                        background-color: white;
+                        color: $color1;
+                        opacity: 0.8;
+                    }
+
+                    // &:hover{
+                    //     background-color: $color1;
+                    //     color: white;
+                    // }
+                    cursor: pointer;
+                    transition: .25s;
+                    // background-color: rgba(255, 255, 255, 0.2);
+                    background-color: #7c46c74e;
+                    color: $color1;
+                    padding: 0.35rem 1.5rem;
+                    font-size: 1.05rem;
+                    border-radius: 12px;
+                    // box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.25);
+                    letter-spacing: 1px;
+                }
+            }
+        }
+    }
+
+    .viewDataContainer {
+        @include all-center();
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 100vh;
+        width: 100%;
+        z-index: 9999;
+        background-color: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(10px);
+        transition: .25s;
+
+        .viewData {
+            width: 35rem;
+            padding: 2rem 2.5rem;
+
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 12px;
+            z-index: 1;
+
+            .viewNavigation {
+                position: relative;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+
+                .throughLine {
+                    position: absolute;
+                    height: 2px;
+                    width: 95%;
+                    top: 45%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    background-color: rgba(0, 0, 0, 0.2);
+
+                    z-index: -1;
+
+                }
+
+                .naviItem {
+                    @include all-center();
+                    flex-direction: column;
+
+                    & * {
+                        transition: .25s;
+                    }
+
+                    &.currentFrame h5 {
+                        opacity: 0.3;
+                    }
+
+                    &.currentFrame .naviIcon {
+                        // $color1 : #7B46C7;
+                        background-color: #7c46c736 !important;
+                        color: $color1 !important;
+                        // opacity: 0.8;
+                        backdrop-filter: blur(20px)
+                    }
+
+                    .naviIcon {
+                        @include all-center();
+                        height: 3rem;
+                        border-radius: 50%;
+                        aspect-ratio: 1/1;
+                        background-color: $color1;
+                        margin-bottom: 0.1rem;
+                        font-size: 1.1rem;
+                    }
+
+                    h5 {
+                        color: $black;
+                    }
+                }
+            }
+
+
+            .line {
+                height: 0.8px;
+                width: 100%;
+                background-color: rgba(0, 0, 0, 0.5);
+                margin: 2rem 0;
+            }
+
+            .fillInData {
+                @include all-center();
+                flex-direction: column;
+                margin-bottom: 2rem;
+
+
+                .fillInPhoto {
+                    width: 100%;
+
+                    .fillInTitle {
+                        h4 {
+                            color: rgba(25, 25, 25, 0.88);
+                            font-size: 1.25rem;
+                        }
+
+                        h5 {
+                            color: rgba(25, 25, 25, 0.5);
+                        }
+
+                        margin-bottom: 1rem;
+
+                    }
+
+                    .fillInput {
+                        position: relative;
+                        overflow: hidden;
+
+                        .uploadbg {
+                            &.hide {
+                                opacity: 0;
+                                pointer-events: none;
+                            }
+
+                            @include all-center();
+                            position: absolute;
+                            height: 100%;
+                            width: 100%;
+                            background-color: #7c46c79b;
+                            backdrop-filter: blur(10px);
+                            z-index: 2;
+
+                            h4 {
+                                color: white;
+                            }
+                        }
+
+                        @include all-center();
+                        flex-direction: column;
+                        width: 100%;
+                        background-color: white;
+                        border: 1px solid rgba(0, 0, 0, 0.35);
+                        border-radius: 25px;
+                        padding: 2rem 1rem;
+                        transition: .25s;
+                        cursor: pointer;
+                        box-sizing: border-box;
+
+                        &:hover {
+                            opacity: 0.8;
+                        }
+
+                        .fillIcon {
+                            @include all-center();
+                            height: 3.2rem;
+                            aspect-ratio: 1/1;
+                            border-radius: 50%;
+                            background-color: #7c46c742;
+                            color: $color1;
+                            font-size: 1.25rem;
+                            backdrop-filter: blur(10px);
+                            box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+                            margin-bottom: 0.5rem;
+                            // box-shadow: rgba(100, 100, 111, 0.1) 0px 7px 29px 0px;
+                        }
+
+                        h4 {
+                            color: $black;
+                            font-weight: normal;
+
+                            span {
+                                transition: .25s;
+                                color: $color1;
+                                cursor: pointer;
+
+                                &:hover {
+                                    opacity: 0.7;
+                                }
+                            }
+                        }
+
+                        h5 {
+                            color: $black;
+                            font-weight: normal;
+                        }
+                    }
+                }
+
+                .fillInTestData,
+                .fillInStudentData {
+                    @include all-center();
+                    flex-direction: column;
+                    width: 100%;
+
+                    .inputColumn {
+                        position: relative;
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                        width: 100%;
+                        margin: 0.5rem 0;
+
+                        .inputItem {
+                            position: relative;
+                            display: flex;
+                            align-items: start;
+                            justify-content: center;
+                            flex-direction: column;
+                            gap: 0.5rem;
+                            width: 100%;
+
+                            .inputName {
+                                color: rgba(25, 25, 25, 0.8);
+                                font-size: 1rem;
+                            }
+
+                            .copyBtn {
+                                padding: 0.25rem 0.8rem;
+                                background-color: $color1;
+                                color: white;
+                                margin-left: 1.2rem;
+                                font-size: 0.8rem;
+                                border-radius: 5px;
+                                transition: .25s;
+                                box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+                                cursor: pointer;
+
+                                &:hover {
+                                    background-color: white;
+                                    color: $color1;
+                                }
+                            }
+
+                            &.triple input {
+                                width: 8rem;
+                            }
+
+                            &.split input {
+                                padding: 0.25rem 1rem;
+                                border-radius: 8px;
+                                width: 14rem;
+                                background-color: white;
+                                border: 1px solid rgba(0, 0, 0, 0.23);
+
+                            }
+
+                            input {
+                                padding: 0.25rem 1rem;
+                                border-radius: 8px;
+                                width: 90%;
+                                background-color: white;
+                                color: $black;
+                                border: 1px solid rgba(0, 0, 0, 0.23);
+
+                            }
+                        }
+                    }
+                }
+
+            }
+
+            .functionBtnContainer {
+                display: flex;
+                align-items: center;
+                justify-content: end;
+                gap: 1rem;
+
+
+                .functionBtn {
+                    &:nth-child(2) {
+                        background-color: $color1;
+                        color: white;
+                    }
+
+                    // $color1 : #7B46C7;
+                    &:hover {
+                        background-color: white;
+                        color: $color1;
+                        opacity: 0.8;
+                    }
+
+                    // &:hover{
+                    //     background-color: $color1;
+                    //     color: white;
+                    // }
+                    cursor: pointer;
+                    transition: .25s;
+                    // background-color: rgba(255, 255, 255, 0.2);
+                    background-color: #7c46c74e;
+                    color: $color1;
+                    padding: 0.5rem 2rem;
+                    font-size: 1.05rem;
+                    border-radius: 12px;
+                    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.25)
+                }
+            }
+
+        }
+
+    }
+
+
     .editFrameContainer {
         @include all-center();
         flex-direction: column;
@@ -659,6 +1150,7 @@
 
                 //  
                 .dataTableContainer {
+
                     max-height: 30rem;
                     height: 100%;
                     box-sizing: border-box;
@@ -829,10 +1321,12 @@
 
                     .tableSwiperContainer {
                         // height: 30rem;
+                        transition: .25s;
                         max-height: 30rem;
                         height: 100%;
                         overflow-y: scroll;
                         box-sizing: border-box;
+                        scroll-behavior: smooth;
                     }
                 }
 
@@ -846,8 +1340,8 @@
                     h2 {
                         text-align: left;
                         color: $black;
-                        font-size: 2.9rem;
-                        text-shadow: $txShadow;
+                        font-size: 2.5rem;
+                        text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
                     }
 
                     .progressionContainer {

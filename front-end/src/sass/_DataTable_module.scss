@@ -10,7 +10,7 @@
         border-collapse: separate;
         border-spacing: 0;
         width: 100%;
-        table-layout: fixed;
+        table-layout:auto;
         border-radius: 15px;
         border: none;
         background-color: rgba(255, 255, 255, 0.2);
@@ -32,6 +32,9 @@
         tr:nth-of-type(even) {
             background-color: rgba(178, 97, 212, 0.1);
 
+        }
+        tbody td:nth-last-child(1){
+            
         }
 
         thead tr th {
@@ -58,16 +61,18 @@
 
             .functionBtn {
                 @include all-center();
+                display: inline-flex;
+
                 gap: 1rem;
 
                 // padding: 0 !important;
-                //  flex-shrink: 0;
+                 flex-shrink: 1;
                 .editButton {
                     @include all-center();
                     background-color: $color1;
                     color: white;
                     transition: .25s;
-                    padding: 0.25rem 1.45rem;
+                    padding: 0.25rem 1.5rem;
                     border-radius: 25px;
                     white-space: nowrap;
                     /* ✅ 不換行 */

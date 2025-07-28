@@ -1,15 +1,19 @@
 import { use, useEffect, useRef, useState } from "react";
 import NavbarComponent from "../component/NavbarComponent";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faAdd, faAngleLeft, faAngleRight, faBackward, faCheck, faCheckCircle, faCircleChevronLeft, faCirclePlus, faCircleQuestion, faDatabase, faFile, faGear, faMagnifyingGlass, faPaperPlane, faPen, faPrint, faRecycle, faRepeat, faTrash, faUpload, faUser, faUserCircle, faWarning, faX } from '@fortawesome/free-solid-svg-icons'
+import { faAdd, faAngleLeft, faAngleRight, faBackward, faCheck, faCheckCircle, faCircleChevronLeft, faCirclePlus, faCircleQuestion, faDatabase, faEye, faFile, faGear, faMagnifyingGlass, faPaperPlane, faPen, faPhotoFilm, faPhotoVideo, faPrint, faRecycle, faRepeat, faTableList, faTrash, faUpload, faUser, faUserCircle, faWarning, faX } from '@fortawesome/free-solid-svg-icons'
 import SwiperCarousel from '../component/SwiperCarousel.tsx';
 import ViewComponent from "../component/ViewComponent.tsx";
 import TableSwiper from "../component/TableSwiper.tsx";
-import StudentTable from "../component/StudentTable.tsx"
+
 import DataTable, { type ExportDataType } from "../component/DataTable.tsx";
-import Loading, { type LoadingType } from "../component/Loading.tsx";
+import Loading from "../component/Loading.tsx";
+import DataTableContainer from "./DataTableContainer.tsx";
+import ViewStudentContainer from "../component/ViewStudentContainer.tsx";
 
 
+import userUploadFile from "../json/userUploadFile.json";
+import userUploadTestFile from "../json/userUploadTestFile.json"
 
 type uploadType = {
     "status": boolean,
@@ -17,17 +21,17 @@ type uploadType = {
     "userInputName": string,
     "uploadPhotoName": string
 }
-type rowType = {
-    value1: string,
-    value2: string
-}
-
 const RegisterFrame = () => {
     useEffect(() => {
+
+
+        handleLoading();
+
         fetch("cookie/api", {
             credentials: "include"
         })
             .then((res) => { setCookie(true) })
+
 
 
         // handleRows()
@@ -39,20 +43,15 @@ const RegisterFrame = () => {
     // table 細項切換//
     const [tableStatus, setTableStatus] = useState(false);
 
+    const [loadingState, setLoadingState] = useState(true);
 
     const [cookie, setCookie] = useState(false);
-
-    const [globalFilter, setGlobalFilter] = useState<string>("");
-    const [calRows, setCalRows] = useState<rowType>({ value1: "", value2: "" });
-    const handleRows = () => {
-        console.log("testtttt", calRows);
-        return (
-            // <h4>總共 <span>{calRows.value2} / {calRows.value1} </span>筆</h4>
-            <div className={`addNewItem ${!currentTable.status ? "divNone" : ""}`}><FontAwesomeIcon icon={faCirclePlus} /> 新增</div>
-        )
-    }
-
+    
+    
     // const swiper = useSwiper();
+    const [viewFrameState, setViewFrameState] = useState(1);
+    const [fillInIndex, setFillInIndex] = useState(0);
+    const [fillInFrame, setFillInFrame] = useState(false);
 
     const [template, setTemplate] = useState(false);
     const [penEdit, setpenEdit] = useState(false);
@@ -69,7 +68,7 @@ const RegisterFrame = () => {
     const [alertFrameShow0, setAlertFrameShow0] = useState(0);
     const [alertFrameShow1, setAlertFrameShow1] = useState(0);
 
-    const [currentTable, setCurrentTable] = useState({ text: "報名資料", status: false });
+    // const [currentTable, setCurrentTable] = useState({ text: "報名資料", status: false });
 
     // success & error
     const [notifyFrame, setNotifyFrame] = useState(0);
@@ -82,11 +81,214 @@ const RegisterFrame = () => {
 
     // useRef 
     const triggerExportRef = useRef<ExportDataType | null>(null);
-    const loadingRef = useRef<LoadingType | null>(null);
+    // const loadingRef = useRef<LoadingType | null>(null);
     const uploadFileNameRef = useRef<HTMLInputElement>(null);
     const uploadFileRef = useRef<HTMLInputElement>(null);
     const uploadPhotoRef = useRef<HTMLInputElement>(null);
     const pendingRef = useRef<HTMLInputElement>(null); // 編輯的input 
+
+
+    const functionBtnLogic = () => {
+        // 取消 下一步
+        // 上一步 下一步
+        // 上一步 送出
+        switch (fillInIndex) {
+            case 0:
+                return (
+                    <>
+                        <div className="fillInData">
+                            {/* { 1 } */}
+
+                            <div className="fillInPhoto">
+                                <div className="fillInTitle">
+                                    <h4>上傳你的照片</h4>
+                                    <h5>檔案格式規定檔案格式規定檔案格式規定</h5>
+                                </div>
+                                <div className="fillInput" >
+                                    <div className={`uploadbg ${!uploadStatus["status"] ? "hide" : ""}`}><h4>{uploadStatus["fileName"]}</h4></div>
+                                    <div className="fillIcon" ><FontAwesomeIcon icon={faUpload} /></div>
+                                    <h4><span>點擊</span> 上傳照片</h4>
+                                    <h5>( 檔案限定 *.png *.jpeg *.jpg )</h5>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="functionBtnContainer">
+                            <div className="functionBtn" onClick={() => setFillInFrame(false)}>取 消</div>
+                            <div className="functionBtn" onClick={() => setFillInIndex(fillInIndex + 1)}>下一步</div>
+                        </div>
+                    </>
+                )
+            case 1:
+                return (
+                    <>
+                        <div className="fillInData">
+                            <div className="fillInStudentData">
+                                {userUploadFile.map((element, index) => {
+
+                                    switch (element.registerCount) {
+                                        case 1:
+                                            if (!element.isCopy) {
+
+                                                return (
+                                                    <div className="inputColumn">
+                                                        <div className="inputItem ">
+                                                            <div style={{ display: "flex", alignItems: "center" }}>
+                                                                <h5 className="inputName">*{element.registerName[0]}</h5>
+                                                            </div>
+                                                            <input type="text" />
+                                                        </div>
+                                                    </div>
+                                                )
+                                            }
+                                            else {
+                                                return (
+                                                    <div className="inputColumn">
+                                                        <div className="inputItem ">
+                                                            <div style={{ display: "flex", alignItems: "center" }}>
+                                                                <h5 className="inputName">*{element.registerName[0]}</h5>
+                                                                <div className="copyBtn">同 上</div>
+                                                            </div>
+                                                            <input type="text" />
+                                                        </div>
+                                                    </div>
+                                                )
+                                            }
+                                        case 2:
+
+                                            if (element.registerName[1] == "出生日期") {
+                                                return (
+                                                    <div className="inputColumn">
+                                                        <div className="inputItem split">
+                                                            <h5 className="inputName">*{element.registerName[0]}</h5>
+                                                            <input type="text" />
+                                                        </div>
+                                                        <div className="inputItem split">
+                                                            <h5 className="inputName">*{element.registerName[1]}</h5>
+                                                            <input type="date" />
+                                                        </div>
+                                                    </div>)
+                                            }
+                                            else {
+                                                return (
+                                                    <div className="inputColumn">
+                                                        <div className="inputItem split">
+                                                            <h5 className="inputName">*{element.registerName[0]}</h5>
+                                                            <input type="text" />
+                                                        </div>
+                                                        <div className="inputItem split">
+                                                            <h5 className="inputName">*{element.registerName[1]}</h5>
+                                                            <input type="text" />
+                                                        </div>
+                                                    </div>)
+                                            }
+
+                                        case 3:
+                                            return (
+                                                <div className="inputColumn">
+                                                    <div className="inputItem triple">
+                                                        <h5 className="inputName">*{element.registerName[0]}</h5>
+                                                        <input type="text" />
+                                                    </div>
+                                                    <div className="inputItem triple">
+                                                        <h5 className="inputName">*{element.registerName[1]}</h5>
+                                                        <input type="text" />
+                                                    </div>
+                                                    <div className="inputItem triple">
+                                                        <h5 className="inputName">*{element.registerName[2]}</h5>
+                                                        <input type="text" />
+                                                    </div>
+                                                </div>)
+
+
+                                    }
+
+
+                                })}
+                            </div>
+                        </div>
+                        <div className="functionBtnContainer">
+                            <div className="functionBtn" onClick={() => setFillInIndex(fillInIndex - 1)}>上一步</div>
+                            <div className="functionBtn" onClick={() => setFillInIndex(fillInIndex + 1)}>下一步</div>
+                        </div>
+                    </>
+
+                )
+            case 2:
+                return (
+                    <>
+
+                        <div className="fillInData">
+                            <div className="fillInTestData">
+                                {userUploadTestFile.map((element, index) => {
+
+                                    switch (element.registerCount) {
+                                        case 1:
+                                            return (
+                                                <div className="inputColumn">
+                                                    <div className="inputItem ">
+                                                        <div style={{ display: "flex", alignItems: "center" }}>
+                                                            <h5 className="inputName">*{element.registerName[0]}</h5>
+                                                        </div>
+                                                        <input type="text" />
+                                                    </div>
+                                                </div>
+                                            )
+                                        case 2:
+                                            return (
+                                                <div className="inputColumn">
+                                                    <div className="inputItem split">
+                                                        <h5 className="inputName">*{element.registerName[0]}</h5>
+                                                        <input type="text" />
+                                                    </div>
+                                                    <div className="inputItem split">
+                                                        <h5 className="inputName">*{element.registerName[1]}</h5>
+                                                        <input type="text" />
+                                                    </div>
+                                                </div>)
+
+                                        case 3:
+                                            return (
+                                                <div className="inputColumn">
+                                                    <div className="inputItem triple">
+                                                        <h5 className="inputName">*{element.registerName[0]}</h5>
+                                                        <input type="text" />
+                                                    </div>
+                                                    <div className="inputItem triple">
+                                                        <h5 className="inputName">*{element.registerName[1]}</h5>
+                                                        <input type="text" />
+                                                    </div>
+                                                    <div className="inputItem triple">
+                                                        <h5 className="inputName">*{element.registerName[2]}</h5>
+                                                        <input type="text" />
+                                                    </div>
+                                                </div>)
+
+
+                                    }
+
+
+                                })}
+                            </div>
+                        </div>
+
+                        <div className="functionBtnContainer">
+                            <div className="functionBtn" onClick={() => setFillInIndex(fillInIndex - 1)}>上一步 </div>
+                            <div className="functionBtn" >送 出</div>
+                        </div>
+                    </>
+                )
+            case 3:
+
+        }
+
+    }
+
+    const handleLoading = () => {
+        setLoadingState(false);
+        setTimeout(() => {
+            setLoadingState(true);
+        }, 800);
+    }
 
 
     const handleEditDone = () => {
@@ -328,13 +530,18 @@ const RegisterFrame = () => {
     //     changePage(currentPage);
     //     console.log(currentPage);
     // },[currentPage])
-    
+
     const triggerExportButton = () => {
         triggerExportRef.current?.triggerExport();
     }
     const triggerChange = (e: number) => {
-        loadingRef.current?.triggerChange();
-        setCurrentPage(e);
+        // loadingRef.current?.triggerChange();
+        setLoadingState(false);
+        setTimeout(() => {
+            setCurrentPage(e);
+
+            setLoadingState(true);
+        }, 800);
     }
 
     const saveFile = () => {
@@ -375,57 +582,7 @@ const RegisterFrame = () => {
                 break;
             case 1:
                 return (
-                    <div className="dataTableContainer">
-                        {/* <h4>報名資料 - 細項資料 </h4> */}
-                        <div className="navigation">
-                            {/* <h2>報名資料</h2> */}
-                            <div className="navigationItem">
-                                <div className={`backlast prev ${!currentTable.status ? "divNone" : ""}`}><FontAwesomeIcon icon={faCircleChevronLeft} /> 返回</div>
-                                <div className="icon"><FontAwesomeIcon icon={faFile} />
-                                </div>
-                                <h4>{currentTable.text}</h4>
-                            </div>
-                            {/* <input type="text" className="searchInput" value={globalFilter} onChange={(e) => setGlobalFilter(e.target.value)} /> */}
-                            <div className="searchBarContainer">
-                                <div className="searchBar">
-                                    <input type="text" className="searchInput" value={globalFilter} onChange={(e) => { setGlobalFilter(e.target.value) }} placeholder="請輸入要搜尋的資料" />
-                                    <div className="mag-icon"><FontAwesomeIcon icon={faMagnifyingGlass} /></div>
-                                </div>
-                                <div className="totalRows">
-
-                                    {handleRows()}
-
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* <div className="progressionContainer">
-                                <div className="progression">
-                                    <div className="progression_percent" style={{width:"0%"}} />
-                                </div>
-                                <div className="percent_value"><h5>{0}%</h5></div>
-                            </div> */}
-                        {/* <DataTable triggerModalShow={triggerModalShow} globalFilter={globalFilter} setGlobalFilter={setGlobalFilter} setCalRows={setCalRows} ref={triggerExportRef}
-                        /> */}
-                        {/* max-height: 30rem;
-                        height: 100%;
-                        box-sizing: border-box; */}
-                        <div className="tableSwiperContainer">
-                            <TableSwiper
-                                arg1={<DataTable globalFilter={globalFilter} setGlobalFilter={setGlobalFilter} setCalRows={setCalRows} ref={triggerExportRef}
-                                />}
-                                arg2={<StudentTable globalFilter={globalFilter} setGlobalFilter={setGlobalFilter} setCalRows={setCalRows} setModalShow={setModalShow} ref={triggerExportRef}
-                                />}
-                                setText={setCurrentTable}
-                            />
-                        </div>
-
-
-                        {/* <div className="dataButtonContainer">
-                            <button className="dataButton" type="button">報名狀況統計</button>
-                            <button className="dataButton" type="button" onClick={triggerExportButton}>匯出報名資料</button>
-                        </div> */}
-                    </div>
+                    <DataTableContainer setFillInFrame={setFillInFrame} setLoadingState={setLoadingState} modalShow={modalShow} setModalShow={setModalShow} />
                 )
                 break;
             case 2:
@@ -437,15 +594,10 @@ const RegisterFrame = () => {
                 break;
             case 3:
                 return (
-                    <div>
+                    <div className="codeSearchContainer">
+
                         <h2>代碼查詢</h2>
 
-                        <div className="progressionContainer">
-                            <div className="progression">
-                                <div className="progression_percent" style={{ width: "0%" }} />
-                            </div>
-                            <div className="percent_value"><h5>{0}%</h5></div>
-                        </div>
 
                     </div>
                 )
@@ -462,6 +614,53 @@ const RegisterFrame = () => {
                 {/* <div className="notify">
 
             </div> */}
+
+
+                <ViewStudentContainer setViewFrameState={setViewFrameState} viewFrameState={viewFrameState} />
+                
+
+
+                {/* 身分證號碼
+                    中文姓名
+                    出生日期
+                    報簡職類
+                    英文姓名
+                    檢定區別
+                    通訊地址
+                    戶籍地址
+                    聯絡電話(住宅)
+                    聯絡電話(手機)
+                    就讀學校
+                    就讀科系
+                    上課別
+                    年級
+                    身分別
+                    學制 */}
+
+
+                <div className={`viewDataContainer ${!fillInFrame ? "op0" : ""}`}>
+                    <div className="viewData">
+                        <div className="viewNavigation">
+                            <div className="throughLine" />
+                            <div className={`naviItem ${fillInIndex != 0 ? "currentFrame" : ""}`}>
+                                <div className="naviIcon"><FontAwesomeIcon icon={faPhotoVideo} /></div>
+                                <h5>學生照片</h5>
+                            </div>
+                            <div className={`naviItem ${fillInIndex != 1 ? "currentFrame" : ""}`}>
+                                <div className="naviIcon"><FontAwesomeIcon icon={faFile} /></div>
+                                <h5>學生資料</h5>
+                            </div>
+                            <div className={`naviItem ${fillInIndex != 2 ? "currentFrame" : ""}`}>
+                                <div className="naviIcon"><FontAwesomeIcon icon={faTableList} /></div>
+                                <h5>檢定資料</h5>
+                            </div>
+                        </div>
+                        <div className="line" />
+                        {functionBtnLogic()}
+
+                    </div>
+                </div>
+
                 <div className={`editFrameContainer ${editAlertFrame ? "" : "op0"}`}>
                     <div className="editFrame">
 
@@ -635,7 +834,7 @@ const RegisterFrame = () => {
                 </div>
 
                 {/* <div className="uploadFileFrameContainer"></div> */}
-                <Loading ref={loadingRef} />
+                <Loading arg={loadingState} />
                 <div className="innerContainer">
                     <NavbarComponent />
                     <div className="bottomContainer">

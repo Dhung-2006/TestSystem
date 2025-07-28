@@ -4,12 +4,35 @@ import { faEye, faFileExport } from '@fortawesome/free-solid-svg-icons'
 import type { ColumnDef, ColumnFiltersState, GlobalFiltering } from "@tanstack/react-table";
 import DATA from "../json/tableData.json";
 import { forwardRef, useState, useImperativeHandle } from "react";
-
+import type { rowData } from "../component/DataTable";
 type globalType = {
 
     globalFilter: string;
     setGlobalFilter: React.Dispatch<React.SetStateAction<string>>;
 }
+
+export type rowData = {
+    
+    "身分證號碼" : string;
+    "中文姓名" : string;
+    "出生日期" : string;
+    "報簡職類" : string;
+    "英文姓名" : string;
+    "檢定區別" : string;
+    "通訊地址" : string;
+    "戶籍地址" : string;
+    "聯絡電話(住宅)" : string;
+    "聯絡電話(手機)" : string;
+    "就讀學校" : string;
+    "就讀科系" : string;
+    "上課別" : string;
+    "年級" : string;
+    "班級" : string;
+    "座號" : string;
+    "身分別" : string;
+    "學制" : string;
+}
+
 // type json_type = {
 //     [key : string]
 // }
@@ -20,47 +43,32 @@ const ViewTable = ({ globalFilter, setGlobalFilter }:globalType) => {
     const [data, setData] = useState<rowData[]>(DATA);
     const [exportData, setExportData] = useState(false);
     const [columnFilter, setColumnFilter] = useState<ColumnFiltersState>([]);
-    type rowData = {
-        "name": string,
-        "type": string;
-        "identity": string;
-        "number": number;
-        "photo_n": number;
-        "all": number;
-        "pass_a": number;
-        "pass_s": number;
-    }
+    
     const columns: ColumnDef<any>[] = [
-        {
+       {
             accessorKey: "no",
             header: "No.",
             cell: (props: any) => <p>{props.row.index + 1}</p>
         }
         ,
+        ,
         {
-            accessorKey: "name",
-            header: "姓名",
+            accessorKey: "中文姓名",
+            header: "中文姓名",
             cell: (props: any) => <p>{props.getValue()}</p>
         }
         ,
         {
-            accessorKey: "type",
-            header: "報名種類",
+            accessorKey: "報簡職類",
+            header: "報簡職類",
             cell: (props: any) => <p>{props.getValue()}</p>
         }
         ,
         {
-            accessorKey: "identity",
-            header: "身份",
+            accessorKey: "檢定區別",
+            header: "檢定區別",
             cell: (props: any) => <p>{props.getValue()}</p>
         }
-        // ,
-        // {
-
-        //     accessorKey: "pass_s",
-        //     header: "",
-        //     cell: (props: any) => <p>{props.getValue()}</p>
-        // }
     ]
 
     const table = useReactTable({

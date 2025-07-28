@@ -40,6 +40,9 @@ $bxShadow : rgba(14, 30, 37, 0.12) 0px 2px 4px 0px, rgba(14, 30, 37, 0.32) 0px 2
 .redT{
     color: rgb(225, 47, 47) !important;
 }
+.wrap{
+    flex-direction: column
+}
 
 .allCenter{
     @include all-center();
