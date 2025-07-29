@@ -40,6 +40,10 @@ app.get('/' , async(req,res)=>{
   console.log(`visitor:${ip}`)
 });
 
+app.post("/test" , (req, res)=>{
+  console.log('13123123123')
+})
+
 app.get('/cleanAllData', (req, res) => {
   fs.unlink('./sqlite.db', (err) => {
     if (err) {
@@ -70,7 +74,7 @@ const storage = multer.diskStorage({
     cb(null, `./convert_content`)
   },
   filename: function (req, file, cb) {
-    console.log(req.headers)
+    console.log(req.query)
     cb(null, "test.xlsx" )
   }
 })
@@ -78,6 +82,8 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage })
 
 app.post('/upload', upload.single('uploadFile') , async (req, res) => {  
+  console.log(req.body.userName);
+  
   // console.log(req.body)
   // console.log(req.body.userName)
   // console.log(req.body.uploadFileName)

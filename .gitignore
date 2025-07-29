@@ -1,7 +1,6 @@
 node_modules/
 .venv/
 convert_content/
-user_data/
 # Logs
 logs
 *.log

@@ -352,7 +352,7 @@ const RegisterFrame = () => {
         if (uploadStatus.status && uploadStatus.fileName != "") {
             // const uploadName: string | undefined = uploadFileNameRef.current?.value;
             const uploadFile: FileList | null | undefined = uploadFileRef.current?.files;
-            const URL = "";
+            const URL = `http://localhost:3000/upload?userName=${document.cookie}`;
             if (uploadStatus.userInputName != undefined && (uploadFile?.length != null || uploadFile?.length != undefined)) {
 
                 formData.append("uploadFileName", uploadStatus.userInputName);
