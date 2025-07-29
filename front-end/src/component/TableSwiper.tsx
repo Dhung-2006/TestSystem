@@ -11,7 +11,7 @@ import { library } from '@fortawesome/fontawesome-svg-core';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import type { IconName } from '@fortawesome/fontawesome-svg-core';
 import DataTable, { type ExportDataType } from "../component/DataTable.tsx";
-
+import type { Swiper as SwiperClass } from "swiper/types";
 import Datas from "../json/swiperData.json";
 
 library.add(fas);
@@ -20,16 +20,16 @@ type dispatchType = {
     status: boolean
 }
 type reactNodeType = {
+    swiperRef: any,
     arg1: React.ReactNode,
     arg2: React.ReactNode;
     setText:React.Dispatch<React.SetStateAction<dispatchType>>
 }
 
-const TableSwiper = ({ arg1, arg2 , setText}: reactNodeType) => {
+const TableSwiper = ({ swiperRef , arg1, arg2 , setText}: reactNodeType) => {
 
 
     // const [isDone, setIsDone] = useState(false);
-    const swiperRef = useRef<any>(null);
 
     return (
         <Swiper
@@ -39,10 +39,10 @@ const TableSwiper = ({ arg1, arg2 , setText}: reactNodeType) => {
             allowSlideNext={true}
             allowTouchMove={false}
             modules={[Navigation]}
-            navigation={{
-                nextEl: '.next',
-                prevEl: '.prev',
-            }}
+            // navigation={{
+            //     nextEl: '.next',
+            //     prevEl: '.prev',
+            // }}
             ref={swiperRef}
             // pagination={{ clickable: true }}
             scrollbar={{ draggable: true }}

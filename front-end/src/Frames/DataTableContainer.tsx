@@ -1,4 +1,5 @@
 import React, { use, useEffect, useImperativeHandle, useRef, useState } from "react";
+import type { Swiper as SwiperClass } from "swiper/types";
 import NavbarComponent from "../component/NavbarComponent";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAdd, faAngleLeft, faAngleRight, faBackward, faCheck, faCheckCircle, faCircleChevronLeft, faCirclePlus, faCircleQuestion, faDatabase, faFile, faGear, faMagnifyingGlass, faPaperPlane, faPen, faPrint, faRecycle, faRepeat, faTrash, faUpload, faUser, faUserCircle, faWarning, faX } from '@fortawesome/free-solid-svg-icons'
@@ -20,19 +21,25 @@ type InputProps = {
     modalShow: number,
     setModalShow: React.Dispatch<React.SetStateAction<number>>,
     setFillInFrame: React.Dispatch<React.SetStateAction<boolean>>,
+    setViewFrameState: React.Dispatch<React.SetStateAction<number>>,
+    setEditFrameState: React.Dispatch<React.SetStateAction<number>>,
+
 }
 
 
-const DataTableContainer = ({ setLoadingState, modalShow, setModalShow, setFillInFrame }: InputProps) => {
+const DataTableContainer = ({ setEditFrameState, setViewFrameState, setLoadingState, modalShow, setModalShow, setFillInFrame }: InputProps) => {
     const [data, setData] = useState<rowData[]>(DATA);
     // const [modalShow, setModalShow] = useState(0);
     const [currentTable, setCurrentTable] = useState({ text: "報名資料", status: false });
     const [globalFilter, setGlobalFilter] = useState<string>("");
+    const [studentFilter, setStudentFilter] = useState<string>("");
+    const [changePage, setChangePage] = useState<number>(0);
     const [calRows, setCalRows] = useState<rowType>({ value1: "", value2: "" });
 
 
     const triggerExportRef = useRef<ExportDataType | null>(null);
     const tableHeightRef = useRef<HTMLDivElement>(null);
+    const swiperRef = useRef<SwiperClass>(null);
 
     // const enterDetailData = () => {
     //     try {
@@ -52,8 +59,12 @@ const DataTableContainer = ({ setLoadingState, modalShow, setModalShow, setFillI
     //     }
     // }
     const enterDetailData = async () => {
+            setChangePage(1);
+            if(swiperRef.current){
+                swiperRef.current.slideNext();
+            }
         try {
-
+            
             setLoadingState(false);
             const URL: string = "";
             const headers = new Headers({
@@ -73,7 +84,16 @@ const DataTableContainer = ({ setLoadingState, modalShow, setModalShow, setFillI
     }
 
     const handleViewData = () => {
+        // fetch -> setState
+        // setEditViewData(prev=>({
+        //     ...prev,
 
+        // }))
+        // 反正這邊就是明天要跟豬串起來的fetch 明天再用 更新資料而已
+        setViewFrameState(1);
+    }
+    const EditViewData = () => {
+        setEditFrameState(1);
     }
 
     const insertData = () => {
@@ -110,19 +130,22 @@ const DataTableContainer = ({ setLoadingState, modalShow, setModalShow, setFillI
     return (
         <div className="dataTableContainer">
 
-
-
             <div className="navigation">
                 <div className="navigationItem">
-                    <div className={`backlast prev ${!currentTable.status ? "divNone" : ""}`}><FontAwesomeIcon icon={faCircleChevronLeft} /> 返回</div>
+                    <div className={`backlast prev ${!currentTable.status ? "divNone" : ""}`} onClick={()=>{setChangePage(0) ; swiperRef.current? swiperRef.current.slidePrev() : null}}><FontAwesomeIcon icon={faCircleChevronLeft} /> 返回</div>
                     <div className="icon"><FontAwesomeIcon icon={faFile} />
                     </div>
                     <h4>{currentTable.text}</h4>
                 </div>
                 <div className="searchBarContainer">
                     <div className="searchBar">
-                        <input type="text" className="searchInput" value={globalFilter} onChange={(e) => { setGlobalFilter(e.target.value) }} placeholder="請輸入要搜尋的資料" />
+                        {changePage==0 ?
+                            <input type="text" className="searchInput" value={globalFilter} onChange={(e) => { setGlobalFilter(e.target.value) }} placeholder="請輸入要搜尋的資料夾" />
+                            :
+                            <input type="text" className="searchInput" value={studentFilter} onChange={(e) => { setStudentFilter(e.target.value) }} placeholder="請輸入要搜尋的資料" />
+                        }
                         <div className="mag-icon"><FontAwesomeIcon icon={faMagnifyingGlass} /></div>
+
                     </div>
                     <div className="totalRows">
 
@@ -133,9 +156,10 @@ const DataTableContainer = ({ setLoadingState, modalShow, setModalShow, setFillI
             </div>
             <div className="tableSwiperContainer" ref={tableHeightRef}>
                 <TableSwiper
-                    arg1={<DataTable globalFilter={globalFilter} setGlobalFilter={setGlobalFilter} setCalRows={setCalRows} ref={triggerExportRef}
+                    swiperRef={swiperRef}
+                    arg1={<DataTable swiperRef={swiperRef.current} globalFilter={globalFilter} setGlobalFilter={setGlobalFilter} setCalRows={setCalRows} ref={triggerExportRef}
                         enterDetailData={enterDetailData} />}
-                    arg2={<StudentTable globalFilter={globalFilter} setGlobalFilter={setGlobalFilter} setCalRows={setCalRows} setModalShow={setModalShow} ref={triggerExportRef}
+                    arg2={<StudentTable EditViewData={EditViewData} studentFilter={studentFilter} setStudentFilter={setStudentFilter} setCalRows={setCalRows} setModalShow={setModalShow} ref={triggerExportRef}
                         data={data} setData={setData} handleViewData={handleViewData} />}
 
                     setText={setCurrentTable}
