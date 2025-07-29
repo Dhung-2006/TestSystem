@@ -1,6 +1,4 @@
 const { spawn } = require('child_process');
-// import { firebasedataconnect } from 'googleapis/build/src/apis/firebasedataconnect';
-// import { useImperativeHandle } from 'react';
 const express = require('express');
 const app = express();
 const path = require("path")
@@ -14,8 +12,12 @@ const cors = require('cors');
 const fs = require('fs');
 const { verbose } = require('sqlite3');
 const { Json } = require('sequelize/lib/utils');
+const { connect } = require('http2');
+const { datacatalog } = require('googleapis/build/src/apis/datacatalog');
+const { loadEnvFile } = require('process');
+const { essentialcontacts } = require('googleapis/build/src/apis/essentialcontacts');
+const multer = require('multer');
 // const { assuredworkloads } = require('googleapis/build/src/apis/assuredworkloads');
-
 
 app.use(express.urlencoded({extended:true}))
 
@@ -25,6 +27,11 @@ app.use(cors({
 }));
 app.use(express.json())
 
+
+// app.get("/test" , (req, res) => {
+//   console.log("test success")
+//   res.send('success')
+// })
 
 app.get('/' , async(req,res)=>{
   res.sendFile(path.join(__dirname, 'test.html'));
@@ -58,9 +65,22 @@ app.get('/cleanAllData', (req, res) => {
 //   const upload = await fetch('http://localhost:3000/upload')
 // })
 
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, `./convert_content`)
+  },
+  filename: function (req, file, cb) {
+    console.log(req.headers)
+    cb(null, "test.xlsx" )
+  }
+})
 
+const upload = multer({ storage: storage })
 
-app.get('/upload', async (req, res) => {  
+app.post('/upload', upload.single('uploadFile') , async (req, res) => {  
+  // console.log(req.body)
+  // console.log(req.body.userName)
+  // console.log(req.body.uploadFileName)
   // -----------------------------------------------
   const funcToRun = "getDataTable";
   const filePath = "./convert_content/1.中壢高商(14901).xlsx"
@@ -69,39 +89,39 @@ app.get('/upload', async (req, res) => {
   // const getFilePath = req.body['filePath']
   // const py = spawn('python' , ['process.py' , funcToRun , filePath])
   // -------------------------------------------------
-  const py = spawn('python', ['process.py', filePath, userName, cFileName])
-  const folderName = path.join(__dirname, "user_data" , userName , cFileName)
-  const fullTest  = path.join(__dirname, "user_data" , userName , cFileName , "full_Test")
-  const studyTest = path.join(__dirname, "user_data" , userName , cFileName , "study_Test")
-  const technicalTest = path.join(__dirname, "user_data" , userName , cFileName , "technical_Test")
-  const imagePath = path.join(__dirname, "user_data" , userName , cFileName , "image")
-  await fs.mkdirSync(folderName, { recursive: true });
-  await fs.mkdirSync(fullTest, { recursive: true });
-  await fs.mkdirSync(studyTest, { recursive: true });   
-  await fs.mkdirSync(technicalTest, { recursive: true });   
-  await fs.mkdirSync(imagePath, { recursive: true });   
-  let outputData = ''
-  py.stdout.on('data', (data) => {
-    outputData += data.toString('utf-8')
-  })
+  // const py = spawn('python', ['process.py', filePath, userName, cFileName])
+  // const folderName = path.join(__dirname, "user_data" , userName , cFileName)
+  // const fullTest  = path.join(__dirname, "user_data" , userName , cFileName , "full_Test")
+  // const studyTest = path.join(__dirname, "user_data" , userName , cFileName , "study_Test")
+  // const technicalTest = path.join(__dirname, "user_data" , userName , cFileName , "technical_Test")
+  // const imagePath = path.join(__dirname, "user_data" , userName , cFileName , "image")
+  // await fs.mkdirSync(folderName, { recursive: true });
+  // await fs.mkdirSync(fullTest, { recursive: true });
+  // await fs.mkdirSync(studyTest, { recursive: true });   
+  // await fs.mkdirSync(technicalTest, { recursive: true });   
+  // await fs.mkdirSync(imagePath, { recursive: true });   
+  // let outputData = ''
+  // py.stdout.on('data', (data) => {
+  //   outputData += data.toString('utf-8')
+  // })
 
-  py.stderr.on('data' , (data) =>{
-    console.log(data.toString('utf-8'));
-  })
+  // py.stderr.on('data' , (data) =>{
+  //   console.log(data.toString('utf-8'));
+  // })
 
-  py.on('close', () => {
-    console.log(outputData)
-    sequelize.sync().then(() => {
-      jsonFile.create({
-        jsonName: cFileName,
-        userAcc: userName
-      }).then(() => {
-        console.log("Json File has already prepared")
-      }).catch(err => {
-        console.log(err.name)
-      })
-    })
-  })
+  // py.on('close', () => {
+  //   console.log(outputData)
+  //   sequelize.sync().then(() => {
+  //     jsonFile.create({
+  //       jsonName: cFileName,
+  //       userAcc: userName
+  //     }).then(() => {
+  //       console.log("Json File has already prepared")
+  //     }).catch(err => {
+  //       console.log(err.name)
+  //     })
+  //   })
+  // })
 })
 
 app.post('/signup' , (req,res) =>{
@@ -266,19 +286,90 @@ app.get("/verifyData", (req, res) => {
   // verify_data()
 })
 
-function verify_data(json_data ,idx){
-  const idRegex = /^[A-Z][12]\d{8}$/;
-  const id = json_data["身分證號碼"];
-  let badContent = []
-  if (!idRegex.test(id)) {
-    // console.log("格式錯誤");
-    badContent.push("身分證號碼")
-  }
+// function verify_data(json_data ,idx){
+//   const idRegex = /^[A-Z][12]\d{8}$/;
+//   const id = json_data["身分證號碼"];
+//   let badContent = []
+//   if (!idRegex.test(id)) {
+//     // console.log("格式錯誤");
+//     badContent.push("身分證號碼")
+//   }
 
-  const birthRegex = /^\d{5}$/
-  const birthDay = json_data["出生日期"]  
-  // if (!birthRegex.test(b))
-}
+//   const birthRegex = /^\d{5}$/
+//   const birthDay = json_data["出生日期"]  
+//   // if (!birthRegex.test(b))
+// }
+
+app.get("/editFile" , (req ,res) =>{
+  testTypeLst = {
+    "A" : "fullTest",
+    "B" : "studyTest",
+    "C" : "technicalTest"
+  }
+  const status = "insert";
+  const userName = "dexter";
+  const fileName = "test-1";
+  const pigID = "A00005";
+  const testType = testTypeLst[pigID.slice(0,1)]
+  const editIDX = Number(pigID.slice(1))-1
+  const item = "准考證號碼";
+  const content = "1130303"
+  const insertFile = {
+    "准考證號碼": "6",
+    "身分證號碼": "H11111111",
+    "中文姓名": "allen",
+    "出生日期": "941314",
+    "報簡職類": "視覺",
+    "英文姓名": "Huang,sheng hung",
+    "檢定區別": "全測",
+    "通訊地址": "桃園市桃園區幸福路",
+    "戶籍地址": "桃園市桃園區XXX",
+    "聯絡電話(住宅)": "034551235",
+    "聯絡電話(手機)": "0953083990",
+    "就讀學校": "中壢家商",
+    "就讀科系": "商業經營科",
+    "上課別": "日間部",
+    "年級": "1",
+    "班級": "19",
+    "座號": "2",
+    "身分別": "無",
+    "學制": "高級中學"
+  }
+  fs.readFile(`./user_data/${userName}/${fileName}/${testType}/${testType}.json` , 'utf8' , (err , jsonList)=>{
+    if (err){
+      console.error( err)
+    }
+    loadJsonList = JSON.parse(jsonList)
+    switch (status){
+      case "edit" : 
+        jsonData = loadJsonList[Number(editIDX)]
+        jsonData[item]  = content;
+        loadJsonList[Number(editIDX)] = jsonData      
+        saveChange(loadJsonList)
+        break;
+      case "insert" : 
+        loadJsonList.push(insertFile)
+        saveChange(loadJsonList)
+        break
+      case "delete" :
+        console.log("delete")
+        break;
+      case "change" : 
+         console.log("change")
+         break;
+    };
+    
+    function saveChange(data){
+      fs.writeFile(`./user_data/${userName}/${fileName}/${testType}/${testType}.json`  , JSON.stringify(data, null, 2)  , (err) =>{
+        if (err){
+          console.error(err);
+        }else{
+          console.log("file write success")
+        }
+      })
+    }
+  });
+})
 
 app.listen(3000 , ()=>{
   console.log("server is running"); 

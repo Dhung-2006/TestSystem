@@ -10,18 +10,18 @@ sys.stdout.reconfigure(encoding='utf-8')  # ✅ 保證輸出為 UTF-8（避免 W
 
 def getDataTable(filePath):
     fullTestTable = pd.read_excel(filePath, sheet_name='套印用資料-全測')
-    dataJsonLst = getData(filePath,fullTestTable , "Data-全測")
-    with open(f"./back-end/user_data/{userName}/{cFileName}/fullTest/fullTest.json" , "w" , encoding="utf-8") as jason_f:
+    dataJsonLst = getData(filePath,fullTestTable , "Data-全測" , "A")
+    with open(f"./user_data/{userName}/{cFileName}/fullTest/fullTest.json" , "w" , encoding="utf-8") as jason_f:
         json.dump(dataJsonLst , jason_f , ensure_ascii=False , indent= 4)
 
     studyTestTable = pd.read_excel(filePath, sheet_name='套印用資料-免學')
-    dataJsonLst = getData(filePath,studyTestTable , "Data-免學")
-    with open(f"./back-end/user_data/{userName}/{cFileName}/studyTest/studyTest.json" , "w" , encoding="utf-8") as jason_f:
+    dataJsonLst = getData(filePath,studyTestTable , "Data-免學" , "B")
+    with open(f"./user_data/{userName}/{cFileName}/studyTest/studyTest.json" , "w" , encoding="utf-8") as jason_f:
         json.dump(dataJsonLst , jason_f , ensure_ascii=False , indent= 4)
 
     technicalTestTable = pd.read_excel(filePath, sheet_name='套印用資料-免術')
-    dataJsonLst = getData(filePath,technicalTestTable, "Data-免學")
-    with open(f"./back-end/user_data/{userName}/{cFileName}/technicalTest/technicalTest.json" , "w" , encoding="utf-8") as jason_f:
+    dataJsonLst = getData(filePath,technicalTestTable, "Data-免學" , "C")
+    with open(f"./user_data/{userName}/{cFileName}/technicalTest/technicalTest.json" , "w" , encoding="utf-8") as jason_f:
         json.dump(dataJsonLst , jason_f , ensure_ascii=False , indent= 4)
 
     
@@ -60,7 +60,7 @@ def getSchoolCode( filePath):
     schoolTypeLst = [data[0] for data in dataframe.values]
     return schoolTypeLst
 
-def getData(filePath,dataFrame , frameType):
+def getData(filePath,dataFrame , frameType , pigID):
     dataRows = dataFrame.shape[0]
     dataJsonLst = []
     idDataframe = pd.read_excel(filePath , sheet_name= frameType , skiprows=2)
@@ -102,6 +102,7 @@ def getData(filePath,dataFrame , frameType):
         schoolTypeLst = getSchoolCode(filePath)
         schoolType = schoolTypeLst[schoolTypeCode]
         datajson = {
+            'pigID' : f"{pigID}{i+1:05d}",
             '准考證號碼':str(testNumber),
             '身分證號碼':identification,
             '中文姓名':chName,
