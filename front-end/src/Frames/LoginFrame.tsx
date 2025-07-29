@@ -2,50 +2,56 @@ import { json, Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGear } from '@fortawesome/free-solid-svg-icons'
 import Loading from "../component/Loading";
-import { useEffect, useState , useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 const LoginFrame = () => {
 
     // const [loginAccount , setLoginAccount] = useState("");
     // const [LoginPassword , setLoginPassword] = useState("");
 
-    const [formValue , setFormValue] = useState({loginAccount:"" , loginPassword:""});
+    const [loading, setLoading] = useState(true);
+    const [formValue, setFormValue] = useState({ loginAccount: "", loginPassword: "" });
 
-    // const account = useRef(null);
+    useEffect(() => { 
+        setLoading(false);
+        setTimeout(()=>{
+            setLoading(true);
+        },800)
+    }, [])
 
-    const handleFormValue = (e:React.ChangeEvent<HTMLInputElement>)=>{
+    const handleFormValue = (e: React.ChangeEvent<HTMLInputElement>) => {
         // name => get element裡面的name
         // value => get element裡面的value
-        const {name , value } = e.target;
-        setFormValue((prev)=>({ ...prev , [name]:value }));
+        const { name, value } = e.target;
+        setFormValue((prev) => ({ ...prev, [name]: value }));
     }
 
-    
 
-    const handleFormSubmit = async(e:React.ChangeEvent<HTMLFormElement>) =>{
+
+    const handleFormSubmit = async (e: React.ChangeEvent<HTMLFormElement>) => {
         e.preventDefault();
         const formData = {
-            'loginAccount':formValue.loginAccount,
-            'loginPassword' : formValue.loginPassword
+            'loginAccount': formValue.loginAccount,
+            'loginPassword': formValue.loginPassword
         }
         // formData.append("loginAccount" , formValue.loginAccount);
         // formData.append("loginPassword" , formValue.loginPassword);
-        const URL : string = "http://localhost:3000/login";
-        try{
-            const res = await fetch(URL,{
-                method:"POST",
-                headers:{
-                    'Content-Type':'application/json'
+        const URL: string = "http://localhost:3000/login";
+        try {
+            const res = await fetch(URL, {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(formData)
             })
-            
-            if(!res.ok) throw new Error("500 server error");
+
+            if (!res.ok) throw new Error("500 server error");
             const data = await res.json();
-            console.log("成功",data)
-            
+            console.log("成功", data)
+
         }
-        catch(err){
-            console.error("123",err);
+        catch (err) {
+            console.error("123", err);
         }
     }
     // useEffect(()=>{console.log(loginAccount)},[loginAccount])
@@ -60,7 +66,7 @@ const LoginFrame = () => {
     // }
     return (
         <div className="LoginFrameContainer">
-            <Loading />
+            <Loading arg={loading} />
             {/* 要判斷login/regist */}
             <form className="loginbox" onSubmit={(handleFormSubmit)}>
                 <div className="boxContainer">

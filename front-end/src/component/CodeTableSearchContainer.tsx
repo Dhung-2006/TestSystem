@@ -2,35 +2,16 @@ import { useReactTable, getCoreRowModel, getFilteredRowModel, flexRender } from 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faFileExport } from '@fortawesome/free-solid-svg-icons'
 import type { ColumnDef, ColumnFiltersState, GlobalFiltering } from "@tanstack/react-table";
-import DATA from "../json/tableData.json";
+import DATA from "../json/codeTemplate.json";
 import { forwardRef, useState, useImperativeHandle } from "react";
-import type { rowData } from "../component/DataTable";
 type globalType = {
 
     globalFilter: string;
     setGlobalFilter: React.Dispatch<React.SetStateAction<string>>;
 }
 
-export type rowData = {
-    
-    "身分證號碼" : string;
-    "中文姓名" : string;
-    "出生日期" : string;
-    "報簡職類" : string;
-    "英文姓名" : string;
-    "檢定區別" : string;
-    "通訊地址" : string;
-    "戶籍地址" : string;
-    "聯絡電話(住宅)" : string;
-    "聯絡電話(手機)" : string;
-    "就讀學校" : string;
-    "就讀科系" : string;
-    "上課別" : string;
-    "年級" : string;
-    "班級" : string;
-    "座號" : string;
-    "身分別" : string;
-    "學制" : string;
+type rowData = {
+    "type-code": string
 }
 
 // type json_type = {
@@ -38,7 +19,7 @@ export type rowData = {
 // }
 // higher order function only receive two arguments , props needs to become a set.
 // const ViewTable :React.FC<json_type> = (init_data) => {
-const ViewTable = ({ globalFilter, setGlobalFilter }:globalType) => {
+const CodeTableSearchContainer = ({ globalFilter, setGlobalFilter }:globalType) => {
     // const { modalOut } = props; 
     const [data, setData] = useState<rowData[]>(DATA);
     const [exportData, setExportData] = useState(false);
@@ -52,22 +33,22 @@ const ViewTable = ({ globalFilter, setGlobalFilter }:globalType) => {
         }
         ,
         {
-            accessorKey: "中文姓名",
-            header: "中文姓名",
+            accessorKey: "type-code",
+            header: "類別",
             cell: (props: any) => <p>{props.getValue()}</p>
         }
-        ,
-        {
-            accessorKey: "報簡職類",
-            header: "報簡職類",
-            cell: (props: any) => <p>{props.getValue()}</p>
-        }
-        ,
-        {
-            accessorKey: "檢定區別",
-            header: "檢定區別",
-            cell: (props: any) => <p>{props.getValue()}</p>
-        }
+        // ,
+        // {
+        //     accessorKey: "報簡職類",
+        //     header: "報簡職類",
+        //     cell: (props: any) => <p>{props.getValue()}</p>
+        // }
+        // ,
+        // {
+        //     accessorKey: "檢定區別",
+        //     header: "檢定區別",
+        //     cell: (props: any) => <p>{props.getValue()}</p>
+        // }
     ]
 
     const table = useReactTable({
@@ -114,18 +95,9 @@ const ViewTable = ({ globalFilter, setGlobalFilter }:globalType) => {
                                 </td>
                             ))}
                             <td>
-                                {/* <div style={{ display: "flex" }}> */}
                                 <div className="iconEye">
                                     <FontAwesomeIcon icon={faEye} />
                                 </div>
-                                {/* 先view就好
-                                    checkbox -> multiple export 
-                                    view 用成開一個modal popout 再rerender
-                                    */}
-                                {/* <div>
-                                        <FontAwesomeIcon icon={faFileExport} />
-                                    </div> */}
-                                {/* </div> */}
                             </td>
                         </tr>
 
@@ -135,4 +107,4 @@ const ViewTable = ({ globalFilter, setGlobalFilter }:globalType) => {
         </div>
     )
 }
-export default ViewTable;
+export default CodeTableSearchContainer;

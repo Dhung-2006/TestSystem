@@ -8,10 +8,15 @@ import ViewComponent from "../component/ViewComponent.tsx";
 import TableSwiper from "../component/TableSwiper.tsx";
 import StudentTable from "../component/StudentTable.tsx"
 import DataTable, { type ExportDataType, type rowData } from "../component/DataTable.tsx";
-// import Loading from "../component/Loading.tsx";
-import DATA from "../json/tableData.json";
+import { DeclareContextType } from "../types/DeclareContextType.tsx";
+
+import DATA from "../json/testPigID.json";
 import { json } from "react-router-dom";
 
+type currentTableType = {
+    text: string,
+    status: boolean
+}
 type rowType = {
     value1: string,
     value2: string
@@ -23,19 +28,19 @@ type InputProps = {
     setFillInFrame: React.Dispatch<React.SetStateAction<boolean>>,
     setViewFrameState: React.Dispatch<React.SetStateAction<number>>,
     setEditFrameState: React.Dispatch<React.SetStateAction<number>>,
-
+    setDoubleCheck: React.Dispatch<React.SetStateAction<number>>;
 }
 
 
-const DataTableContainer = ({ setEditFrameState, setViewFrameState, setLoadingState, modalShow, setModalShow, setFillInFrame }: InputProps) => {
+const DataTableContainer = ({ setDoubleCheck, setEditFrameState, setViewFrameState, setLoadingState, modalShow, setModalShow, setFillInFrame }: InputProps) => {
     const [data, setData] = useState<rowData[]>(DATA);
     // const [modalShow, setModalShow] = useState(0);
-    const [currentTable, setCurrentTable] = useState({ text: "報名資料", status: false });
+    const [currentTable, setCurrentTable] = useState<currentTableType>({ text: "報名資料", status: false });
     const [globalFilter, setGlobalFilter] = useState<string>("");
     const [studentFilter, setStudentFilter] = useState<string>("");
     const [changePage, setChangePage] = useState<number>(0);
     const [calRows, setCalRows] = useState<rowType>({ value1: "", value2: "" });
-
+    const [pigID, setPigID] = useState("");
 
     const triggerExportRef = useRef<ExportDataType | null>(null);
     const tableHeightRef = useRef<HTMLDivElement>(null);
@@ -58,13 +63,19 @@ const DataTableContainer = ({ setEditFrameState, setViewFrameState, setLoadingSt
     //         console.error(err);
     //     }
     // }
-    const enterDetailData = async () => {
-            setChangePage(1);
-            if(swiperRef.current){
-                swiperRef.current.slideNext();
-            }
+    const enterDetailData = async (arg: string) => {
+        setCurrentTable(prev => ({
+            ...prev,
+            status: false,
+            text: `報名資料 / ${arg}`
+        }));
+
+        setChangePage(1);
+        if (swiperRef.current) {
+            swiperRef.current.slideNext();
+        }
         try {
-            
+
             setLoadingState(false);
             const URL: string = "";
             const headers = new Headers({
@@ -95,79 +106,113 @@ const DataTableContainer = ({ setEditFrameState, setViewFrameState, setLoadingSt
     const EditViewData = () => {
         setEditFrameState(1);
     }
+    const deleteEditData = (index: number, arg: string) => {
+        if (index == 0) {
+            // 1 save & asking
+            setPigID(arg);
+            setDoubleCheck(1);
+        }
+        else {
+            // 2 submit
+            setDoubleCheck(0);
+            submitDeleteEditData(pigID);
 
-    const insertData = () => {
-        const newRow = {
-            "身分證號碼": "H126312469",
-            "中文姓名": "卓z3",
-            "出生日期": "95830",
-            "報簡職類": "會計人工",
-            "英文姓名": "ZHUO,YU-CHEN",
-            "檢定區別": "全測",
-            "通訊地址": "桃園市中壢區中北",
-            "戶籍地址": "桃園市中壢區中北路",
-            "聯絡電話(住宅)": "034551238",
-            "聯絡電話(手機)": "953083990",
-            "就讀學校": "中壢家商",
-            "就讀科系": "商業經營科",
-            "上課別": "日間部",
-            "年級": "1",
-            "班級": "19",
-            "座號": "5",
-            "身分別": "身心障礙",
-            "學制": "高級中學"
         }
-        setData(prevData => [...prevData, newRow]);
-        // alert(1)
-        // useEffect(() => {
-        // alert()
-        if (tableHeightRef.current) {
-            tableHeightRef.current.scrollTop = tableHeightRef.current?.scrollHeight;
-        }
-        // }, [data])
     }
+    const submitDeleteEditData = async (arg: string) => {
+        const URL: string = "";
+        try {
+            const res = await fetch(URL, {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ "deleteName": arg })
+            })
+
+            if (!res.ok) throw new Error("500 server error");
+
+            console.log("成功", data)
+
+        }
+        catch (err) {
+            console.error("123", err);
+        }
+    }
+    // const insertData = () => {
+    //     const newRow = {
+    //         "pigID":
+    //         "身分證號碼": "H126312469",
+    //         "中文姓名": "卓z3",
+    //         "出生日期": "95830",
+    //         "報簡職類": "會計人工",
+    //         "英文姓名": "ZHUO,YU-CHEN",
+    //         "檢定區別": "全測",
+    //         "通訊地址": "桃園市中壢區中北",
+    //         "戶籍地址": "桃園市中壢區中北路",
+    //         "聯絡電話(住宅)": "034551238",
+    //         "聯絡電話(手機)": "953083990",
+    //         "就讀學校": "中壢家商",
+    //         "就讀科系": "商業經營科",
+    //         "上課別": "日間部",
+    //         "年級": "1",
+    //         "班級": "19",
+    //         "座號": "5",
+    //         "身分別": "身心障礙",
+    //         "學制": "高級中學"
+    //     }
+    //     setData(prevData => [...prevData, newRow]);
+    //     // alert(1)
+    //     // useEffect(() => {
+    //     // alert()
+    //     if (tableHeightRef.current) {
+    //         tableHeightRef.current.scrollTop = tableHeightRef.current?.scrollHeight;
+    //     }
+    //     // }, [data])
+    // }
 
     return (
-        <div className="dataTableContainer">
-
-            <div className="navigation">
-                <div className="navigationItem">
-                    <div className={`backlast prev ${!currentTable.status ? "divNone" : ""}`} onClick={()=>{setChangePage(0) ; swiperRef.current? swiperRef.current.slidePrev() : null}}><FontAwesomeIcon icon={faCircleChevronLeft} /> 返回</div>
-                    <div className="icon"><FontAwesomeIcon icon={faFile} />
+        <DeclareContextType.Provider value={{ deleteEditData }}>
+            <div className="dataTableContainer">
+                <div className="navigation">
+                    <div className="navigationItem">
+                        <div className={`backlast prev ${!currentTable.status ? "divNone" : ""}`} onClick={() => { setChangePage(0); swiperRef.current ? swiperRef.current.slidePrev() : null }}><FontAwesomeIcon icon={faCircleChevronLeft} /> 返回</div>
+                        <div className="icon"><FontAwesomeIcon icon={faFile} />
+                        </div>
+                        <h4>{currentTable.text}</h4>
                     </div>
-                    <h4>{currentTable.text}</h4>
+                    <div className="searchBarContainer">
+                        <div className="searchBar">
+                            {changePage == 0 ?
+                                <input type="text" className="searchInput" value={globalFilter} onChange={(e) => { setGlobalFilter(e.target.value) }} placeholder="請輸入要搜尋的資料夾" />
+                                :
+                                <input type="text" className="searchInput" value={studentFilter} onChange={(e) => { setStudentFilter(e.target.value) }} placeholder="請輸入要搜尋的資料" />
+                            }
+                            <div className="mag-icon"><FontAwesomeIcon icon={faMagnifyingGlass} /></div>
+
+                        </div>
+                        <div className="totalRows">
+
+                            <div className={`addNewItem ${!currentTable.status ? "divNone" : ""}`} onClick={() => setFillInFrame(true)} ><FontAwesomeIcon icon={faCirclePlus} /> 新增</div>
+
+                        </div>
+                    </div>
                 </div>
-                <div className="searchBarContainer">
-                    <div className="searchBar">
-                        {changePage==0 ?
-                            <input type="text" className="searchInput" value={globalFilter} onChange={(e) => { setGlobalFilter(e.target.value) }} placeholder="請輸入要搜尋的資料夾" />
-                            :
-                            <input type="text" className="searchInput" value={studentFilter} onChange={(e) => { setStudentFilter(e.target.value) }} placeholder="請輸入要搜尋的資料" />
-                        }
-                        <div className="mag-icon"><FontAwesomeIcon icon={faMagnifyingGlass} /></div>
+                <div className="tableSwiperContainer" ref={tableHeightRef}>
+                    <TableSwiper
+                        swiperRef={swiperRef}
+                        arg1={<DataTable swiperRef={swiperRef.current} globalFilter={globalFilter} setGlobalFilter={setGlobalFilter} setCalRows={setCalRows} ref={triggerExportRef}
+                            enterDetailData={enterDetailData} />}
+                        arg2={<StudentTable EditViewData={EditViewData} studentFilter={studentFilter} setStudentFilter={setStudentFilter} setCalRows={setCalRows} setModalShow={setModalShow} ref={triggerExportRef}
+                            data={data} setData={setData} handleViewData={handleViewData} />}
 
-                    </div>
-                    <div className="totalRows">
+                        setText={setCurrentTable}
 
-                        <div className={`addNewItem ${!currentTable.status ? "divNone" : ""}`} onClick={() => setFillInFrame(true)} ><FontAwesomeIcon icon={faCirclePlus} /> 新增</div>
-
-                    </div>
+                    // tableSwiper > studentTable - datatable
+                    />
                 </div>
             </div>
-            <div className="tableSwiperContainer" ref={tableHeightRef}>
-                <TableSwiper
-                    swiperRef={swiperRef}
-                    arg1={<DataTable swiperRef={swiperRef.current} globalFilter={globalFilter} setGlobalFilter={setGlobalFilter} setCalRows={setCalRows} ref={triggerExportRef}
-                        enterDetailData={enterDetailData} />}
-                    arg2={<StudentTable EditViewData={EditViewData} studentFilter={studentFilter} setStudentFilter={setStudentFilter} setCalRows={setCalRows} setModalShow={setModalShow} ref={triggerExportRef}
-                        data={data} setData={setData} handleViewData={handleViewData} />}
-
-                    setText={setCurrentTable}
-
-                // tableSwiper > studentTable - datatable
-                />
-            </div>
-        </div>
+        </DeclareContextType.Provider>
     )
 }
 export default DataTableContainer;

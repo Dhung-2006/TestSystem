@@ -7,12 +7,21 @@ const SignupFrame = () => {
     
     // const verifyCodeArr = [0, 1, 2, 3];
     
+    
+    
+    
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => { 
+        setLoading(false);
+        setTimeout(()=>{
+            setLoading(true);
+        },800)
+    }, [])
+
     // useRef
     const userInput = useRef<(HTMLInputElement | null)[]>([]);
     
-    
-    
-    // useState
     const [verifyAlertFrame, setVerifyAlertFrame] = useState(false);
     const [formValue, setFormValue] = useState({ signEmail: "", signAccount: "", signPassword: "" });
     const [verificationCode, setVerificationCode] = useState("");
@@ -142,7 +151,7 @@ const SignupFrame = () => {
                     </div>
                 </div>
             </div>
-            <Loading />
+            <Loading arg={loading} />
             {/* 要判斷login/regist */}
             <form className="loginbox" onSubmit={handleFormSubmit} >
                 <div className="boxContainer">

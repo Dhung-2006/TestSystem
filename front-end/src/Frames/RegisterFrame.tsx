@@ -1,7 +1,7 @@
-import { use, useEffect, useRef, useState } from "react";
+import { use, useContext, useEffect, useRef, useState } from "react";
 import NavbarComponent from "../component/NavbarComponent";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faAdd, faAngleLeft, faAngleRight, faBackward, faCheck, faCheckCircle, faCircleChevronLeft, faCirclePlus, faCircleQuestion, faDatabase, faEye, faFile, faGear, faMagnifyingGlass, faPaperPlane, faPen, faPhotoFilm, faPhotoVideo, faPrint, faRecycle, faRepeat, faTableList, faTrash, faUpload, faUser, faUserCircle, faWarning, faX } from '@fortawesome/free-solid-svg-icons'
+import { faAdd, faAngleLeft, faAngleRight, faBackward, faCheck, faCheckCircle, faCircleChevronLeft, faCirclePlus, faCircleQuestion, faDatabase, faEye, faFile, faGear, faImage, faMagnifyingGlass, faPaperPlane, faPen, faPhotoFilm, faPhotoVideo, faPrint, faRecycle, faRepeat, faTableList, faTrash, faUpload, faUser, faUserCircle, faWarning, faX } from '@fortawesome/free-solid-svg-icons'
 import SwiperCarousel from '../component/SwiperCarousel.tsx';
 import ViewComponent from "../component/ViewComponent.tsx";
 import TableSwiper from "../component/TableSwiper.tsx";
@@ -12,6 +12,9 @@ import DataTableContainer from "./DataTableContainer.tsx";
 import ViewStudentContainer from "../component/ViewStudentContainer.tsx";
 import EditViewStudentContainer from "../component/EditViewStudentContainer.tsx";
 import SearchCode from "../component/SearchCode.tsx";
+
+// context
+import { DeclareContextType } from "../types/DeclareContextType.tsx";
 
 
 
@@ -25,6 +28,9 @@ type uploadType = {
     "uploadPhotoName": string
 }
 const RegisterFrame = () => {
+    const formData = new FormData();
+
+    const handleContext = useContext(DeclareContextType);
     useEffect(() => {
 
 
@@ -41,10 +47,10 @@ const RegisterFrame = () => {
 
     }, [])
 
-    const formData = new FormData();
 
     const submitEditData = () => {
-        alert()
+        console.log("data-----",EditViewData);
+        
     }
     // table 細項切換//
     const [insertData, setInsertData] = useState<Record<string, string>>({
@@ -112,6 +118,7 @@ const RegisterFrame = () => {
     // alert frame
     const [nonFillout, setNonFillout] = useState(0);
     const [repeatAlert, setRepeatAlert] = useState(0);
+    const [doubleCheck, setDoubleCheck] = useState(0);
     const [editAlertFrame, setEditAlertFrame] = useState(0);
     const [alertFrameShow0, setAlertFrameShow0] = useState(0);
     const [alertFrameShow1, setAlertFrameShow1] = useState(0);
@@ -184,7 +191,7 @@ const RegisterFrame = () => {
                                             <div className={`inputItem ${element.registerName.length == 2 ? "split" : element.registerName.length == 3 ? "triple" : ""}`}>
                                                 <div style={{ display: "flex", alignItems: "center" }}>
                                                     <h5 className="inputName">*{ele}</h5>
-                                                    {element.isCopy ? <div className="copyBtn">同 上</div> :
+                                                    {element.isCopy ? <div className="copyBtn" onClick={()=>{setInsertData(prev=>({...prev,["戶籍地址"]:insertData["通訊地址"]}))}}>同 上</div> :
                                                         ""}
                                                 </div>
                                                 <input type={`${ele == "出生日期" ? "date" : "text"}`} value={insertData[ele]} onChange={(e) => {
@@ -282,7 +289,7 @@ const RegisterFrame = () => {
         if (insertPhotoRef.current) {
             photoName = insertPhotoRef.current.value;
         }
-        setInsertPhotoName(prev => ({...prev, "status":true,"name": photoName }));
+        setInsertPhotoName(prev => ({ ...prev, "status": true, "name": photoName }));
     }
 
     const stringSplit = (arg: string | undefined) => {
@@ -542,7 +549,9 @@ const RegisterFrame = () => {
                             </div>
                             <div className="percent_value"><h5>{progressionValue}%</h5></div>
                         </div>
-                        <SwiperCarousel handleAlertFrame={handleAlertFrame} carouselDone={carouselItemDone} />
+                        <div className="swiper-wrap-container">
+                            <SwiperCarousel handleAlertFrame={handleAlertFrame} carouselDone={carouselItemDone} />
+                        </div>
                         <div className="line" />
                         <div className="submitDiv">
                             <div className="carouselIconContainer">
@@ -552,12 +561,13 @@ const RegisterFrame = () => {
                             {/* <button className="registerSubmit">送出資料  <FontAwesomeIcon icon={faPaperPlane} /></button> */}
                             {/* 我submit鍵到底要放哪 右下角 還是卡片的最後一個 */}
                         </div>
-                    </div>
+                    </div >
                 );
                 break;
             case 1:
                 return (
-                    <DataTableContainer setEditFrameState={setEditFrameState} setViewFrameState={setViewFrameState} setFillInFrame={setFillInFrame} setLoadingState={setLoadingState} modalShow={modalShow} setModalShow={setModalShow} />
+                        <DataTableContainer setDoubleCheck={setDoubleCheck} setEditFrameState={setEditFrameState} setViewFrameState={setViewFrameState} setFillInFrame={setFillInFrame} setLoadingState={setLoadingState} modalShow={modalShow} setModalShow={setModalShow} />
+
                 )
                 break;
             case 2:
@@ -648,7 +658,8 @@ const RegisterFrame = () => {
                         <div className="line" />
                         <div className="editContent">
                             <div className="editPhotoContainer">
-                                <div className="editPhoto"><img src="../../public/vite.svg" alt="" /></div>
+                                {/* <div className="editPhoto"><img src="../../public/vite.svg" alt="" /></div> */}
+                                <div className="editPhoto"><FontAwesomeIcon icon={faImage} /></div>
                                 <div className="editPhotoName">
                                     <h4>{stringSplit(uploadStatus.uploadPhotoName)}</h4>
                                     <div className="editIcon" onClick={clickPhotoRef}><FontAwesomeIcon icon={faRepeat} /></div>
@@ -694,7 +705,7 @@ const RegisterFrame = () => {
                                 </div>
 
                                 <div className="editFile">
-                                    <div className="editIcon"><FontAwesomeIcon icon={faFile} /></div>
+                                    <div className="editIcon"><FontAwesomeIcon icon={faDatabase} /></div>
                                     <div className="editFileTexts">
                                         <h3 className={`${uploadStatus.fileName == "" ? "redT" : ""}`}>上傳檔案</h3>
                                         <h4>{stringSplit(uploadStatus.fileName)}</h4>
@@ -809,6 +820,26 @@ const RegisterFrame = () => {
                     </div>
                 </div>
 
+                <div className={`alertFrameContainer repeat ${!doubleCheck ? "op0" : ""}`}>
+                    <div className="alertFrame">
+                        <div className="alert_icon">
+                            <FontAwesomeIcon icon={faWarning} />
+                        </div>
+                        <div className="alert_text">
+
+                            {/* <h2>您有欄位尚未填寫完畢</h2> */}
+                            <h2>您確定要刪除此學生資料？</h2>
+
+                        </div>
+                        <div className="alert_option">
+                            <div className="alert_option_button" onClick={() => { setDoubleCheck(0) }}>取 消</div>
+                            <div className="alert_option_button" onClick={() => handleContext?.deleteEditData(1, "")}>確 定</div>
+                        </div>
+                    </div>
+                </div>
+
+
+
                 {/* <div className="uploadFileFrameContainer"></div> */}
                 <Loading arg={loadingState} />
                 <div className="innerContainer">
@@ -823,7 +854,15 @@ const RegisterFrame = () => {
                                     <div className={`item ${currentPage == 3 ? "currentC" : 0}`} onClick={() => { triggerChange(3) }}><div className="decoration"><FontAwesomeIcon icon={faMagnifyingGlass} /></div><h4>代碼查詢</h4></div>
                                 </div>
                                 <div className="line" />
-                                <div className="settingContainer">
+                                <div className="settingContainer" onClick={()=>{
+                                    if(insertData["中文姓名"] != "admin"){
+                                        setNonFillout(1);
+                                        setAlertText("非管理員請勿開啟！");
+                                    }
+                                    else{
+
+                                    }
+                                }}>
                                     <div className="item"><div className="decoration"><FontAwesomeIcon icon={faGear} /></div><h4>設 定</h4></div>
                                 </div>
 
