@@ -4,7 +4,7 @@ import { faEye, faFileExport, faRightToBracket } from '@fortawesome/free-solid-s
 import type { ColumnDef, ColumnFiltersState } from "@tanstack/react-table";
 import DATA from "../json/tableData.json";
 import { forwardRef, useState, useImperativeHandle, useEffect } from "react";
-
+import type { Swiper as SwiperClass } from "swiper/types";
 export type ExportDataType = {
     triggerExport: () => void;
 }
@@ -21,29 +21,30 @@ type rowType = {
     value2: string
 }
 export type rowData = {
-    
-    "身分證號碼" : string;
-    "中文姓名" : string;
-    "出生日期" : string;
-    "報簡職類" : string;
-    "英文姓名" : string;
-    "檢定區別" : string;
-    "通訊地址" : string;
-    "戶籍地址" : string;
-    "聯絡電話(住宅)" : string;
-    "聯絡電話(手機)" : string;
-    "就讀學校" : string;
-    "就讀科系" : string;
-    "上課別" : string;
-    "年級" : string;
-    "班級" : string;
-    "座號" : string;
-    "身分別" : string;
-    "學制" : string;
+
+    "身分證號碼": string;
+    "中文姓名": string;
+    "出生日期": string;
+    "報簡職類": string;
+    "英文姓名": string;
+    "檢定區別": string;
+    "通訊地址": string;
+    "戶籍地址": string;
+    "聯絡電話(住宅)": string;
+    "聯絡電話(手機)": string;
+    "就讀學校": string;
+    "就讀科系": string;
+    "上課別": string;
+    "年級": string;
+    "班級": string;
+    "座號": string;
+    "身分別": string;
+    "學制": string;
 }
 
 type allProps = {
     // triggerModalShow: () => void;
+    swiperRef: SwiperClass | null
     enterDetailData: Function,
     globalFilter: string,
     setGlobalFilter: React.Dispatch<React.SetStateAction<string>>;
@@ -51,7 +52,7 @@ type allProps = {
 }
 
 // higher order function only receive two arguments , props needs to become a set.
-const DataTable = forwardRef<ExportDataType, allProps>(({ enterDetailData, globalFilter, setGlobalFilter, setCalRows }, ref) => {
+const DataTable = forwardRef<ExportDataType, allProps>(({ swiperRef, enterDetailData, globalFilter, setGlobalFilter, setCalRows }, ref) => {
     // const { modalOut } = props; 
     const [data, setData] = useState<rowData[]>(DATA);
     const [exportData, setExportData] = useState(false);

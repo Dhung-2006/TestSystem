@@ -1,7 +1,7 @@
-import { useReactTable, getCoreRowModel, getFilteredRowModel, flexRender, getSortedRowModel } from "@tanstack/react-table";
+import { useReactTable, getCoreRowModel, getFilteredRowModel, flexRender, getSortedRowModel  } from "@tanstack/react-table";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faFileExport, faRightToBracket } from '@fortawesome/free-solid-svg-icons'
-import type { ColumnDef, ColumnFiltersState, SortingState } from "@tanstack/react-table";
+import type { ColumnDef, ColumnFiltersState, SortingState  } from "@tanstack/react-table";
 import DATA from "../json/tableData.json";
 import { forwardRef, useState, useImperativeHandle, useEffect } from "react";
 
@@ -55,15 +55,16 @@ type allProps = {
     // triggerModalShow: () => void;
     data: rowData[],
     handleViewData: Function,
+    EditViewData: Function,
     setData: React.Dispatch<React.SetStateAction<rowData[]>>,
-    globalFilter: string,
-    setGlobalFilter: React.Dispatch<React.SetStateAction<string>>,
+    studentFilter: string,
+    setStudentFilter: React.Dispatch<React.SetStateAction<string>>,
     setCalRows: React.Dispatch<React.SetStateAction<rowType>>,
     setModalShow: React.Dispatch<React.SetStateAction<number>>,
 }
 
 // higher order function only receive two arguments , props needs to become a set.
-const StudentTable = forwardRef<ExportDataType, allProps>(({ handleViewData, data, setData, globalFilter, setGlobalFilter, setCalRows, setModalShow }, ref) => {
+const StudentTable = forwardRef<ExportDataType, allProps>(({EditViewData, handleViewData, data, setData, studentFilter, setStudentFilter, setCalRows, setModalShow }, ref) => {
     // const { modalOut } = props; 
     // const [data, setData] = useState<rowData[]>(inputData);
     const [exportData, setExportData] = useState(false);
@@ -125,9 +126,9 @@ const StudentTable = forwardRef<ExportDataType, allProps>(({ handleViewData, dat
             cell: (props: any) =>
             (
                 <div className="functionBtn">
-                    <div className="editButton" onClick={() => handleViewData}>查看</div>
-                    <div className="editButton" onClick={() => { setModalShow(1) }}>編輯</div>
-                    <div className="editButton">刪除</div>
+                    <div className="editButton" onClick={() => handleViewData()}>查看</div>
+                    <div className="editButton" onClick={() =>  EditViewData() }>編輯</div>
+                    <div className="editButton" onClick={() => deleteEditData()}>刪除</div>
                 </div>
             )
         }
@@ -174,10 +175,10 @@ const StudentTable = forwardRef<ExportDataType, allProps>(({ handleViewData, dat
     const table = useReactTable({
         data,
         columns,
-        state: { globalFilter, sorting },
+        state: { globalFilter:studentFilter, sorting },
         onSortingChange: setSorting,
         getSortedRowModel: getSortedRowModel(),
-        onGlobalFilterChange: setGlobalFilter,
+        onGlobalFilterChange: setStudentFilter,
         getCoreRowModel: getCoreRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
     });

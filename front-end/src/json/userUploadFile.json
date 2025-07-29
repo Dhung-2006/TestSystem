@@ -31,14 +31,14 @@
     },
     {
         "registerName": [
-            "聯絡電話"
+            "聯絡電話(住宅)"
         ],
         "registerCount": 1,
         "isCopy": false
     },
     {
         "registerName": [
-            "行動電話"
+            "聯絡電話(手機)"
         ],
         "registerCount": 1,
         "isCopy": false
