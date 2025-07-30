@@ -65,7 +65,7 @@ def getData(filePath,dataFrame , frameType , pigID):
     dataJsonLst = []
     idDataframe = pd.read_excel(filePath , sheet_name= frameType , skiprows=2)
     for i in range(dataRows):
-        testNumber = idDataframe.loc[i , "流水號"]
+        testNumber = idDataframe.loc[i , "流水號"] 
         identification = dataFrame.loc[i , '身分證號碼']
         chName = dataFrame.loc[i, '中文姓名']
         birthYear = str(dataFrame.loc[i,'出生年'])
@@ -101,28 +101,36 @@ def getData(filePath,dataFrame , frameType , pigID):
         schoolTypeCode = dataFrame.loc[i,"學制"]
         schoolTypeLst = getSchoolCode(filePath)
         schoolType = schoolTypeLst[schoolTypeCode]
-        datajson = {
-            'pigID' : f"{pigID}{i+1:05d}",
+        datajson = [{    
             '准考證號碼':str(testNumber),
-            '身分證號碼':identification,
-            '中文姓名':chName,
+            '身分證號碼':str(identification),
+            '中文姓名':str(chName),
             '出生日期':birthYear + birthMounth + birthDay,  
-            '報簡職類':testSubject,
-            '英文姓名':engName,
-            '檢定區別':testType,
-            '通訊地址':callAdr,
-            '戶籍地址':liveAdr,
-            '聯絡電話(住宅)':"0" + teleArea + teleNum,
+            '報簡職類':str(testSubject),
+            '英文姓名':str(engName),
+            '檢定區別':str(testType),
+            '通訊地址':str(callAdr),
+            '戶籍地址':str(liveAdr),
+            '聯絡電話(住宅)':"0" + str(teleArea) + str(teleNum),
             '聯絡電話(手機)':"0"+cellNum,
-            '就讀學校':stdSch,
-            '就讀科系':major,
-            '上課別':studyType,
-            '年級':year,
-            '班級':sclass,
-            '座號':number,
-            '身分別':specificType,
-            '學制':schoolType
-        }
+            '就讀學校':str(stdSch),
+            '就讀科系':str(major),
+            '上課別':str(studyType),
+            '年級':str(year),
+            '班級':str(sclass),
+            '座號':str(number),
+            '身分別':str(specificType),
+            '學制':str(schoolType), 
+        },
+        {
+            'pigID' : f"{pigID}{i+1:05d}",
+            "comfirmStatus" : False
+        }]
+        for item in datajson[0]:
+            # print(type(datajson[0][item]))
+            if  datajson[0][item]:
+                print("enter")
+                datajson[0][item] =False
         dataJsonLst.append(datajson)
     return dataJsonLst
     
@@ -133,10 +141,8 @@ if __name__ == "__main__":
     filePath = sys.argv[1]
     userName  = sys.argv[2]
     cFileName = sys.argv[3]
-    try:
-        getDataTable(filePath)
-    except Exception as e :
-        print(str(e))
+    getDataTable(filePath)
+
 # getDataTable("./back-end/convert_content/1.中壢高商(14901).xlsx")
 
 

@@ -5,7 +5,6 @@ import { faAdd, faAngleLeft, faAngleRight, faBackward, faCheck, faCheckCircle, f
 import SwiperCarousel from '../component/SwiperCarousel.tsx';
 import ViewComponent from "../component/ViewComponent.tsx";
 import TableSwiper from "../component/TableSwiper.tsx";
-
 import DataTable, { type ExportDataType } from "../component/DataTable.tsx";
 import Loading from "../component/Loading.tsx";
 import DataTableContainer from "./DataTableContainer.tsx";
@@ -34,9 +33,6 @@ const RegisterFrame = () => {
             credentials: "include"
         })
             .then((res) => { setCookie(true) })
-
-
-
         // handleRows()
 
     }, [])
@@ -327,7 +323,7 @@ const RegisterFrame = () => {
         if (uploadStatus.status && uploadStatus.fileName != "") {
             // const uploadName: string | undefined = uploadFileNameRef.current?.value;
             const uploadFile: FileList | null | undefined = uploadFileRef.current?.files;
-            const URL = `http://localhost:3000/upload?userName=${document.cookie}`;
+            const URL = `http://localhost:3000/upload`;
             if (uploadStatus.userInputName != undefined && (uploadFile?.length != null || uploadFile?.length != undefined)) {
 
                 formData.append("uploadFileName", uploadStatus.userInputName);

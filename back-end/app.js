@@ -10,17 +10,14 @@ const { stat } = require('fs');
 const { count, log } = require('console');
 const cors = require('cors');
 const fs = require('fs');
+const  cookieParser =  require("cookie-parser")
 const { verbose } = require('sqlite3');
 const { Json } = require('sequelize/lib/utils');
-const { connect } = require('http2');
-const { datacatalog } = require('googleapis/build/src/apis/datacatalog');
-const { loadEnvFile } = require('process');
-const { essentialcontacts } = require('googleapis/build/src/apis/essentialcontacts');
 const multer = require('multer');
 // const { assuredworkloads } = require('googleapis/build/src/apis/assuredworkloads');
 
 app.use(express.urlencoded({extended:true}))
-
+app.use(cookieParser())
 app.use(cors({
   origin: "http://localhost:5173", // 只允許這個來源的前端請求
   credentials : true
@@ -28,10 +25,10 @@ app.use(cors({
 app.use(express.json())
 
 
-// app.get("/test" , (req, res) => {
-//   console.log("test success")
-//   res.send('success')
-// })
+app.get("/test" , (req, res) => {
+  console.log("test success")
+  res.send('success')
+})
 
 app.get('/' , async(req,res)=>{
   res.sendFile(path.join(__dirname, 'test.html'));
@@ -74,60 +71,52 @@ const storage = multer.diskStorage({
     cb(null, `./convert_content`)
   },
   filename: function (req, file, cb) {
-    console.log(req.query)
-    cb(null, "test.xlsx" )
+    cb(null, `${req.cookies.userName}.xlsx` )
   }
 })
 
 const upload = multer({ storage: storage })
 
 app.post('/upload', upload.single('uploadFile') , async (req, res) => {  
-  console.log(req.body.userName);
-  
-  // console.log(req.body)
-  // console.log(req.body.userName)
-  // console.log(req.body.uploadFileName)
-  // -----------------------------------------------
-  const funcToRun = "getDataTable";
-  const filePath = "./convert_content/1.中壢高商(14901).xlsx"
-  const userName = "dexter"
+  const userName = req.cookies.userName
+  const filePath = `./convert_content/${userName}.xlsx`
   const cFileName = "test-1"
-  // const getFilePath = req.body['filePath']
-  // const py = spawn('python' , ['process.py' , funcToRun , filePath])
-  // -------------------------------------------------
-  // const py = spawn('python', ['process.py', filePath, userName, cFileName])
-  // const folderName = path.join(__dirname, "user_data" , userName , cFileName)
-  // const fullTest  = path.join(__dirname, "user_data" , userName , cFileName , "full_Test")
-  // const studyTest = path.join(__dirname, "user_data" , userName , cFileName , "study_Test")
-  // const technicalTest = path.join(__dirname, "user_data" , userName , cFileName , "technical_Test")
-  // const imagePath = path.join(__dirname, "user_data" , userName , cFileName , "image")
-  // await fs.mkdirSync(folderName, { recursive: true });
-  // await fs.mkdirSync(fullTest, { recursive: true });
-  // await fs.mkdirSync(studyTest, { recursive: true });   
-  // await fs.mkdirSync(technicalTest, { recursive: true });   
-  // await fs.mkdirSync(imagePath, { recursive: true });   
-  // let outputData = ''
-  // py.stdout.on('data', (data) => {
-  //   outputData += data.toString('utf-8')
-  // })
 
-  // py.stderr.on('data' , (data) =>{
-  //   console.log(data.toString('utf-8'));
-  // })
+  const folderName = path.join(__dirname, "user_data" , userName , cFileName)
+  const fullTest  = path.join(__dirname, "user_data" , userName , cFileName , "fullTest")
+  const studyTest = path.join(__dirname, "user_data" , userName , cFileName , "studyTest")
+  const technicalTest = path.join(__dirname, "user_data" , userName , cFileName , "technicalTest")
+  const imagePath = path.join(__dirname, "user_data" , userName , cFileName , "image")
 
-  // py.on('close', () => {
-  //   console.log(outputData)
-  //   sequelize.sync().then(() => {
-  //     jsonFile.create({
-  //       jsonName: cFileName,
-  //       userAcc: userName
-  //     }).then(() => {
-  //       console.log("Json File has already prepared")
-  //     }).catch(err => {
-  //       console.log(err.name)
-  //     })
-  //   })
-  // })
+  await fs.mkdirSync(folderName, { recursive: true });
+  await fs.mkdirSync(fullTest, { recursive: true });
+  await fs.mkdirSync(studyTest, { recursive: true });   
+  await fs.mkdirSync(technicalTest, { recursive: true });   
+  await fs.mkdirSync(imagePath, { recursive: true });   
+
+  const py = spawn('python', ['process.py', filePath, userName, cFileName])
+  let outputData = ''
+  py.stdout.on('data', (data) => {
+    outputData += data.toString('utf-8')
+  })
+
+  py.stderr.on('data' , (data) =>{
+    console.log(data.toString('utf-8'));
+  })
+
+  py.on('close', () => {
+    console.log(outputData)
+    sequelize.sync().then(() => {
+      jsonFile.create({
+        jsonName: cFileName,
+        userAcc: userName
+      }).then(() => {
+        console.log("Json File has already prepared")
+      }).catch(err => {
+        console.log(err.name)
+      })
+    })
+  })
 })
 
 app.post('/signup' , (req,res) =>{
@@ -169,13 +158,15 @@ app.post("/login" ,async (req, res) =>{
       userAcc:reqAcc
       }
     });
+    
     console.log(`targetAcc:${targetAcc.userAcc}`);
     console.log(`targetPsd:${targetAcc.userPsd}`)
     if (targetAcc.userPsd === reqPsd){
-      res.json({
-        'useraccount':targetAcc.userAcc,
-        "status" : "true"
-      })
+      res.cookie("userAccount" , reqAcc ,{
+        httpOnly:false,
+        sameSite:"None",
+        secure :true
+      }).status(200).send("success")
       }else{
         res.json({"status": "false"})
       }
@@ -312,15 +303,17 @@ app.get("/editFile" , (req ,res) =>{
     "B" : "studyTest",
     "C" : "technicalTest"
   }
-  const status = "insert";
-  const userName = "dexter";
-  const fileName = "test-1";
-  const pigID = "A00005";
+  const status = "insert"; //req.body
+  const userName = "dexter"; //req.body
+  const fileName = "test-1"; //req.body
+  const pigID = "A00006";  //req.body
+  const testTypeCode = pigID.slice(0,1)
   const testType = testTypeLst[pigID.slice(0,1)]
   const editIDX = Number(pigID.slice(1))-1
-  const item = "准考證號碼";
-  const content = "1130303"
-  const insertFile = {
+  const transferType = "B"
+  const item = "准考證號碼";  //req.body
+  const content = "1130303" //req.body
+  const insertFile = {    //req.body
     "准考證號碼": "6",
     "身分證號碼": "H11111111",
     "中文姓名": "allen",
@@ -355,16 +348,27 @@ app.get("/editFile" , (req ,res) =>{
         break;
       case "insert" : 
         loadJsonList.push(insertFile)
+        checkID()
         saveChange(loadJsonList)
         break
       case "delete" :
         console.log("delete")
+        loadJsonList.splice(editIDX,1)
+        checkID()
+        saveChange(loadJsonList)
         break;
       case "change" : 
-         console.log("change")
-         break;
+        const transferJson = loadJsonList.splice(editIDX , 1)
+
+        console.log("change")
+        break;
     };
-    
+    function checkID(){
+      loadJsonList.forEach((jsons , idx) => {
+        jsons["pigID"] = testTypeCode + String(idx + 1).padStart(5, '0');
+      });
+    }
+
     function saveChange(data){
       fs.writeFile(`./user_data/${userName}/${fileName}/${testType}/${testType}.json`  , JSON.stringify(data, null, 2)  , (err) =>{
         if (err){
