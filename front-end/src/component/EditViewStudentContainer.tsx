@@ -6,6 +6,7 @@ import { faEye, faFile, faPen } from '@fortawesome/free-solid-svg-icons'
 import TestFile from "../json/userUploadTestFile.json";
 
 type stateType = {
+    
     submitEditData: Function,
     viewData: ViewType,
     editFrameState: number,

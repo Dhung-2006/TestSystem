@@ -11,7 +11,7 @@ const NavbarComponent = () =>{
                     <h4 className="text">桃竹檢定管理系統</h4>
                 </div>
 
-                <Link to="/login">
+                <Link to="/loginFrame">
                 <button className="navbarButton">
                     <div className="icon"><FontAwesomeIcon icon={faUserCircle} /></div>
                     <h4 className="text">會員登出</h4>

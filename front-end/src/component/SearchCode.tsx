@@ -5,7 +5,8 @@ import type { ColumnDef, ColumnFiltersState, GlobalFiltering } from "@tanstack/r
 import DATA from "../json/tableData.json";
 import { forwardRef, useState, useImperativeHandle, useRef } from "react";
 
-import ViewTable from "./ViewTable";
+// import ViewTable from "./ViewTable";
+import CodeTableSearchContainer from "./codeTableSearchContainer";
 import jsonData from "../json/tableData.json"
 
 const SearchCode = () => {
@@ -31,7 +32,7 @@ const SearchCode = () => {
     }
 
     return (
-        <div className="viewContainer">
+        <div className="SearchCode">
             <div className="leftsideContainer">
                 <div className="searchBarContainer">
                     <div className="searchBar" onClick={userFocus}>
@@ -40,10 +41,11 @@ const SearchCode = () => {
                         <div className="mag-icon"><FontAwesomeIcon icon={faMagnifyingGlass} /></div>
                     </div>
                 </div>
-                <div className="previewDatas" ref={viewHeightRef} ><ViewTable globalFilter={globalFilter} setGlobalFilter={setGlobalFilter} /></div>
+                <div className="previewDatas" ref={viewHeightRef} ><CodeTableSearchContainer globalFilter={globalFilter} setGlobalFilter={setGlobalFilter} /></div>
             </div>
             <div className="rightsideContainer">
                 {/* <iframe src={URL} /> */}
+                <div className="header">結果：</div>
             </div>
         </div>
     )

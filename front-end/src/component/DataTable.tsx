@@ -2,7 +2,7 @@ import { useReactTable, getCoreRowModel, getFilteredRowModel, flexRender } from 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faFileExport, faRightToBracket } from '@fortawesome/free-solid-svg-icons'
 import type { ColumnDef, ColumnFiltersState } from "@tanstack/react-table";
-import DATA from "../json/tableData.json";
+import DATA from "../json/testPigID.json";
 import { forwardRef, useState, useImperativeHandle, useEffect } from "react";
 import type { Swiper as SwiperClass } from "swiper/types";
 export type ExportDataType = {
@@ -21,7 +21,7 @@ type rowType = {
     value2: string
 }
 export type rowData = {
-
+    "pigID" : string;
     "身分證號碼": string;
     "中文姓名": string;
     "出生日期": string;
@@ -40,6 +40,7 @@ export type rowData = {
     "座號": string;
     "身分別": string;
     "學制": string;
+    "comfirmStatus": boolean;
 }
 
 type allProps = {
@@ -98,11 +99,25 @@ const DataTable = forwardRef<ExportDataType, allProps>(({ swiperRef, enterDetail
             cell: (props: any) => <p>{props.getValue()}</p>
         }
         ,
-
         {
-            accessorKey: "",
+            accessorKey: "comfirmStatus",
             header: "報名狀態",
-            cell: (props: any) => <p>{props.getValue()}</p>
+            cell: (props: any) => {
+                if (props.getValue()) {
+
+                    return (
+                        <div className="viewFolder">
+                            <div className="checkStatus done">完成</div>
+                        </div>)
+                }
+                else {
+                    return (
+                        <div className="viewFolder">
+                            <div className="checkStatus">未完成</div>
+                        </div>
+                    )
+                }
+            }
         }
         // ,
         // {
@@ -183,11 +198,11 @@ const DataTable = forwardRef<ExportDataType, allProps>(({ swiperRef, enterDetail
     useImperativeHandle(ref, () => ({
         triggerExport: () => {
             setExportData(exportData => !exportData);
-            console.log(exportData);
+            
         }
     }), [])
 
-    console.log(data);
+    
     return (
         <div className="tableContainer">
             <table border={1} cellPadding={6} >
@@ -208,14 +223,14 @@ const DataTable = forwardRef<ExportDataType, allProps>(({ swiperRef, enterDetail
                 <tbody>
                     {table.getRowModel().rows.map((row, index) => (
                         <tr key={row.id}>
-                            {exportData ?
+                            {/* {exportData ?
 
                                 <td>
                                     <input type="checkbox" name={`checkbox-${index + 1}`} />
                                 </td>
                                 :
                                 <></>
-                            }
+                            } */}
 
                             {row.getVisibleCells().map((cell) => (
                                 <td key={cell.id}>
@@ -224,7 +239,7 @@ const DataTable = forwardRef<ExportDataType, allProps>(({ swiperRef, enterDetail
                             ))}
                             <td>
                                 {/* <div style={{ display: "flex" }}> */}
-                                <div className="iconEye next" onClick={() => enterDetailData()}>
+                                <div className="iconEye next" onClick={() => enterDetailData(row.original["中文姓名"])}>
                                     <FontAwesomeIcon icon={faRightToBracket} />
                                 </div>
                                 {/* 先view就好

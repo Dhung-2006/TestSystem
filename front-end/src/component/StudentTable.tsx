@@ -1,9 +1,10 @@
-import { useReactTable, getCoreRowModel, getFilteredRowModel, flexRender, getSortedRowModel  } from "@tanstack/react-table";
+import { useReactTable, getCoreRowModel, getFilteredRowModel, flexRender, getSortedRowModel } from "@tanstack/react-table";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faFileExport, faRightToBracket } from '@fortawesome/free-solid-svg-icons'
-import type { ColumnDef, ColumnFiltersState, SortingState  } from "@tanstack/react-table";
+import type { ColumnDef, ColumnFiltersState, SortingState } from "@tanstack/react-table";
 import DATA from "../json/tableData.json";
-import { forwardRef, useState, useImperativeHandle, useEffect } from "react";
+import { DeclareContextType } from "../types/DeclareContextType";
+import { forwardRef, useState, useImperativeHandle, useEffect, useContext } from "react";
 
 export type ExportDataType = {
     triggerExport: () => void;
@@ -32,24 +33,27 @@ type rowData = {
     // "all": number;
     // "pass_a": number;
     // "pass_s": number;
-    "身分證號碼" : string;
-    "中文姓名" : string;
-    "出生日期" : string;
-    "報簡職類" : string;
-    "英文姓名" : string;
-    "檢定區別" : string;
-    "通訊地址" : string;
-    "戶籍地址" : string;
-    "聯絡電話(住宅)" : string;
-    "聯絡電話(手機)" : string;
-    "就讀學校" : string;
-    "就讀科系" : string;
-    "上課別" : string;
-    "年級" : string;
-    "班級" : string;
-    "座號" : string;
-    "身分別" : string;
-    "學制" : string;
+
+    "pigID": string,
+    "身分證號碼": string;
+    "中文姓名": string;
+    "出生日期": string;
+    "報簡職類": string;
+    "英文姓名": string;
+    "檢定區別": string;
+    "通訊地址": string;
+    "戶籍地址": string;
+    "聯絡電話(住宅)": string;
+    "聯絡電話(手機)": string;
+    "就讀學校": string;
+    "就讀科系": string;
+    "上課別": string;
+    "年級": string;
+    "班級": string;
+    "座號": string;
+    "身分別": string;
+    "學制": string;
+    "comfirmStatus": boolean
 }
 type allProps = {
     // triggerModalShow: () => void;
@@ -64,32 +68,39 @@ type allProps = {
 }
 
 // higher order function only receive two arguments , props needs to become a set.
-const StudentTable = forwardRef<ExportDataType, allProps>(({EditViewData, handleViewData, data, setData, studentFilter, setStudentFilter, setCalRows, setModalShow }, ref) => {
+const StudentTable = forwardRef<ExportDataType, allProps>(({ EditViewData, handleViewData, data, setData, studentFilter, setStudentFilter, setCalRows, setModalShow }, ref) => {
     // const { modalOut } = props; 
     // const [data, setData] = useState<rowData[]>(inputData);
     const [exportData, setExportData] = useState(false);
     const [columnFilter, setColumnFilter] = useState<ColumnFiltersState>([]);
     const [sorting, setSorting] = useState<SortingState>([]);
 
+    const handleContext = useContext(DeclareContextType);
 
     //  ▲
     //  ▼
     const [columns, setColumn] = useState<ColumnDef<any>[]>([
+        // {
+        //     accessorKey: "pigID",
+        //     // header: "準考證號碼",
+        //     cell: (props: any) => <p>{props.row.index + 1 + "00499"}</p>
+        // }
+        // ,
         {
             accessorKey: "no",
-            header: "準考證號碼",
-            cell: (props: any) => <p>{props.row.index + 1 + "00499"}</p>
-        }
-        ,
-        {
-            accessorKey: "身分證號碼",
-            header: "身分證號碼",
-            cell: (props: any) => <p>{props.getValue()}</p>
+            header: "No.",
+            cell: (props: any) => <p>{props.row.index + 1 }</p>
         }
         ,
         {
             accessorKey: "中文姓名",
             header: "中文姓名",
+            cell: (props: any) => <p>{props.getValue()}</p>
+        }
+        ,
+        {
+            accessorKey: "身分證號碼",
+            header: "身分證號碼",
             cell: (props: any) => <p>{props.getValue()}</p>
         }
         ,
@@ -113,24 +124,34 @@ const StudentTable = forwardRef<ExportDataType, allProps>(({EditViewData, handle
         ,
 
         {
-            accessorKey: "",
+            accessorKey: "comfirmStatus",
             header: "報名狀態",
-            cell: (props: any) => <p>{props.getValue()}</p>
+            cell: (props: any) => {
+                if (props.getValue()) {
+
+                    return (<div className="checkStatus done">完成</div>)
+                }
+                else {
+                    return (<div className="checkStatus">未完成</div>)
+                }
+            }
         }
         ,
         {
-            header: "Status",
             id: "status",
+            header: "功能欄",
             size: 1,
             // maxSize: 100,
-            cell: (props: any) =>
-            (
-                <div className="functionBtn">
-                    <div className="editButton" onClick={() => handleViewData()}>查看</div>
-                    <div className="editButton" onClick={() =>  EditViewData() }>編輯</div>
-                    <div className="editButton" onClick={() => deleteEditData()}>刪除</div>
-                </div>
-            )
+            cell: (props: any) => {
+                const rowData = props.row.original;
+                return (
+                    <div className="functionBtn">
+                        <div className="editButton" onClick={() => handleViewData()}>查看</div>
+                        <div className="editButton" onClick={() => EditViewData()}>編輯</div>
+                        <div className="editButton" onClick={() => handleContext?.deleteEditData(0, rowData["pigID"])}>刪除</div>
+                    </div>
+                )
+            }
         }
 
         // ,
@@ -175,7 +196,7 @@ const StudentTable = forwardRef<ExportDataType, allProps>(({EditViewData, handle
     const table = useReactTable({
         data,
         columns,
-        state: { globalFilter:studentFilter, sorting },
+        state: { globalFilter: studentFilter, sorting },
         onSortingChange: setSorting,
         getSortedRowModel: getSortedRowModel(),
         onGlobalFilterChange: setStudentFilter,
@@ -211,11 +232,11 @@ const StudentTable = forwardRef<ExportDataType, allProps>(({EditViewData, handle
     useImperativeHandle(ref, () => ({
         triggerExport: () => {
             setExportData(exportData => !exportData);
-            console.log(exportData);
+            
         }
     }), [])
 
-    console.log(data);
+    
     return (
         <div className="tableContainer">
             <table border={1} cellPadding={6} >

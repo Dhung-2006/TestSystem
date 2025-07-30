@@ -10,7 +10,7 @@
         "swiper_inner":"請上傳包含學生資訊的檔案，支援 Excel 格式，請確保符合規範。"
     },
     {
-        "swiper_icon":"photo-video",
+        "swiper_icon":"image",
         "swiper_title":"上傳學生照片",
         "swiper_inner":"請上傳學生證件用照片，格式為 JPG 或 PNG，請確保影像清晰、符合規範。"
     },

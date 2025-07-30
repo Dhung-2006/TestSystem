@@ -16,17 +16,17 @@ import Datas from "../json/swiperData.json";
 
 library.add(fas);
 type dispatchType = {
-    text:string,
+    text: string,
     status: boolean
 }
 type reactNodeType = {
     swiperRef: any,
     arg1: React.ReactNode,
     arg2: React.ReactNode;
-    setText:React.Dispatch<React.SetStateAction<dispatchType>>
+    setText: React.Dispatch<React.SetStateAction<dispatchType>>
 }
 
-const TableSwiper = ({ swiperRef , arg1, arg2 , setText}: reactNodeType) => {
+const TableSwiper = ({ swiperRef, arg1, arg2, setText }: reactNodeType) => {
 
 
     // const [isDone, setIsDone] = useState(false);
@@ -49,16 +49,15 @@ const TableSwiper = ({ swiperRef , arg1, arg2 , setText}: reactNodeType) => {
             onSlideChange={(swiper) => {
                 if (swiper.activeIndex == 1) {
                     // setText(`報名資料 / ${123}`);
-                    setText(prev=>({
+                    setText(prev => ({
                         ...prev,
-                        status:true,
-                        text: `報名資料 / 學生資料`
+                        status: true,
                     }));
                 }
-                else{
-                   setText(prev=>({
+                else {
+                    setText(prev => ({
                         ...prev,
-                        status:false,
+                        status: false,
                         text: `報名資料`
                     }));
                 }
@@ -68,10 +67,14 @@ const TableSwiper = ({ swiperRef , arg1, arg2 , setText}: reactNodeType) => {
                 swiperRef.current = swiper;
             }}>
             <SwiperSlide>
-                {arg1}
+                <div className="wrap-table">
+                    {arg1}
+                </div>
             </SwiperSlide>
             <SwiperSlide>
-                {arg2}
+                <div className="wrap-table">
+                    {arg2}
+                </div>
             </SwiperSlide>
 
             {/* <button onClick={() => { swiperRef.current?.slideNext() }}>click</button> */}
