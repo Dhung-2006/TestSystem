@@ -136,6 +136,14 @@ const StudentTable = forwardRef<ExportDataType, allProps>(({ EditViewData, handl
                 }
             }
         }
+        // ,
+        // {
+        //     accessorKey: "comfirmStatus",
+        //     header: "",
+        //     cell: (props: any) => {
+        //         return(<p style={{opacity:"0.2"}}>|</p>)
+        //     }
+        // }
         ,
         {
             id: "status",

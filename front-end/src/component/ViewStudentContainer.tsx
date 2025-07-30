@@ -5,17 +5,30 @@ import { faEye, faFile } from '@fortawesome/free-solid-svg-icons'
 
 import TestFile from "../json/userUploadTestFile.json";
 
-const multipleType = [
-    "身分證號碼", "中文姓名", "出生日期", 
-    "報簡職類", "英文姓名", "檢定區別", 
-    "通訊地址", "戶籍地址", "聯絡電話(住宅)", 
-    "聯絡電話(手機)", "就讀學校", "就讀科系", 
-    "上課別", "年級", "班級", "座號", "身分別",  
-    "學制"
-]
-type ViewType ={
-    [k in typeof multipleType[number]] : string;
+
+type ViewType = {
+    "身分證號碼": string,
+    "中文姓名": string,
+    "出生日期": string,
+    "報簡職類": string,
+    "英文姓名": string,
+    "檢定區別": string,
+    "通訊地址": string,
+    "戶籍地址": string,
+    "聯絡電話(住宅)": string,
+    "聯絡電話(手機)": string,
+    "就讀學校": string,
+    "就讀科系": string,
+    "上課別": string,
+    "年級": string,
+    "班級": string,
+    "座號": string,
+    "身分別": string,
+    "學制": string,
+    "test-type": string,
+    "comfirmStatus": boolean
 }
+
 
 type stateType = {
     viewData: ViewType,
@@ -46,14 +59,14 @@ const ViewStudentContainer = ({ viewData, viewFrameState, setViewFrameState }: s
                                         <div className="viewStudentItem">
                                             <div className="viewStudentName">
                                                 <h4>*中文姓名</h4>
-                                                <input type="text" disabled value={viewData["中文姓名"] } />
+                                                <input type="text" disabled value={viewData["中文姓名"]} />
                                             </div>
 
                                         </div>
                                         <div className="viewStudentItem">
                                             <div className="viewStudentName">
                                                 <h4> *英文姓名</h4>
-                                                <input type="text" disabled value={viewData["英文姓名"] } />
+                                                <input type="text" disabled value={viewData["英文姓名"]} />
                                             </div>
 
                                         </div>
@@ -64,13 +77,13 @@ const ViewStudentContainer = ({ viewData, viewFrameState, setViewFrameState }: s
 
                                             <div className="viewStudentName">
                                                 <h4> *身分證字號</h4>
-                                                <input type="text" disabled value={viewData["身分證字號"] } />
+                                                <input type="text" disabled value={viewData["身分證號碼"]} />
                                             </div>
                                         </div>
                                         <div className="viewStudentItem">
                                             <div className="viewStudentName">
                                                 <h4> *出生日期</h4>
-                                                <input type="date" disabled value={viewData["出生日期"] } />
+                                                <input type="date" disabled value={viewData["出生日期"]} />
                                             </div>
 
                                         </div>
@@ -82,14 +95,14 @@ const ViewStudentContainer = ({ viewData, viewFrameState, setViewFrameState }: s
                                     <div className="viewStudentItem">
                                         <div className="viewStudentName">
                                             <h4> *通訊地址</h4>
-                                            <input type="text" disabled value={viewData["通訊地址"] } />
+                                            <input type="text" disabled value={viewData["通訊地址"]} />
                                         </div>
 
                                     </div>
                                     <div className="viewStudentItem">
                                         <div className="viewStudentName">
                                             <h4> *戶籍地址</h4>
-                                            <input type="text" disabled value={viewData["戶籍地址"] } />
+                                            <input type="text" disabled value={viewData["戶籍地址"]} />
                                         </div>
 
                                     </div>
@@ -98,14 +111,14 @@ const ViewStudentContainer = ({ viewData, viewFrameState, setViewFrameState }: s
                                     <div className="viewStudentItem">
                                         <div className="viewStudentName">
                                             <h4> *聯絡電話</h4>
-                                            <input type="text" disabled value={viewData["聯絡電話(住宅)"] } />
+                                            <input type="text" disabled value={viewData["聯絡電話(住宅)"]} />
                                         </div>
 
                                     </div>
                                     <div className="viewStudentItem">
                                         <div className="viewStudentName">
                                             <h4> *行動電話</h4>
-                                            <input type="text" disabled value={viewData["聯絡電話(手機)"] } />
+                                            <input type="text" disabled value={viewData["聯絡電話(手機)"]} />
                                         </div>
 
                                     </div>
@@ -124,7 +137,7 @@ const ViewStudentContainer = ({ viewData, viewFrameState, setViewFrameState }: s
                                                     <div className={`viewStudentItem ${element.registerCount == 2 ? "split" : element.registerCount == 3 ? "triple" : ""} `}>
                                                         <div className="viewStudentName">
                                                             <h4>*{element.registerName[0]}</h4>
-                                                            <input type="text" disabled  value={viewData[element.registerName[0]]}/>
+                                                            <input type="text" disabled value={viewData[element.registerName[0]]} />
                                                         </div>
                                                     </div>
                                                 ))
@@ -134,86 +147,6 @@ const ViewStudentContainer = ({ viewData, viewFrameState, setViewFrameState }: s
                                     </div>
                                 </div>
                             </>
-                            {/* <div className="viewTestData">
-                                <div className="viewStudentColumn">
-                                    <div className="viewStudentItem">
-                                        <div className="viewStudentName">
-                                            <h5> *就讀學校</h5>
-                                            <input type="text" disabled />
-                                        </div>
-
-                                    </div>
-                                    <div className="viewStudentItem">
-                                        <div className="viewStudentName">
-                                            <h5> *就讀科系</h5>
-                                            <input type="text" disabled />
-                                        </div>
-
-                                    </div>
-                                    <div className="viewStudentItem">
-                                        <div className="viewStudentName">
-                                            <h5> *學制</h5>
-                                            <input type="text" disabled />
-                                        </div>
-
-                                    </div>
-                                </div>
-                                <div className="viewStudentColumn">
-                                    <div className="viewStudentItem">
-                                        <div className="viewStudentName">
-                                            <h5> *年級</h5>
-                                            <input type="text" disabled />
-                                        </div>
-
-                                    </div>
-                                    <div className="viewStudentItem">
-                                        <div className="viewStudentName">
-                                            <h5> *班級</h5>
-                                            <input type="text" disabled />
-                                        </div>
-
-                                    </div>
-                                    <div className="viewStudentItem">
-                                        <div className="viewStudentName">
-                                            <h5> *座號</h5>
-                                            <input type="text" disabled />
-                                        </div>
-
-                                    </div>
-                                </div>
-                                <div className="viewStudentColumn">
-                                    <div className="viewStudentItem">
-                                        <div className="viewStudentName">
-                                            <h5> *報檢職種</h5>
-                                            <input type="text" disabled />
-                                        </div>
-
-                                    </div>
-                                    <div className="viewStudentItem">
-                                        <div className="viewStudentName">
-                                            <h5> *上課別</h5>
-                                            <input type="text" disabled />
-                                        </div>
-
-                                    </div>
-                                </div>
-                                <div className="viewStudentColumn">
-                                    <div className="viewStudentItem">
-                                        <div className="viewStudentName">
-                                            <h5> *檢定區別</h5>
-                                            <input type="text" disabled />
-                                        </div>
-
-                                    </div>
-                                    <div className="viewStudentItem">
-                                        <div className="viewStudentName">
-                                            <h5> *身份別</h5>
-                                            <input type="text" disabled />
-                                        </div>
-
-                                    </div>
-                                </div>
-                            </div> */}
                         </>
                     }
 
