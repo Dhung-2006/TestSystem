@@ -124,7 +124,7 @@ def getData(filePath,dataFrame , frameType , pigID):
         },
         {
             'pigID' : f"{pigID}{i+1:05d}",
-            "comfirmStatus" : False
+            "confirmStatus" : False
         }]
         for item in datajson[0]:
             # print(type(datajson[0][item]))

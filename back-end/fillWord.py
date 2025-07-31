@@ -22,6 +22,7 @@ sys.stdout.reconfigure(encoding='utf-8')  # ✅ 保證輸出為 UTF-8（避免 W
 def fillin(userName , chooseFile , inputJsons , fileType):
     wordFilePaths = []
     for inputJson in inputJsons:
+        inputJson = inputJson[0]
         wordPath = './convert_content/5.報名表正面.docx'
         wordDoc = Document(wordPath)
         table = wordDoc.tables[0]

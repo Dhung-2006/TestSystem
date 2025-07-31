@@ -5,7 +5,7 @@ const path = require("path")
 const session  = require("express-session");
 const nodemailer = require("nodemailer")
 const { sequelize, userAccounts  , fileInfo , jsonFile} = require('./sqlSetting');
-const { where, json } = require('sequelize');
+const { where, json, AsyncQueueError } = require('sequelize');
 const { stat } = require('fs');
 const { count, log } = require('console');
 const cors = require('cors');
@@ -14,7 +14,7 @@ const  cookieParser =  require("cookie-parser")
 const { verbose } = require('sqlite3');
 const { Json } = require('sequelize/lib/utils');
 const multer = require('multer');
-// const { assuredworkloads } = require('googleapis/build/src/apis/assuredworkloads');
+const { useTransition } = require('react');
 
 app.use(express.urlencoded({extended:true}))
 app.use(cookieParser())
@@ -76,6 +76,34 @@ const storage = multer.diskStorage({
 })
 
 const upload = multer({ storage: storage })
+
+app.post('/getfolder' , (req ,res)=>{
+// 所有file資料  -> sqlite 抓資料
+})
+
+app.post('/getjsons' , multer().none(),async(req ,res)=>{
+  let resultLst =[]
+  const userName = req.body.userName
+  const fileName  = req.body.fileName
+
+  const fullTest = fs.readFileSync(`./user_data/${userName}/${fileName}/fullTest/fullTest.json`, 'utf-8')
+  const studyTest = fs.readFileSync(`./user_data/${userName}/${fileName}/studyTest/studyTest.json`, 'utf-8')
+  const technicalTest = fs.readFileSync(`./user_data/${userName}/${fileName}/technicalTest/technicalTest.json`, 'utf-8')
+  const fullData = JSON.parse(fullTest)
+  const studyData = JSON.parse(studyTest)
+  const tecData = JSON.parse(technicalTest)
+  fullData.forEach((data) =>{
+    resultLst.push(data)
+  })
+  studyData.forEach(element => {
+    resultLst.push(element)
+  });
+  tecData.forEach(element => {
+    resultLst.push(element)
+  });
+  
+  res.json(resultLst).status(200)
+})
 
 app.post('/upload', upload.single('uploadFile') , async (req, res) => {  
   const userName = req.cookies.userName
@@ -168,7 +196,7 @@ app.post("/login" ,async (req, res) =>{
         secure :true
       }).status(200).send("success")
       }else{
-        res.json({"status": "false"})
+        res.status(400).send("false")
       }
   })
 })
@@ -297,80 +325,88 @@ app.get("/verifyData", (req, res) => {
 //   // if (!birthRegex.test(b))
 // }
 
-app.get("/editFile" , (req ,res) =>{
-  testTypeLst = {
+const editUpload = multer()
+
+app.post("/editFile" , editUpload.none() ,(req ,res) =>{
+  testTypeMap = {
     "A" : "fullTest",
     "B" : "studyTest",
     "C" : "technicalTest"
   }
-  const status = "insert"; //req.body
-  const userName = "dexter"; //req.body
-  const fileName = "test-1"; //req.body
-  const pigID = "A00006";  //req.body
-  const testTypeCode = pigID.slice(0,1)
-  const testType = testTypeLst[pigID.slice(0,1)]
-  const editIDX = Number(pigID.slice(1))-1
-  const transferType = "B"
-  const item = "准考證號碼";  //req.body
-  const content = "1130303" //req.body
-  const insertFile = {    //req.body
-    "准考證號碼": "6",
-    "身分證號碼": "H11111111",
-    "中文姓名": "allen",
-    "出生日期": "941314",
-    "報簡職類": "視覺",
-    "英文姓名": "Huang,sheng hung",
-    "檢定區別": "全測",
-    "通訊地址": "桃園市桃園區幸福路",
-    "戶籍地址": "桃園市桃園區XXX",
-    "聯絡電話(住宅)": "034551235",
-    "聯絡電話(手機)": "0953083990",
-    "就讀學校": "中壢家商",
-    "就讀科系": "商業經營科",
-    "上課別": "日間部",
-    "年級": "1",
-    "班級": "19",
-    "座號": "2",
-    "身分別": "無",
-    "學制": "高級中學"
+  const status = req.body.status; //req.body
+  const userName = req.body.userName; //req.body
+  const fileName = req.body.fileName; //req.body
+  const pigID = req.body.pigID;  //req.body
+  let testTypeCode = pigID.slice(0,1)
+  let testType = testTypeMap[pigID.slice(0,1)]
+  if (status ===  "insert"){
+    testTypeCode = req.body.insertType
+    testType = testTypeMap[testTypeCode]
   }
-  fs.readFile(`./user_data/${userName}/${fileName}/${testType}/${testType}.json` , 'utf8' , (err , jsonList)=>{
+  // const editIDX = Number(pigID.slice(1))-1
+  fs.readFile(`./user_data/${userName}/${fileName}/${testType}/${testType}.json` , 'utf8' , async(err , jsonList)=>{
     if (err){
       console.error( err)
     }
     loadJsonList = JSON.parse(jsonList)
     switch (status){
       case "edit" : 
-        jsonData = loadJsonList[Number(editIDX)]
-        jsonData[item]  = content;
-        loadJsonList[Number(editIDX)] = jsonData      
-        saveChange(loadJsonList)
+        await editJson()
+        res.send("done").status(200)
         break;
       case "insert" : 
-        loadJsonList.push(insertFile)
-        checkID()
-        saveChange(loadJsonList)
+        await insertJson()
+        res.send("done").status(200)
         break
       case "delete" :
-        console.log("delete")
-        loadJsonList.splice(editIDX,1)
-        checkID()
-        saveChange(loadJsonList)
-        break;
-      case "change" : 
-        const transferJson = loadJsonList.splice(editIDX , 1)
-
-        console.log("change")
+        await deleteJson()
+        res.send("done").status(200)
         break;
     };
-    function checkID(){
-      loadJsonList.forEach((jsons , idx) => {
-        jsons["pigID"] = testTypeCode + String(idx + 1).padStart(5, '0');
-      });
+    
+    function editJson(){
+      const editIDX = Number(pigID.slice(1))-1
+      const transferType  = req.body.transferType
+      const inserFile = [{ "准考證號碼": "7", "身分證號碼": "F203568912", "中文姓名": "王怡婷", "出生日期": "95072", "報簡職類": "行政助理", "英文姓名": "WANG,YI-TING", "檢定區別": "全測", "通訊地址": "新北市板橋區文化路二段", "戶籍地址": "新北市新莊區幸福街", "聯絡電話(住宅)": "0229634456", "聯絡電話(手機)": "0987654321", "就讀學校": "板橋高商", "就讀科系": "資料處理科", "上課別": "日間部", "年級": "2", "班級": "5", "座號": "7", "身分別": "無", "學制": "高級中學" }, { "pigID": "A00004", "comfirmStatus": false }]
+      
+      if (transferType === testTypeCode){
+        loadJsonList[editIDX] = inserFile
+      }else {
+        transferJson = loadJsonList.splice(editIDX,1)[0]
+        loadJsonList = checkID(loadJsonList,testTypeCode)
+        fs.readFile(`./user_data/${userName}/${fileName}/${testTypeMap[transferType]}/${testTypeMap[transferType]}.json` , "utf-8" , (err , transferLst)=>{
+          loadTransferLst = JSON.parse(transferLst)
+          loadTransferLst.push(transferJson)
+          loadTransferLst = checkID(loadTransferLst , transferType)
+          saveChange(loadTransferLst , testTypeMap[transferType])
+        })
+      }
+      saveChange(loadJsonList , testType)
     }
 
-    function saveChange(data){
-      fs.writeFile(`./user_data/${userName}/${fileName}/${testType}/${testType}.json`  , JSON.stringify(data, null, 2)  , (err) =>{
+    function insertJson(){
+      const insertFile =JSON.parse( req.body.insertFile)
+      loadJsonList.push(insertFile)
+      checkID(loadJsonList , testTypeCode)
+      saveChange(loadJsonList , testType)
+    }
+
+    function deleteJson(){
+      const editIDX = Number(pigID.slice(1))-1
+      loadJsonList.splice(editIDX,1)
+      checkID(loadJsonList , testTypeCode)
+      saveChange(loadJsonList, testType)
+    }
+
+    function checkID(lst , type){
+      lst.forEach((jsons , idx) => {
+        jsons[1]["pigID"] = type + String(idx + 1).padStart(5, '0');
+      });
+      return lst
+    }
+
+    function saveChange(data , type){
+      fs.writeFile(`./user_data/${userName}/${fileName}/${type}/${type}.json`  , JSON.stringify(data, null, 2)  , (err) =>{
         if (err){
           console.error(err);
         }else{
@@ -380,6 +416,7 @@ app.get("/editFile" , (req ,res) =>{
     }
   });
 })
+
 
 app.listen(3000 , ()=>{
   console.log("server is running"); 
