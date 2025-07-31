@@ -142,6 +142,18 @@
                                 border: 1px solid rgba(0, 0, 0, 0.23);
                                 // box-sizing: border-box
                             }
+
+                            .css-13cymwt-control {
+                                * {
+                                    padding: 0;
+                                }
+
+                                min-height: unset !important;
+
+                                width: 98%;
+                                font-size: 0.9rem;
+                                border-radius: 8px;
+                            }
                         }
 
 
@@ -175,9 +187,15 @@
                 .bottomSide {
                     margin-top: 1rem;
 
+                    .single .viewStudentName input {
+                        width: 100% !important;
+                    }
+
                     .viewStudentItem {
                         display: flex;
                         justify-content: space-between;
+
+
 
                         .viewStudentName {
                             position: relative;
@@ -474,6 +492,28 @@
                                 background-color: white;
                                 border: 1px solid rgba(0, 0, 0, 0.23);
 
+                            }
+
+                            .css-13cymwt-control {
+                                
+                                * {
+                                    padding: 0;
+                                }
+
+                                min-height: unset !important;
+
+                                width: 100%;
+                                font-size: 0.9rem;
+                                border-radius: 8px;
+                            }
+                            .selectClass {
+                                * {
+                                    padding: 0;
+                                }
+                                width: 95%;
+                                border-radius: 8px;
+                                font-size: 0.9rem;
+                                color: #252525;
                             }
 
                             input {

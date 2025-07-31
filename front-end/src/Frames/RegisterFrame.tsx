@@ -1,10 +1,12 @@
 import { use, useContext, useEffect, useRef, useState } from "react";
 import NavbarComponent from "../component/NavbarComponent";
+import Select from "react-select";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAdd, faAngleLeft, faAngleRight, faBackward, faCheck, faCheckCircle, faCircleChevronLeft, faCirclePlus, faCircleQuestion, faDatabase, faEye, faFile, faGear, faImage, faMagnifyingGlass, faPaperPlane, faPen, faPhotoFilm, faPhotoVideo, faPrint, faRecycle, faRepeat, faTableList, faTrash, faUpload, faUser, faUserCircle, faWarning, faX } from '@fortawesome/free-solid-svg-icons'
 import SwiperCarousel from '../component/SwiperCarousel.tsx';
 import ViewComponent from "../component/ViewComponent.tsx";
 import TableSwiper from "../component/TableSwiper.tsx";
+
 import DataTable, { type ExportDataType } from "../component/DataTable.tsx";
 import Loading from "../component/Loading.tsx";
 import DataTableContainer from "./DataTableContainer.tsx";
@@ -16,9 +18,37 @@ import SearchCode from "../component/SearchCode.tsx";
 import { DeclareContextType } from "../types/DeclareContextType.tsx";
 
 
+// type
+import type { _InsertType } from "../types/_InsertType.ts";
+import type { _EditType } from "../types/_EditType.ts";
+import type { _CommonType } from "../types/_CommonType.ts";
 
+// json
+import testPigId from "../json/testPigID.json"
 import userUploadFile from "../json/userUploadFile.json";
 import userUploadTestFile from "../json/userUploadTestFile.json"
+
+
+type selectType = {
+    value: string,
+    label: string
+}
+
+const options_type: selectType[] = [
+    { value: 'A', label: '全冊' },
+    { value: 'B', label: '免學' },
+    { value: 'C', label: '免術' },
+]
+
+const options_identity: selectType[] = [
+    { value: "原住民", label: "原住民" },
+    { value: "身心障礙", label: "身心障礙" },
+    { value: "低收入戶", label: "低收入戶" },
+    { value: "大陸學位生", label: "大陸學位生" },
+    { value: "大陸地區人民", label: "大陸地區人民" },
+    { value: "外籍人士", label: "外籍人士" },
+    { value: "探親就學", label: "探親就學" },
+]
 
 type uploadType = {
     "status": boolean,
@@ -29,7 +59,6 @@ type uploadType = {
 const RegisterFrame = () => {
     const formData = new FormData();
 
-    const handleContext = useContext(DeclareContextType);
     useEffect(() => {
 
 
@@ -39,55 +68,128 @@ const RegisterFrame = () => {
             credentials: "include"
         })
             .then((res) => { setCookie(true) })
+
+
+
         // handleRows()
 
     }, [])
+    const handleContext = useContext(DeclareContextType);
+
+    const [pigID, setPigID] = useState("");
+    const deleteEditData = (index: number, arg: string) => {
+        console.log(arg);
+
+        if (index == 0) {
+            // 1 save & asking
+            setPigID(arg);
+            setDoubleCheck(1);
+        }
+        else {
+            // 2 submit
+            console.log(10000000);
+            setDoubleCheck(0);
+            submitDeleteEditData(pigID);
+
+        }
+    }
+    const submitDeleteEditData = async (arg: string) => {
+
+        setLoadingState(false);
+        const URL: string = "";
+        try {
+            const res = await fetch(URL, {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ "deleteName": arg })
+            })
+
+            if (!res.ok) throw new Error("500 server error");
+
+            // console.log("成功", data)
+            setLoadingState(true);
+
+        }
+        catch (err) {
+            console.error("123", err);
+            setLoadingState(true);
+            setNonFillout(1);
+            setAlertText("刪除資料部分發生錯誤 請再試一次");
+        }
+    }
 
 
     const submitEditData = () => {
-        console.log("data-----",EditViewData);
-        
+        console.log("data-----", EditViewData);
+        Object.entries(EditViewData).forEach((key, value) => {
+            console.log(key, value);
+        })
     }
     // table 細項切換//
-    const [insertData, setInsertData] = useState<Record<string, string>>({
-        "身分證號碼": "1",
-        "中文姓名": "2",
-        "出生日期": "3",
-        "報簡職類": "3",
-        "英文姓名": "4",
-        "檢定區別": "5",
-        "通訊地址": "6",
-        "戶籍地址": "2",
-        "聯絡電話(住宅)": "",
-        "聯絡電話(手機)": "",
-        "就讀學校": "",
-        "就讀科系": "",
-        "上課別": "",
-        "年級": "",
-        "班級": "",
-        "座號": "",
-        "身分別": "",
-        "學制": ""
+    const [insertData, setInsertData] = useState<_InsertType>({
+        "status": "",
+        "userName": "",
+        "filename": "",
+        "insertType": "",
+        "insertFile": {
+            "准考證號碼": "",
+            "身分證號碼": "",
+            "中文姓名": "",
+            "出生日期": "",
+            "報簡職類": "",
+            "英文姓名": "",
+            "檢定區別": "",
+            "通訊地址": "",
+            "戶籍地址": "",
+            "聯絡電話(住宅)": "",
+            "聯絡電話(手機)": "",
+            "就讀學校": "",
+            "就讀科系": "",
+            "上課別": "",
+            "年級": "",
+            "班級": "",
+            "座號": "",
+            "身分別": "",
+            "學制": ""
+        }
     })
-    const [EditViewData, setEditViewData] = useState<Record<string, string>>({
-        "身分證號碼": "1",
-        "中文姓名": "2",
-        "出生日期": "3",
-        "報簡職類": "3",
-        "英文姓名": "4",
-        "檢定區別": "5",
-        "通訊地址": "6",
-        "戶籍地址": "2",
-        "聯絡電話(住宅)": "",
-        "聯絡電話(手機)": "",
-        "就讀學校": "",
-        "就讀科系": "",
-        "上課別": "",
-        "年級": "",
-        "班級": "",
-        "座號": "",
-        "身分別": "",
-        "學制": ""
+    const [EditViewData, setEditViewData] = useState<_EditType>({
+
+        "status": "edit",
+        "userName": "",
+        "filename": "",
+        "transferType": "",
+        "insertFile": [{
+            "准考證號碼": "6",
+            "身分證號碼": "H11111111",
+            "中文姓名": "allen",
+            "出生日期": "941314",
+            "報簡職類": "視覺",
+            "英文姓名": "Huang,sheng hung",
+            "檢定區別": "全測",
+            "通訊地址": "桃園市桃園區幸福路",
+            "戶籍地址": "桃園市桃園區XXX",
+            "聯絡電話(住宅)": "034551235",
+            "聯絡電話(手機)": "0953083990",
+            "就讀學校": "中壢家商",
+            "就讀科系": "商業經營科",
+            "上課別": "日間部",
+            "年級": "1",
+            "班級": "19",
+            "座號": "2",
+            "身分別": "無",
+            "學制": "高級中學"
+
+        },
+        {
+            "pigID": "",
+            "confirmStatus": ""
+        }]
+
+
+
     })
     const [insertPhotoName, setInsertPhotoName] = useState({ "name": "", "status": false });
 
@@ -119,7 +221,6 @@ const RegisterFrame = () => {
     const [alertFrameShow0, setAlertFrameShow0] = useState(0);
     const [alertFrameShow1, setAlertFrameShow1] = useState(0);
 
-    // const [currentTable, setCurrentTable] = useState({ text: "報名資料", status: false });
 
     // success & error
     const [notifyFrame, setNotifyFrame] = useState(0);
@@ -168,7 +269,7 @@ const RegisterFrame = () => {
                             </div>
                         </div>
                         <div className="functionBtnContainer">
-                            <div className="functionBtn" onClick={() => setFillInFrame(false)}>取 消</div>
+                            <div className="functionBtn" onClick={() => { checkFillinStatus() }}>取 消</div>
                             <div className="functionBtn" onClick={() => setFillInIndex(fillInIndex + 1)}>下一步</div>
                         </div>
                     </>
@@ -183,28 +284,43 @@ const RegisterFrame = () => {
                                 {userUploadFile.map((element, index) => (
 
                                     <div className="inputColumn">
-                                        {element.registerName.map((ele, index) => (
-                                            <div className={`inputItem ${element.registerName.length == 2 ? "split" : element.registerName.length == 3 ? "triple" : ""}`}>
-                                                <div style={{ display: "flex", alignItems: "center" }}>
-                                                    <h5 className="inputName">*{ele}</h5>
-                                                    {element.isCopy ? <div className="copyBtn" onClick={()=>{setInsertData(prev=>({...prev,["戶籍地址"]:insertData["通訊地址"]}))}}>同 上</div> :
-                                                        ""}
+                                        {element.registerName.map((ele, index) => {
+                                            const key = ele as keyof _CommonType;
+                                            return (
+                                                <div className={`inputItem ${element.registerName.length == 1 ? "single" : element.registerName.length == 2 ? "split" : element.registerName.length == 3 ? "triple" : ""}`} >
+                                                    <div style={{ display: "flex", alignItems: "center" }}>
+                                                        <h5 className="inputName">*{ele}</h5>
+                                                        {element.isCopy ? <div className="copyBtn" onClick={() => {
+                                                            setInsertData(prev => ({
+                                                                ...prev,
+                                                                insertFile: { ...prev.insertFile, ["戶籍地址"]: insertData["insertFile"]["通訊地址"] }
+                                                            }))
+                                                        }}>同 上</div> :
+                                                            ""}
+                                                    </div>
+
+                                                    <input type={`${ele == "出生日期" ? "date" : "text"}`} value={insertData["insertFile"][key]} onChange={(e) => {
+                                                        setInsertData(prev => ({
+                                                            ...prev,
+                                                            insertFile:
+                                                            {
+                                                                ...prev.insertFile,
+                                                                [key]: e.target.value
+                                                            }
+                                                        }))
+                                                    }} />
+
+
                                                 </div>
-                                                <input type={`${ele == "出生日期" ? "date" : "text"}`} value={insertData[ele]} onChange={(e) => {
-                                                    setInsertData(prev => ({
-                                                        ...prev,
-                                                        [ele]: e.target.value
-                                                    }))
-                                                }} />
-                                            </div>
-                                        ))}
+                                            )
+                                        })}
                                     </div>
 
 
 
                                 ))}
                             </div>
-                        </div>
+                        </div >
                         <div className="functionBtnContainer">
                             <div className="functionBtn" onClick={() => setFillInIndex(fillInIndex - 1)}>上一步</div>
                             <div className="functionBtn" onClick={() => setFillInIndex(fillInIndex + 1)}>下一步</div>
@@ -222,21 +338,83 @@ const RegisterFrame = () => {
                                 {userUploadTestFile.map((element, index) => (
 
                                     <div className="inputColumn">
-                                        {element.registerName.map((ele, index) => (
-                                            <div className={`inputItem ${element.registerName.length == 2 ? "split" : element.registerName.length == 3 ? "triple" : ""}`}>
-                                                <div style={{ display: "flex", alignItems: "center" }}>
-                                                    <h5 className="inputName">*{ele}</h5>
-                                                    {element.isCopy ? <div className="copyBtn">同 上</div> :
-                                                        ""}
+                                        {element.registerName.map((ele, index) => {
+
+                                            const key = ele as keyof _CommonType;
+                                            return (
+                                                <div className={`inputItem ${element.registerName.length == 2 ? "split" : element.registerName.length == 3 ? "triple" : ""}`}>
+                                                    <div style={{ display: "flex", alignItems: "center" }}>
+                                                        <h5 className="inputName">*{ele}</h5>
+                                                        {element.isCopy ? <div className="copyBtn">同 上</div> :
+                                                            ""}
+                                                    </div>
+                                                    {
+                                                        ele != "檢定區別" && ele != "身分別" ?
+                                                            <input type={`${ele == "出生日期" ? "date" : "text"}`} value={insertData["insertFile"][key]} onChange={(e) => {
+                                                                setInsertData(prev => ({
+                                                                    ...prev,
+                                                                    insertFile:
+                                                                    {
+                                                                        ...prev.insertFile,
+                                                                        [key]: e.target.value
+                                                                    }
+
+                                                                }))
+                                                            }} />
+
+                                                            :
+                                                            ele != "身分別" ?
+                                                                <Select
+                                                                    onChange={(e) => {
+                                                                        setInsertData((prev) => ({
+                                                                            ...prev,
+                                                                            insertFile:{
+                                                                                ...prev.insertFile,
+                                                                                ["檢定區別"] : e?.value ?? "",
+                                                                            }
+                                                                        }))
+                                                                    }}
+                                                                    value={options_type.find(
+
+                                                                        (opt) => {
+                                                                            const match = opt.value === insertData["insertFile"]["檢定區別"];
+
+                                                                            return match;
+
+                                                                        }
+                                                                    ) ?? null}
+                                                                    options={options_type}
+                                                                    placeholder="選擇檢定區別"
+                                                                    className="selectClass"
+                                                                />
+                                                                :
+                                                                <Select
+                                                                    onChange={(e) => {
+
+                                                                        setInsertData((prev) => ({
+                                                                            ...prev,
+                                                                            insertFile:{
+                                                                                ...prev.insertFile,
+                                                                                ["身分別"] : e?.value ?? "",
+                                                                            }
+                                                                        }))
+                                                                    }}
+                                                                    value={options_identity.find(
+
+                                                                        (opt) => {
+                                                                            const match = opt.value === insertData["insertFile"]["身分別"];
+                                                                            return match;
+
+                                                                        }
+                                                                    ) ?? null}
+                                                                    options={options_identity}
+                                                                    placeholder="選擇身分別"
+                                                                    className="selectClass"
+                                                                />
+                                                    }
                                                 </div>
-                                                <input type={`${ele == "出生日期" ? "date" : "text"}`} value={insertData[ele]} onChange={(e) => {
-                                                    setInsertData(prev => ({
-                                                        ...prev,
-                                                        [ele]: e.target.value
-                                                    }))
-                                                }} />
-                                            </div>
-                                        ))}
+                                            )
+                                        })}
                                     </div>
                                 ))}
                             </div>
@@ -314,10 +492,10 @@ const RegisterFrame = () => {
             // finalData.append("user_photo",data_photo);
             // finalData.append("user_file",data_file);
             // finalData.append("data_name",data_name);
-            alert();
+            // alert();
         }
         else {
-            alert(2);
+            // alert(2);
             console.log(data_photo);
             console.log(data_file);
             console.log(data_name);
@@ -330,7 +508,7 @@ const RegisterFrame = () => {
         if (uploadStatus.status && uploadStatus.fileName != "") {
             // const uploadName: string | undefined = uploadFileNameRef.current?.value;
             const uploadFile: FileList | null | undefined = uploadFileRef.current?.files;
-            const URL = `http://localhost:3000/upload`;
+            const URL = `http://localhost:3000/upload?userName=${document.cookie}`;
             if (uploadStatus.userInputName != undefined && (uploadFile?.length != null || uploadFile?.length != undefined)) {
 
                 formData.append("uploadFileName", uploadStatus.userInputName);
@@ -428,9 +606,29 @@ const RegisterFrame = () => {
             status: true,
             fileName: file
         }))
+    }
 
 
+    const checkFillinStatus = () => {
 
+        setFillInFrame(false)
+        if (insertPhotoRef.current != null) {
+            // for(const key in insertData.insertFile){
+            //     console.log(key);
+
+            //     if(insertData.hasOwnProperty(key)){
+            //         console.log(key);
+            //     }
+            // }
+
+            Object.entries(insertData.insertFile).forEach((([key, value]) => {
+                console.log(key, value);
+                if (!value) {
+                    console.log(key);
+                }
+            }))
+
+        }
     }
     ///////////////////////////////////////////
 
@@ -562,7 +760,7 @@ const RegisterFrame = () => {
                 break;
             case 1:
                 return (
-                        <DataTableContainer setDoubleCheck={setDoubleCheck} setEditFrameState={setEditFrameState} setViewFrameState={setViewFrameState} setFillInFrame={setFillInFrame} setLoadingState={setLoadingState} modalShow={modalShow} setModalShow={setModalShow} />
+                    <DataTableContainer deleteEditData={deleteEditData} setEditViewData={setEditViewData} setDoubleCheck={setDoubleCheck} setEditFrameState={setEditFrameState} setViewFrameState={setViewFrameState} setFillInFrame={setFillInFrame} setLoadingState={setLoadingState} modalShow={modalShow} setModalShow={setModalShow} />
 
                 )
                 break;
@@ -587,6 +785,7 @@ const RegisterFrame = () => {
     }
     return (
         cookie ? (
+
             <div className="registerFrameContainer">
                 <input type="file" id="hiddenInput" style={{ display: "none" }} ref={uploadFileRef} onChange={fileChange} />
                 <input type="file" id="uploadPhotoRef" style={{ display: "none" }} ref={uploadPhotoRef} onChange={photoUpload} accept="image/*," webkitdirectory="true"  {...({ webkitdirectory: "" } as any)} />
@@ -598,7 +797,7 @@ const RegisterFrame = () => {
 
 
                 <ViewStudentContainer viewData={EditViewData} setViewFrameState={setViewFrameState} viewFrameState={viewFrameState} />
-                <EditViewStudentContainer submitEditData={submitEditData} viewData={EditViewData} editFrameState={editFrameState} setEditFrameState={setEditFrameState} />
+                <EditViewStudentContainer setEditViewData={setEditViewData} submitEditData={submitEditData} EditViewData={EditViewData} editFrameState={editFrameState} setEditFrameState={setEditFrameState} />
 
 
 
@@ -829,7 +1028,7 @@ const RegisterFrame = () => {
                         </div>
                         <div className="alert_option">
                             <div className="alert_option_button" onClick={() => { setDoubleCheck(0) }}>取 消</div>
-                            <div className="alert_option_button" onClick={() => handleContext?.deleteEditData(1, "")}>確 定</div>
+                            <div className="alert_option_button" onClick={() => deleteEditData(1, "")}>確 定</div>
                         </div>
                     </div>
                 </div>
@@ -850,12 +1049,12 @@ const RegisterFrame = () => {
                                     <div className={`item ${currentPage == 3 ? "currentC" : 0}`} onClick={() => { triggerChange(3) }}><div className="decoration"><FontAwesomeIcon icon={faMagnifyingGlass} /></div><h4>代碼查詢</h4></div>
                                 </div>
                                 <div className="line" />
-                                <div className="settingContainer" onClick={()=>{
-                                    if(insertData["中文姓名"] != "admin"){
+                                <div className="settingContainer" onClick={() => {
+                                    if (insertData["insertFile"]["中文姓名"] != "admin") {
                                         setNonFillout(1);
                                         setAlertText("非管理員請勿開啟！");
                                     }
-                                    else{
+                                    else {
 
                                     }
                                 }}>

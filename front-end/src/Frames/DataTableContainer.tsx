@@ -11,7 +11,10 @@ import DataTable, { type ExportDataType, type rowData } from "../component/DataT
 import { DeclareContextType } from "../types/DeclareContextType.tsx";
 
 import DATA from "../json/testPigID.json";
-import { json } from "react-router-dom";
+import type { _ReloadStudentType } from "../types/_ReloadStudentType.ts";
+import type { _ReloadStudentTypeList } from "../types/_ReloadStudentType.ts";
+import type { _EditType } from "../types/_EditType.ts";
+
 
 type currentTableType = {
     text: string,
@@ -24,6 +27,8 @@ type rowType = {
 type InputProps = {
     setLoadingState: Function,
     modalShow: number,
+    deleteEditData: (index : number , arg : string ) => void,
+    setEditViewData: React.Dispatch<React.SetStateAction<_EditType>>,
     setModalShow: React.Dispatch<React.SetStateAction<number>>,
     setFillInFrame: React.Dispatch<React.SetStateAction<boolean>>,
     setViewFrameState: React.Dispatch<React.SetStateAction<number>>,
@@ -32,15 +37,16 @@ type InputProps = {
 }
 
 
-const DataTableContainer = ({ setDoubleCheck, setEditFrameState, setViewFrameState, setLoadingState, modalShow, setModalShow, setFillInFrame }: InputProps) => {
-    const [data, setData] = useState<rowData[]>(DATA);
+const DataTableContainer = ({ deleteEditData, setEditViewData, setDoubleCheck, setEditFrameState, setViewFrameState, setLoadingState, modalShow, setModalShow, setFillInFrame }: InputProps) => {
+
+    const [data, setData] = useState<_ReloadStudentType[]>(DATA as _ReloadStudentType[]);
     // const [modalShow, setModalShow] = useState(0);
     const [currentTable, setCurrentTable] = useState<currentTableType>({ text: "報名資料", status: false });
     const [globalFilter, setGlobalFilter] = useState<string>("");
     const [studentFilter, setStudentFilter] = useState<string>("");
     const [changePage, setChangePage] = useState<number>(0);
     const [calRows, setCalRows] = useState<rowType>({ value1: "", value2: "" });
-    const [pigID, setPigID] = useState("");
+    // const [pigID, setPigID] = useState("");
 
     const triggerExportRef = useRef<ExportDataType | null>(null);
     const tableHeightRef = useRef<HTMLDivElement>(null);
@@ -93,7 +99,7 @@ const DataTableContainer = ({ setDoubleCheck, setEditFrameState, setViewFrameSta
 
 
     }
-
+    // 查看
     const handleViewData = () => {
         // fetch -> setState
         // setEditViewData(prev=>({
@@ -103,42 +109,56 @@ const DataTableContainer = ({ setDoubleCheck, setEditFrameState, setViewFrameSta
         // 反正這邊就是明天要跟豬串起來的fetch 明天再用 更新資料而已
         setViewFrameState(1);
     }
-    const EditViewData = () => {
+    // 編輯
+    const EditViewData = (arg: number) => {
+        // console.log(data[arg][0]);
+        const sendData = data[arg][0];
+        setEditViewData(prev => ({
+            ...prev,
+            insertFile: [sendData, prev.insertFile[1]]
+        }));
         setEditFrameState(1);
     }
-    const deleteEditData = (index: number, arg: string) => {
-        if (index == 0) {
-            // 1 save & asking
-            setPigID(arg);
-            setDoubleCheck(1);
-        }
-        else {
-            // 2 submit
-            setDoubleCheck(0);
-            submitDeleteEditData(pigID);
+    // const deleteEditData =  (index: number, arg: string) => {
+    //     console.log(arg);
 
-        }
-    }
-    const submitDeleteEditData = async (arg: string) => {
-        const URL: string = "";
-        try {
-            const res = await fetch(URL, {
-                method: "POST",
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ "deleteName": arg })
-            })
+    //     if (index == 0) {
+    //         // 1 save & asking
+    //         setPigID(arg);
+    //         setDoubleCheck(1);
+    //     }
+    //     else {
+    //         // 2 submit
+    //         console.log(10000000);
+    //         setDoubleCheck(0);
+    //         submitDeleteEditData(pigID);
 
-            if (!res.ok) throw new Error("500 server error");
+    //     }
+    // }
+    // const submitDeleteEditData = async (arg: string) => {
 
-            console.log("成功", data)
+    //     setLoadingState(false);
+    //     const URL: string = "";
+    //     try {
+    //         const res = await fetch(URL, {
+    //             method: "POST",
+    //             headers: {
+    //                 'Content-Type': 'application/json'
+    //             },
+    //             body: JSON.stringify({ "deleteName": arg })
+    //         })
 
-        }
-        catch (err) {
-            console.error("123", err);
-        }
-    }
+    //         if (!res.ok) throw new Error("500 server error");
+
+    //         console.log("成功", data)
+    //         setLoadingState(true);
+
+    //     }
+    //     catch (err) {
+    //         console.error("123", err);
+    //         setLoadingState(true);
+    //     }
+    // }
     // const insertData = () => {
     //     const newRow = {
     //         "pigID":
