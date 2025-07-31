@@ -5,6 +5,7 @@ import type { ColumnDef, ColumnFiltersState } from "@tanstack/react-table";
 import DATA from "../json/testPigID.json";
 import { forwardRef, useState, useImperativeHandle, useEffect } from "react";
 import type { Swiper as SwiperClass } from "swiper/types";
+import type { _ReloadStudentType } from "../types/_ReloadStudentType";
 export type ExportDataType = {
     triggerExport: () => void;
 }
@@ -21,7 +22,7 @@ type rowType = {
     value2: string
 }
 export type rowData = {
-    "pigID" : string;
+    "pigID": string;
     "身分證號碼": string;
     "中文姓名": string;
     "出生日期": string;
@@ -55,10 +56,27 @@ type allProps = {
 // higher order function only receive two arguments , props needs to become a set.
 const DataTable = forwardRef<ExportDataType, allProps>(({ swiperRef, enterDetailData, globalFilter, setGlobalFilter, setCalRows }, ref) => {
     // const { modalOut } = props; 
-    const [data, setData] = useState<rowData[]>(DATA);
+
+    const [data, setData] = useState(DATA);
+    // const [data, setData] = useState(() => {
+    //     // 變平化 （解構 合併）
+    //     return DATA.map(([studentInfo, nested]) => ({
+    //         ...studentInfo,
+    //         ...nested,
+    //     }));
+    // });
+    const [viewData, setViewData] = useState(() => {
+        // 變平化 （解構 合併）
+        return DATA.map(([studentInfo, nested]) => ({
+            ...studentInfo,
+            ...nested,
+        }));
+    })
+
+
+
     const [exportData, setExportData] = useState(false);
     const [columnFilter, setColumnFilter] = useState<ColumnFiltersState>([]);
-
 
 
 
@@ -100,7 +118,7 @@ const DataTable = forwardRef<ExportDataType, allProps>(({ swiperRef, enterDetail
         }
         ,
         {
-            accessorKey: "comfirmStatus",
+            accessorKey: "confirmStatus",
             header: "報名狀態",
             cell: (props: any) => {
                 if (props.getValue()) {
@@ -165,7 +183,7 @@ const DataTable = forwardRef<ExportDataType, allProps>(({ swiperRef, enterDetail
     ]
 
     const table = useReactTable({
-        data,
+        data : viewData,
         columns,
         state: { globalFilter },
         onGlobalFilterChange: setGlobalFilter,
@@ -198,11 +216,11 @@ const DataTable = forwardRef<ExportDataType, allProps>(({ swiperRef, enterDetail
     useImperativeHandle(ref, () => ({
         triggerExport: () => {
             setExportData(exportData => !exportData);
-            
+
         }
     }), [])
 
-    
+
     return (
         <div className="tableContainer">
             <table border={1} cellPadding={6} >

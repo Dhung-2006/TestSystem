@@ -5,6 +5,7 @@ import type { ColumnDef, ColumnFiltersState, SortingState } from "@tanstack/reac
 import DATA from "../json/tableData.json";
 import { DeclareContextType } from "../types/DeclareContextType";
 import { forwardRef, useState, useImperativeHandle, useEffect, useContext } from "react";
+import type { _ReloadStudentType } from "../types/_ReloadStudentType";
 
 export type ExportDataType = {
     triggerExport: () => void;
@@ -57,10 +58,10 @@ type rowData = {
 }
 type allProps = {
     // triggerModalShow: () => void;
-    data: rowData[],
+    data: _ReloadStudentType[],
     handleViewData: Function,
     EditViewData: Function,
-    setData: React.Dispatch<React.SetStateAction<rowData[]>>,
+    setData: React.Dispatch<React.SetStateAction<_ReloadStudentType[]>>,
     studentFilter: string,
     setStudentFilter: React.Dispatch<React.SetStateAction<string>>,
     setCalRows: React.Dispatch<React.SetStateAction<rowType>>,
@@ -71,6 +72,13 @@ type allProps = {
 const StudentTable = forwardRef<ExportDataType, allProps>(({ EditViewData, handleViewData, data, setData, studentFilter, setStudentFilter, setCalRows, setModalShow }, ref) => {
     // const { modalOut } = props; 
     // const [data, setData] = useState<rowData[]>(inputData);
+    // 解構版本
+    
+    const [ViewData, setViewData] = useState(() => {
+        return data.map(([std, nested]) => ({
+            ...std, ...nested
+        }))
+    })
     const [exportData, setExportData] = useState(false);
     const [columnFilter, setColumnFilter] = useState<ColumnFiltersState>([]);
     const [sorting, setSorting] = useState<SortingState>([]);
@@ -124,8 +132,8 @@ const StudentTable = forwardRef<ExportDataType, allProps>(({ EditViewData, handl
         ,
 
         {
-            accessorKey: "comfirmStatus",
-            header: "報名狀態",
+            accessorKey: "confirmStatus",
+            header: "填寫狀態",
             cell: (props: any) => {
                 if (props.getValue()) {
 
@@ -136,14 +144,6 @@ const StudentTable = forwardRef<ExportDataType, allProps>(({ EditViewData, handl
                 }
             }
         }
-        // ,
-        // {
-        //     accessorKey: "comfirmStatus",
-        //     header: "",
-        //     cell: (props: any) => {
-        //         return(<p style={{opacity:"0.2"}}>|</p>)
-        //     }
-        // }
         ,
         {
             id: "status",
@@ -152,57 +152,21 @@ const StudentTable = forwardRef<ExportDataType, allProps>(({ EditViewData, handl
             // maxSize: 100,
             cell: (props: any) => {
                 const rowData = props.row.original;
+                const index = props.row.index;
+                // alert("rowindex" + props.row.index);
                 return (
                     <div className="functionBtn">
-                        <div className="editButton" onClick={() => handleViewData()}>查看</div>
-                        <div className="editButton" onClick={() => EditViewData()}>編輯</div>
+                        <div className="editButton" onClick={() => handleViewData(index)}>查看</div>
+                        <div className="editButton" onClick={() => EditViewData(index)}>編輯</div>
                         <div className="editButton" onClick={() => handleContext?.deleteEditData(0, rowData["pigID"])}>刪除</div>
                     </div>
                 )
             }
         }
-
-        // ,
-        // {
-        //     accessorKey: "number",
-        //     header: "報名人數",
-        //     cell: (props: any) => <p>{props.getValue()}</p>
-        // }
-        // ,
-        // {
-        //     accessorKey: "photo_n",
-        //     header: "未傳照片",
-        //     cell: (props: any) => <p>{props.getValue()}</p>
-        // }
-        // ,
-        // {
-        //     accessorKey: "all",
-        //     header: "全測",
-        //     cell: (props: any) => <p>{props.getValue()}</p>
-        // }
-        // ,
-        // {
-        //     accessorKey: "pass_a",
-        //     header: "免學",
-        //     cell: (props: any) => <p>{props.getValue()}</p>
-        // }
-        // ,
-        // {
-        //     accessorKey: "pass_s",
-        //     header: "免術",
-        //     cell: (props: any) => <p>{props.getValue()}</p>
-        // }
-        // ,
-        // {
-
-        //     accessorKey: "pass_s",
-        //     header: "",
-        //     cell: (props: any) => <p>{props.getValue()}</p>
-        // }
     ])
 
     const table = useReactTable({
-        data,
+        data : ViewData,
         columns,
         state: { globalFilter: studentFilter, sorting },
         onSortingChange: setSorting,

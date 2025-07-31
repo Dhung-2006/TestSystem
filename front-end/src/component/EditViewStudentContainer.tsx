@@ -4,13 +4,18 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faFile, faPen } from '@fortawesome/free-solid-svg-icons'
 import Select from "react-select";
 import TestFile from "../json/userUploadTestFile.json";
+// type
+import type { _EditType } from "../types/_EditType";
+import type { _CommonType } from "../types/_CommonType";
 
 type stateType = {
 
     submitEditData: Function,
-    viewData: ViewType,
+    EditViewData: _EditType,
     editFrameState: number,
     setEditFrameState: React.Dispatch<React.SetStateAction<number>>
+    setEditViewData: React.Dispatch<React.SetStateAction<_EditType>>
+
 }
 
 // const multipleType = [
@@ -24,28 +29,6 @@ type stateType = {
 // type ViewType = {
 //     [k in typeof multipleType[number]]: string;
 // }
-type ViewType={
-    "身分證號碼": string,
-    "中文姓名": string,
-    "出生日期": string,
-    "報簡職類": string,
-    "英文姓名": string,
-    "檢定區別": string,
-    "通訊地址": string,
-    "戶籍地址": string,
-    "聯絡電話(住宅)": string,
-    "聯絡電話(手機)": string,
-    "就讀學校": string,
-    "就讀科系": string,
-    "上課別": string,
-    "年級": string,
-    "班級": string,
-    "座號": string,
-    "身分別": string,
-    "學制": string,
-    "test-type": string,
-    "comfirmStatus": boolean
-}
 
 type selectType = {
     value: string,
@@ -53,12 +36,15 @@ type selectType = {
 }
 
 const options: selectType[] = [
-    { value: 'A', label: '全冊' },
-    { value: 'B', label: '免學' },
-    { value: 'C', label: '免術' },
+    // { value: "A", label: "全冊" },
+    // { value: "B", label: "免學" },
+    // { value: "C", label: "免術" },
+    { value: "全測", label: "全測" },
+    { value: "免學", label: "免學" },
+    { value: "免術", label: "免術" },
 ];
 
-const EditViewStudentContainer = ({ submitEditData, viewData, editFrameState, setEditFrameState }: stateType) => {
+const EditViewStudentContainer = ({ setEditViewData, submitEditData, EditViewData, editFrameState, setEditFrameState }: stateType) => {
 
     return (
         <div className={`viewStudentDetailContainer ${editFrameState == 0 ? "op0" : ""}`}>
@@ -80,14 +66,42 @@ const EditViewStudentContainer = ({ submitEditData, viewData, editFrameState, se
                                         <div className="viewStudentItem">
                                             <div className="viewStudentName">
                                                 <h4>*中文姓名</h4>
-                                                <input type="text" value={viewData["中文姓名"]} />
+                                                <input type="text" value={EditViewData["insertFile"][0]["中文姓名"]} onChange={(e) => {
+                                                    const value = e.target.value;
+                                                    setEditViewData((prev) => ({
+                                                        ...prev,
+                                                        "insertFile": [
+                                                            {
+                                                                ...prev.insertFile[0],
+                                                                ["中文姓名"]: value,
+                                                            },
+                                                            {
+                                                                ...prev.insertFile[1],
+                                                            }
+                                                        ]
+                                                    }))
+                                                }} />
                                             </div>
 
                                         </div>
                                         <div className="viewStudentItem">
                                             <div className="viewStudentName">
                                                 <h4> *英文姓名</h4>
-                                                <input type="text" value={viewData["中文姓名"]} />
+                                                <input type="text" value={EditViewData["insertFile"][0]["英文姓名"]} onChange={(e) => {
+                                                    const value = e.target.value;
+                                                    setEditViewData((prev) => ({
+                                                        ...prev,
+                                                        "insertFile": [
+                                                            {
+                                                                ...prev.insertFile[0],
+                                                                ["英文姓名"]: value,
+                                                            },
+                                                            {
+                                                                ...prev.insertFile[1],
+                                                            }
+                                                        ]
+                                                    }))
+                                                }} />
                                             </div>
 
                                         </div>
@@ -98,13 +112,41 @@ const EditViewStudentContainer = ({ submitEditData, viewData, editFrameState, se
 
                                             <div className="viewStudentName">
                                                 <h4> *身分證字號</h4>
-                                                <input type="text" value={viewData["中文姓名"]} />
+                                                <input type="text" value={EditViewData["insertFile"][0]["身分證號碼"]} onChange={(e) => {
+                                                    const value = e.target.value;
+                                                    setEditViewData((prev) => ({
+                                                        ...prev,
+                                                        "insertFile": [
+                                                            {
+                                                                ...prev.insertFile[0],
+                                                                ["身分證號碼"]: value,
+                                                            },
+                                                            {
+                                                                ...prev.insertFile[1],
+                                                            }
+                                                        ]
+                                                    }))
+                                                }} />
                                             </div>
                                         </div>
                                         <div className="viewStudentItem">
                                             <div className="viewStudentName">
                                                 <h4> *出生日期</h4>
-                                                <input type="date" value={viewData["中文姓名"]} />
+                                                <input type="date" value={EditViewData["insertFile"][0]["出生日期"]} style={{ color: "rgba(0,0,0,1)" }} onChange={(e) => {
+                                                    const value = e.target.value;
+                                                    setEditViewData((prev) => ({
+                                                        ...prev,
+                                                        "insertFile": [
+                                                            {
+                                                                ...prev.insertFile[0],
+                                                                ["出生日期"]: value,
+                                                            },
+                                                            {
+                                                                ...prev.insertFile[1],
+                                                            }
+                                                        ]
+                                                    }))
+                                                }} />
                                             </div>
 
                                         </div>
@@ -116,14 +158,42 @@ const EditViewStudentContainer = ({ submitEditData, viewData, editFrameState, se
                                     <div className="viewStudentItem">
                                         <div className="viewStudentName">
                                             <h4> *通訊地址</h4>
-                                            <input type="text" value={viewData["中文姓名"]} />
+                                            <input type="text" value={EditViewData["insertFile"][0]["通訊地址"]} onChange={(e) => {
+                                                const value = e.target.value;
+                                                setEditViewData((prev) => ({
+                                                    ...prev,
+                                                    "insertFile": [
+                                                        {
+                                                            ...prev.insertFile[0],
+                                                            ["通訊地址"]: value,
+                                                        },
+                                                        {
+                                                            ...prev.insertFile[1],
+                                                        }
+                                                    ]
+                                                }))
+                                            }} />
                                         </div>
 
                                     </div>
                                     <div className="viewStudentItem">
                                         <div className="viewStudentName">
                                             <h4> *戶籍地址</h4>
-                                            <input type="text" value={viewData["中文姓名"]} />
+                                            <input type="text" value={EditViewData["insertFile"][0]["戶籍地址"]} onChange={(e) => {
+                                                const value = e.target.value;
+                                                setEditViewData((prev) => ({
+                                                    ...prev,
+                                                    "insertFile": [
+                                                        {
+                                                            ...prev.insertFile[0],
+                                                            ["戶籍地址"]: value,
+                                                        },
+                                                        {
+                                                            ...prev.insertFile[1],
+                                                        }
+                                                    ]
+                                                }))
+                                            }} />
                                         </div>
 
                                     </div>
@@ -132,14 +202,42 @@ const EditViewStudentContainer = ({ submitEditData, viewData, editFrameState, se
                                     <div className="viewStudentItem">
                                         <div className="viewStudentName">
                                             <h4> *聯絡電話</h4>
-                                            <input type="text" value={viewData["中文姓名"]} />
+                                            <input type="text" value={EditViewData["insertFile"][0]["聯絡電話(住宅)"]} onChange={(e) => {
+                                                const value = e.target.value;
+                                                setEditViewData((prev) => ({
+                                                    ...prev,
+                                                    "insertFile": [
+                                                        {
+                                                            ...prev.insertFile[0],
+                                                            ["聯絡電話(住宅)"]: value,
+                                                        },
+                                                        {
+                                                            ...prev.insertFile[1],
+                                                        }
+                                                    ]
+                                                }))
+                                            }} />
                                         </div>
 
                                     </div>
                                     <div className="viewStudentItem">
                                         <div className="viewStudentName">
                                             <h4> *行動電話</h4>
-                                            <input type="text" value={viewData["中文姓名"]} />
+                                            <input type="text" value={EditViewData["insertFile"][0]["聯絡電話(手機)"]} onChange={(e) => {
+                                                const value = e.target.value;
+                                                setEditViewData((prev) => ({
+                                                    ...prev,
+                                                    "insertFile": [
+                                                        {
+                                                            ...prev.insertFile[0],
+                                                            ["聯絡電話(手機)"]: value,
+                                                        },
+                                                        {
+                                                            ...prev.insertFile[1],
+                                                        }
+                                                    ]
+                                                }))
+                                            }} />
                                         </div>
 
                                     </div>
@@ -154,30 +252,77 @@ const EditViewStudentContainer = ({ submitEditData, viewData, editFrameState, se
                                     <div className="fillInTestData">
                                         {TestFile.map((element, index) => (
                                             <div className="viewStudentColumn">
-                                                {element.registerName.map((label, index) => (
-                                                    label != "檢定區別" ?
-                                                        (
+                                                {element.registerName.map((label, index) => {
+                                                    return (
+
+                                                        label != "檢定區別" ?
+                                                            (
+                                                                <div className={`viewStudentItem ${element.registerCount == 1 ? "single" : element.registerCount == 2 ? "split" : element.registerCount == 3 ? "triple" : ""} `}>
+                                                                    <div className="viewStudentName">
+                                                                        <h4>*{label}</h4>
+                                                                        <input type="text" value={EditViewData["insertFile"][0][label]}
+                                                                            onChange={(e) => {
+                                                                                const inputValue = e.target.value;
+                                                                                setEditViewData((prev) => ({
+                                                                                    ...prev,
+                                                                                    "insertFile": [
+                                                                                        {
+                                                                                            ...prev.insertFile[0],
+
+                                                                                            [label]: inputValue
+                                                                                        },
+                                                                                        {
+                                                                                            ...prev.insertFile[1]
+                                                                                        }
+                                                                                    ]
+                                                                                }))
+                                                                            }} />
+                                                                    </div>
+                                                                </div>
+                                                            ) :
                                                             <div className={`viewStudentItem ${element.registerCount == 1 ? "single" : element.registerCount == 2 ? "split" : element.registerCount == 3 ? "triple" : ""} `}>
                                                                 <div className="viewStudentName">
                                                                     <h4>*{element.registerName[0]}</h4>
-                                                                    <input type="text" />
+                                                                    <Select
+                                                                        onChange={(e) => {
+
+                                                                            setEditViewData(prev => ({
+
+                                                                                ...prev,
+                                                                                insertFile: [
+                                                                                    {
+                                                                                        ...prev.insertFile[0],
+                                                                                        檢定區別: e?.value ?? ""
+
+                                                                                    },
+                                                                                    {
+                                                                                        ...prev.insertFile[1]
+                                                                                    }
+                                                                                ]
+                                                                            }))
+                                                                        }}
+                                                                        options={options}
+
+                                                                        value={options.find(
+                                                                            
+                                                                            (opt) => {
+                                                                                const match = opt.value === EditViewData["insertFile"][0]["檢定區別"];
+                                                                                if(match){
+                                                                                    // alert('py');
+                                                                                    
+                                                                                }
+                                                                                return match;
+                                                                                
+                                                                            }
+                                                                        ) ?? null}
+
+                                                                        placeholder="選擇檢定區別"
+                                                                        className="selectClass"
+                                                                    />
                                                                 </div>
                                                             </div>
-                                                        ) :
-                                                        <div className={`viewStudentItem ${element.registerCount == 1 ? "single" : element.registerCount == 2 ? "split" : element.registerCount == 3 ? "triple" : ""} `}>
-                                                            <div className="viewStudentName">
-                                                                <h4>*{element.registerName[0]}</h4>
-                                                                <Select
-                                                                    onChange={(e) => {
-                                                                        set
-                                                                    }}
-                                                                    options={options}
-                                                                    placeholder="選擇檢定區別"
-                                                                    className="selectClass"
-                                                                />
-                                                            </div>
-                                                        </div>
-                                                ))
+                                                    )
+                                                })
                                                 }
                                             </div>
                                         ))}
