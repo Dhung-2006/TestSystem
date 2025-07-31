@@ -37,10 +37,6 @@ app.get('/' , async(req,res)=>{
   console.log(`visitor:${ip}`)
 });
 
-app.post("/test" , (req, res)=>{
-  console.log('13123123123')
-})
-
 app.get('/cleanAllData', (req, res) => {
   fs.unlink('./sqlite.db', (err) => {
     if (err) {
@@ -77,8 +73,21 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage })
 
-app.post('/getfolder' , (req ,res)=>{
-// 所有file資料  -> sqlite 抓資料
+app.post('/getfolder', multer().none(), (req, res) => {
+  const userName = req.body.userName;
+  let fileList = []
+  sequelize.sync().then(async () => {
+    const files = await jsonFile.findAll({
+      where: {
+        userAcc: userName
+      }
+    });
+
+    files.forEach(element => {
+      fileList.push(element.jsonName)
+    });
+    res.json(fileList).status(200)
+  })
 })
 
 app.post('/getjsons' , multer().none(),async(req ,res)=>{
