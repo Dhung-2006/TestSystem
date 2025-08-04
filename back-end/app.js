@@ -299,9 +299,11 @@ app.get("/seeAllJson" , async(req,res)=>{
   
 // }
 
-app.get("/fillWd" , async(req,res)=>{
-  const userName = "dexter" ;//req.body['username']
-  const chooseFile = "test-1" ;//req.body['test-1.json]
+app.post("/fillWd" , multer().none() ,async(req,res)=>{
+  // const userName = "dexter" ;//req.body['username']
+  const userName = req.body.userName
+  const chooseFile = req.body.chooseFile
+  // const chooseFile = "test-1" ;//req.body['test-1.json]
   // const filePath = path.join(__dirname  , "user_data" , userName , )
   const py = spawn('python' , ['fillWord.py' , userName , chooseFile]);
   let outputData =''
@@ -315,6 +317,7 @@ app.get("/fillWd" , async(req,res)=>{
 
   py.on('close' , ()=>{
     console.log(outputData)
+    res.send('success').status(200)
   })
 });
 
