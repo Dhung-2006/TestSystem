@@ -2,19 +2,13 @@ const { spawn } = require('child_process');
 const express = require('express');
 const app = express();
 const path = require("path")
-const session  = require("express-session");
 const nodemailer = require("nodemailer")
 const { sequelize, userAccounts  , fileInfo , jsonFile} = require('./sqlSetting');
 const { where, json, AsyncQueueError } = require('sequelize');
-const { stat } = require('fs');
-const { count, log } = require('console');
 const cors = require('cors');
 const fs = require('fs');
 const  cookieParser =  require("cookie-parser")
-const { verbose } = require('sqlite3');
-const { Json } = require('sequelize/lib/utils');
 const multer = require('multer');
-const { useTransition } = require('react');
 
 app.use(express.urlencoded({extended:true}))
 app.use(cookieParser())
@@ -62,17 +56,6 @@ app.get('/cleanAllData', (req, res) => {
 //   const upload = await fetch('http://localhost:3000/upload')
 // })
 
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, `./convert_content`)
-  },
-  filename: function (req, file, cb) {
-    cb(null, `${req.cookies.userName}.xlsx` )
-  }
-})
-
-const upload = multer({ storage: storage })
-
 app.post('/getfolder', multer().none(), (req, res) => {
   const userName = req.body.userName;
   let fileList = []
@@ -114,16 +97,15 @@ app.post('/getjsons' , multer().none(),async(req ,res)=>{
   res.json(resultLst).status(200)
 })
 
-app.post('/upload', upload.single('uploadFile') , async (req, res) => {  
-  const userName = req.cookies.userName
-  const filePath = `./convert_content/${userName}.xlsx`
-  const cFileName = "test-1"
+app.post('/createFolder',multer().none() , async(req,res)=>{
+  const userName = req.body.userName
+  const fileName = req.body.fileName
 
-  const folderName = path.join(__dirname, "user_data" , userName , cFileName)
-  const fullTest  = path.join(__dirname, "user_data" , userName , cFileName , "fullTest")
-  const studyTest = path.join(__dirname, "user_data" , userName , cFileName , "studyTest")
-  const technicalTest = path.join(__dirname, "user_data" , userName , cFileName , "technicalTest")
-  const imagePath = path.join(__dirname, "user_data" , userName , cFileName , "image")
+  const folderName = path.join(__dirname, "user_data" , userName , fileName)
+  const fullTest  = path.join(__dirname, "user_data" , userName , fileName , "fullTest")
+  const studyTest = path.join(__dirname, "user_data" , userName , fileName , "studyTest")
+  const technicalTest = path.join(__dirname, "user_data" , userName , fileName , "technicalTest")
+  const imagePath = path.join(__dirname, "user_data" , userName , fileName , "image")
 
   await fs.mkdirSync(folderName, { recursive: true });
   await fs.mkdirSync(fullTest, { recursive: true });
@@ -131,7 +113,40 @@ app.post('/upload', upload.single('uploadFile') , async (req, res) => {
   await fs.mkdirSync(technicalTest, { recursive: true });   
   await fs.mkdirSync(imagePath, { recursive: true });   
 
-  const py = spawn('python', ['process.py', filePath, userName, cFileName])
+  res.cookie("fileName" , fileName ,{
+    httpOnly:false,
+    sameSite:"None",
+    secure :true
+  }).status(200).send("成功了!!")
+})
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    const extName = path.extname(file.originalname)
+    const userName = req.cookies.userName
+    const filePath = req.cookies.fileName
+    let folderPath = ''
+    if(extName === ".xlsx"){
+      folderPath = `./user_data/${userName}/${filePath}`
+    }else if(extName === ".jpg"){
+      folderPath = `./user_data/${userName}/${filePath}/image`
+    }
+    cb(null, folderPath)
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname )
+  }
+})
+
+const upload = multer({ storage: storage })
+
+app.post('/upload', upload.fields([{ name:'excelFile' }, { name:'photoFile'}]) , async (req, res) => {  
+  const userName = req.cookies.userName
+  const fileName = req.body.fileName
+  const excelFile = req.body.originalName
+  const filePath = `./user_data/${userName}/${fileName}/${excelFile}.xlsx`
+
+  const py = await spawn('python', ['process.py', filePath, userName, fileName])
   let outputData = ''
   py.stdout.on('data', (data) => {
     outputData += data.toString('utf-8')
@@ -145,12 +160,14 @@ app.post('/upload', upload.single('uploadFile') , async (req, res) => {
     console.log(outputData)
     sequelize.sync().then(() => {
       jsonFile.create({
-        jsonName: cFileName,
+        jsonName: fileName,
         userAcc: userName
       }).then(() => {
         console.log("Json File has already prepared")
+        res.send('success').status(200)
       }).catch(err => {
         console.log(err.name)
+        res.send('failure').status(400)
       })
     })
   })
@@ -188,6 +205,7 @@ app.post('/signup' , (req,res) =>{
 })
 
 app.post("/login" ,async (req, res) =>{
+  console.log(req.body)
   const reqAcc = req.body.loginAccount;
   const reqPsd  = req.body.loginPassword;
   sequelize.sync().then(async()=>{
@@ -210,7 +228,7 @@ app.post("/login" ,async (req, res) =>{
   })
 })
 
-app.post("/createOneAcc" , async(req, res) => {
+app.post("/createOneAcc" ,async(req, res) => {
   const userAccount = req.body.signAccount
   const userPassword = req.body.signPassword
   const newFolderPath = path.join(__dirname , "user_data" , userAccount)
@@ -426,6 +444,13 @@ app.post("/editFile" , editUpload.none() ,(req ,res) =>{
   });
 })
 
+app.post('/getPdf' ,multer().none(), (req , res)=>{
+  const fileName = req.body.fileName
+  const userName = req.body.userName
+  const pdfPath = path.join(__dirname , "user_data" , userName , fileName , 'combine.pdf')
+  res.setHeader('Content-Type', 'application/pdf');
+  res.sendFile(pdfPath);
+})
 
 app.listen(3000 , ()=>{
   console.log("server is running"); 

@@ -130,7 +130,7 @@ def getData(filePath,dataFrame , frameType , pigID):
             # print(type(datajson[0][item]))
             if  "nan" ==datajson[0][item]:
                 print("enter")
-                datajson[0][item] =False
+                datajson[0][item] =""
         dataJsonLst.append(datajson)
     return dataJsonLst
     

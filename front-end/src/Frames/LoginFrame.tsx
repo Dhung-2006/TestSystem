@@ -47,9 +47,8 @@ const LoginFrame = () => {
             })
 
             if (!res.ok) throw new Error("500 server error");
-            const data = await res.json();
-            console.log("成功", data)
-
+            // const data = await res;
+            // console.log("成功", data)
         }
         catch (err) {
             console.error("123", err);
